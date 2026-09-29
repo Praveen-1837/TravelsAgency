@@ -1,0 +1,266 @@
+.footer {
+  background-color: var(--color-surface-2);
+  border-top: 1px solid var(--color-line);
+  margin-top: auto;
+}
+
+/* Newsletter & Inquiry Banner */
+.newsletterBanner {
+  background-color: var(--color-surface-3);
+  border-bottom: 1px solid var(--color-line);
+  padding: 40px 0;
+}
+
+.newsletterContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+@media (min-width: 860px) {
+  .newsletterContainer {
+    flex-direction: row;
+    align-items: center;
+  }
+}
+
+.newsletterEyebrow {
+  display: block;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: var(--color-cta-deep);
+  margin-bottom: 4px;
+}
+
+.newsletterTitle {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--color-ink);
+  margin-bottom: 4px;
+}
+
+.newsletterSubtitle {
+  font-size: 14px;
+  color: var(--color-body);
+}
+
+.newsletterFormWrapper {
+  width: 100%;
+  max-width: 440px;
+}
+
+.newsletterForm {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+}
+
+.newsletterInput {
+  flex: 1;
+  font-family: var(--font-sans);
+  font-size: 14px;
+  padding: 12px 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-line);
+  background-color: #ffffff;
+  color: var(--color-ink);
+  outline: none;
+  min-height: 48px;
+}
+
+.newsletterInput:focus {
+  border-color: var(--color-cta);
+  box-shadow: 0 0 0 3px rgba(255, 87, 34, 0.15);
+}
+
+.newsletterBtn {
+  background-color: var(--color-dark);
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 14px;
+  padding: 0 20px;
+  border-radius: var(--radius-md);
+  min-height: 48px;
+}
+
+.newsletterBtn:hover {
+  background-color: var(--color-dark-hover);
+}
+
+.newsletterSuccess {
+  background-color: var(--color-success-light);
+  color: var(--color-success);
+  padding: 12px 18px;
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  font-size: 14px;
+}
+
+/* Main Footer */
+.mainFooter {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 40px;
+  padding: 56px 20px;
+}
+
+@media (min-width: 900px) {
+  .mainFooter {
+    grid-template-columns: 320px 1fr;
+    gap: 60px;
+    padding: 64px 32px;
+  }
+}
+
+.brandColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.brandRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.footerLogo {
+  object-fit: contain;
+}
+
+.footerBrandName {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--color-ink);
+  letter-spacing: -0.02em;
+}
+
+.footerDesc {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--color-body);
+}
+
+.contactChips {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.contactChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #ffffff;
+  border: 1px solid var(--color-line);
+  padding: 10px 14px;
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--color-ink);
+  box-shadow: var(--shadow-subtle);
+}
+
+.whatsappChip {
+  color: #128c7e;
+  border-color: #a7f3d0;
+  background-color: #f0fdf4;
+}
+
+/* Links Grid */
+.linksGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 32px 20px;
+}
+
+@media (min-width: 640px) {
+  .linksGrid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.columnTitle {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--color-ink);
+  letter-spacing: -0.01em;
+}
+
+.linkList {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.linkList li a,
+.linkList li span {
+  font-size: 13px;
+  color: var(--color-body);
+  transition: color var(--transition-fast);
+}
+
+.linkList li a:hover {
+  color: var(--color-cta-deep);
+  text-decoration: underline;
+}
+
+.footerActionBtn {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--color-cta-deep);
+  text-align: left;
+  padding: 0;
+  cursor: pointer;
+}
+
+.footerActionBtn:hover {
+  text-decoration: underline;
+}
+
+/* Bottom Bar */
+.bottomBar {
+  background-color: #ffffff;
+  border-top: 1px solid var(--color-line);
+  padding: 20px 0;
+}
+
+.bottomContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+@media (min-width: 640px) {
+  .bottomContainer {
+    flex-direction: row;
+  }
+}
+
+.copyright {
+  font-size: 13px;
+  color: var(--color-slate);
+}
+
+.trustBadges {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-slate);
+}

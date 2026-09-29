@@ -1,0 +1,1005 @@
+.pageWrapper {
+  background-color: var(--color-bg);
+  min-height: 100vh;
+  padding-bottom: 80px;
+}
+
+/* 1. Breadcrumbs */
+.breadcrumbBar {
+  background-color: var(--color-surface);
+  border-bottom: 1px solid var(--color-line);
+  padding: 12px 0;
+  margin-bottom: 24px;
+}
+
+.breadcrumbContainer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  flex-wrap: wrap;
+}
+
+.breadcrumbLink {
+  color: var(--color-slate);
+}
+
+.breadcrumbLink:hover {
+  color: var(--color-cta-deep);
+}
+
+.breadcrumbSep {
+  color: var(--color-line);
+}
+
+.breadcrumbCurrent {
+  color: var(--color-ink);
+  font-weight: 700;
+}
+
+/* 2. Tour Header */
+.tourHeader {
+  margin-bottom: 24px;
+}
+
+.badgeRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.bestsellerBadge {
+  background-color: var(--color-dark);
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  padding: 4px 8px;
+  border-radius: var(--radius-xs);
+}
+
+.durationBadge {
+  background-color: var(--color-surface-2);
+  color: var(--color-ink);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 8px;
+  border-radius: var(--radius-xs);
+  border: 1px solid var(--color-line);
+}
+
+.expertBadge {
+  background-color: var(--color-success);
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 8px;
+  border-radius: var(--radius-xs);
+}
+
+.bookedPill {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--color-cta-deep);
+}
+
+.tourTitle {
+  font-size: clamp(26px, 4vw, 40px);
+  font-weight: 800;
+  color: var(--color-ink);
+  line-height: 1.2;
+  margin-bottom: 12px;
+}
+
+.metaRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 14px;
+  flex-wrap: wrap;
+}
+
+.ratingBox {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.starIcon {
+  color: var(--color-amber);
+  font-size: 16px;
+}
+
+.ratingVal {
+  font-weight: 800;
+  color: var(--color-ink);
+}
+
+.reviewCount {
+  color: var(--color-slate);
+}
+
+.dot {
+  color: var(--color-blush);
+}
+
+.destinationText {
+  color: var(--color-body);
+  font-weight: 600;
+}
+
+.audienceText {
+  color: var(--color-slate);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+/* 3. Photo Gallery */
+.gallery {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+  margin-bottom: 40px;
+  height: 380px;
+}
+
+@media (min-width: 768px) {
+  .gallery {
+    grid-template-columns: 2fr 1fr;
+    height: 440px;
+  }
+}
+
+.mainGalleryImage {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background-color: var(--color-surface-2);
+}
+
+.sideGalleryTiles {
+  display: none;
+  flex-direction: column;
+  gap: 12px;
+}
+
+@media (min-width: 768px) {
+  .sideGalleryTiles {
+    display: flex;
+  }
+}
+
+.sideTile {
+  position: relative;
+  flex: 1;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: all var(--transition-fast);
+}
+
+.sideTile:hover {
+  opacity: 0.9;
+}
+
+.activeTile {
+  border-color: var(--color-cta);
+}
+
+.galleryImg {
+  object-fit: cover;
+}
+
+/* 4. Two-Column Layout */
+.twoColumnLayout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 40px;
+  align-items: flex-start;
+}
+
+@media (min-width: 1024px) {
+  .twoColumnLayout {
+    grid-template-columns: 1fr 389px;
+  }
+}
+
+/* LEFT MAIN CONTENT */
+.mainContent {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+/* Tabs */
+.tabNav {
+  display: flex;
+  gap: 8px;
+  border-bottom: 2px solid var(--color-line);
+  overflow-x: auto;
+  white-space: nowrap;
+}
+
+.tabBtn {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--color-slate);
+  padding: 12px 18px;
+  position: relative;
+  bottom: -2px;
+  transition: color var(--transition-fast);
+  border-bottom: 2px solid transparent;
+}
+
+.tabBtn:hover {
+  color: var(--color-ink);
+}
+
+.activeTab {
+  color: var(--color-cta-deep);
+  border-bottom-color: var(--color-cta);
+}
+
+.tabContent {
+  display: flex;
+  flex-direction: column;
+  gap: 36px;
+  padding-top: 12px;
+}
+
+.sectionBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.blockTitle {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--color-ink);
+}
+
+.overviewText {
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--color-body);
+}
+
+.highlightsGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
+@media (min-width: 640px) {
+  .highlightsGrid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.highlightCard {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-md);
+  padding: 18px;
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.highlightIcon {
+  font-size: 26px;
+}
+
+.highlightCard h4 {
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.highlightCard p {
+  font-size: 13px;
+  color: var(--color-slate);
+  line-height: 1.4;
+}
+
+/* Day-by-day Itinerary */
+.itineraryHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.toggleAllBtn {
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  color: var(--color-cta-deep);
+}
+
+.itineraryList {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.itineraryDayCard {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-subtle);
+}
+
+.dayCardHeader {
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  background-color: var(--color-surface);
+  transition: background-color var(--transition-fast);
+}
+
+.dayCardHeader:hover {
+  background-color: var(--color-surface-2);
+}
+
+.dayTitleGroup {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.dayBadge {
+  background-color: var(--color-dark);
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 800;
+  padding: 3px 8px;
+  border-radius: var(--radius-xs);
+  letter-spacing: 0.05em;
+}
+
+.dayTitle {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--color-ink);
+}
+
+.chevron {
+  font-size: 12px;
+  color: var(--color-slate);
+}
+
+.dayCardBody {
+  padding: 0 20px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  border-top: 1px dashed var(--color-line);
+  padding-top: 16px;
+}
+
+.dayMetaRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.dayMetaChip {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-body);
+  background-color: var(--color-surface-2);
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+}
+
+.dayDescription {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--color-body);
+}
+
+.dayHighlightsPills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.dayHighlightPill {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-success);
+  background-color: var(--color-success-light);
+  padding: 3px 8px;
+  border-radius: var(--radius-xs);
+}
+
+/* Inclusions & Exclusions */
+.inclusionsList,
+.exclusionsList {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.inclusionItem,
+.exclusionItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--color-ink);
+}
+
+.checkIcon {
+  color: var(--color-success);
+  font-weight: 800;
+  font-size: 16px;
+}
+
+.crossIcon {
+  color: var(--color-error);
+  font-weight: 800;
+  font-size: 16px;
+}
+
+/* Reviews Tab */
+.reviewSummaryCard {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-lg);
+  padding: 28px;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+}
+
+@media (min-width: 600px) {
+  .reviewSummaryCard {
+    grid-template-columns: 200px 1fr;
+    align-items: center;
+  }
+}
+
+.summaryLeft {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.bigRatingScore {
+  font-size: 48px;
+  font-weight: 800;
+  color: var(--color-ink);
+  line-height: 1;
+}
+
+.outOf {
+  font-size: 13px;
+  color: var(--color-slate);
+  margin-bottom: 6px;
+}
+
+.starsRow {
+  color: var(--color-amber);
+  font-size: 20px;
+  letter-spacing: 2px;
+  margin-bottom: 6px;
+}
+
+.basedOn {
+  font-size: 12px;
+  color: var(--color-slate);
+}
+
+.summaryBars {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ratingBarRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 13px;
+  color: var(--color-slate);
+}
+
+.barTrack {
+  flex: 1;
+  height: 8px;
+  background-color: var(--color-surface-2);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.barFill {
+  height: 100%;
+  background-color: var(--color-amber);
+  border-radius: var(--radius-full);
+}
+
+.reviewList {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  margin-top: 16px;
+}
+
+.reviewItem {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-md);
+  padding: 20px;
+}
+
+.reviewItemHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.avatarCircle {
+  width: 38px;
+  height: 38px;
+  border-radius: var(--radius-full);
+  background-color: var(--color-dark);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 13px;
+}
+
+.reviewItemHeader h5 {
+  font-size: 14px;
+  font-weight: 700;
+  margin-bottom: 2px;
+}
+
+.reviewDate {
+  font-size: 12px;
+  color: var(--color-slate);
+}
+
+.reviewItemStars {
+  margin-left: auto;
+  color: var(--color-amber);
+  font-size: 14px;
+}
+
+.reviewText {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--color-body);
+}
+
+/* RIGHT STICKY BOOKING CARD (389px per Figma) */
+.stickyColumn {
+  position: sticky;
+  top: 90px;
+}
+
+.bookingCard {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+}
+
+.bookingCardHeader {
+  padding: 24px;
+  border-bottom: 1px solid var(--color-line);
+  background: linear-gradient(180deg, #ffffff 0%, var(--color-surface-2) 100%);
+}
+
+.strikeRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.strikePrice {
+  font-size: 15px;
+  color: var(--color-slate);
+  text-decoration: line-through;
+}
+
+.cardDiscountBadge {
+  font-size: 11px;
+  font-weight: 800;
+  color: #93000a;
+  background-color: #fee2e2;
+  padding: 2px 6px;
+  border-radius: var(--radius-xs);
+}
+
+.cardPriceRow {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  margin-bottom: 6px;
+}
+
+.cardInr {
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--color-cta);
+}
+
+.cardPriceBig {
+  font-size: 40px;
+  font-weight: 800;
+  color: var(--color-cta);
+  letter-spacing: -0.02em;
+}
+
+.cardPriceUnit {
+  font-size: 14px;
+  color: var(--color-slate);
+  font-weight: 600;
+}
+
+.taxNote {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-success);
+  margin-bottom: 4px;
+}
+
+.advisoryNote {
+  font-size: 12px;
+  color: var(--color-body);
+  font-style: italic;
+}
+
+.bookingFormFields {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.formGroup label {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  color: var(--color-slate);
+}
+
+.cardDateInput {
+  font-family: var(--font-sans);
+  font-size: 14px;
+  padding: 10px 14px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-line);
+  background-color: var(--color-surface-2);
+}
+
+.stepperRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-md);
+  padding: 4px;
+  background-color: var(--color-surface-2);
+}
+
+.stepBtn {
+  width: 36px;
+  height: 36px;
+  background-color: #ffffff;
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-sm);
+  font-size: 18px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.stepBtn:hover {
+  background-color: var(--color-surface-3);
+}
+
+.stepVal {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--color-ink);
+}
+
+.estimatedQuoteBox {
+  background-color: var(--color-surface-3);
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
+}
+
+.quoteRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 14px;
+  color: var(--color-ink);
+}
+
+.quoteRow strong {
+  font-size: 18px;
+  color: var(--color-cta-deep);
+}
+
+.quoteSubtext {
+  display: block;
+  font-size: 11px;
+  color: var(--color-slate);
+  margin-top: 2px;
+}
+
+.bookingCtaBtn {
+  background-color: var(--color-cta);
+  color: #ffffff;
+  font-size: 17px;
+  font-weight: 800;
+  padding: 16px 24px;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-cta);
+  transition: all var(--transition-fast);
+  text-align: center;
+  width: 100%;
+}
+
+.bookingCtaBtn:hover {
+  background-color: var(--color-cta-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(255, 87, 34, 0.4);
+}
+
+.urgencyLine {
+  font-size: 12px;
+  font-weight: 700;
+  color: #b45309;
+  text-align: center;
+}
+
+.cardTrustList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-top: 12px;
+  border-top: 1px solid var(--color-line);
+}
+
+.trustCheckItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--color-body);
+}
+
+.trustCheckItem span {
+  color: var(--color-success);
+  font-weight: 800;
+}
+
+.haveQuestionsBox {
+  background-color: var(--color-surface-2);
+  padding: 12px;
+  border-radius: var(--radius-md);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.haveQuestionsBox span {
+  font-size: 11px;
+  color: var(--color-slate);
+}
+
+.callGuidePill {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--color-cta-deep);
+}
+
+/* 5. Similar Section */
+.similarSection {
+  margin-top: 60px;
+  padding-top: 40px;
+  border-top: 1px solid var(--color-line);
+}
+
+.similarHeader {
+  margin-bottom: 24px;
+}
+
+.eyebrow {
+  display: block;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: var(--color-cta-deep);
+  margin-bottom: 4px;
+}
+
+.similarTitle {
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--color-ink);
+}
+
+.similarGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+}
+
+@media (min-width: 680px) {
+  .similarGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .similarGrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* 6. Mobile Sticky Bottom Bar */
+.mobileBottomBar {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: #ffffff;
+  border-top: 1px solid var(--color-line);
+  box-shadow: var(--shadow-sticky);
+  padding: 12px 18px;
+  z-index: 100;
+  align-items: center;
+  justify-content: space-between;
+}
+
+@media (max-width: 1023px) {
+  .mobileBottomBar {
+    display: flex;
+  }
+}
+
+.mobileBarPrice {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+}
+
+.mobileBarLabel {
+  font-size: 11px;
+  color: var(--color-slate);
+}
+
+.mobileBarAmount {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--color-cta);
+}
+
+.mobileBarUnit {
+  font-size: 11px;
+  color: var(--color-slate);
+}
+
+.mobileBarBtn {
+  background-color: var(--color-cta);
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 800;
+  padding: 10px 18px;
+  border-radius: var(--radius-md);
+  box-shadow: 0 2px 8px rgba(255, 87, 34, 0.3);
+}
+
+.embeddedFormSection {
+  margin-top: 24px;
+}
+
+/* Overview Reviews Teaser */
+.reviewsOverviewHeader {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+  flex-wrap: wrap;
+}
+
+.overviewSubtext {
+  font-size: 0.875rem;
+  color: var(--color-slate);
+  margin-top: 0.25rem;
+}
+
+.viewAllReviewsBtn {
+  background: none;
+  border: none;
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--color-primary-text);
+  cursor: pointer;
+  padding: 0;
+}
+
+.viewAllReviewsBtn:hover {
+  text-decoration: underline;
+}
+
+.overviewReviewsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1rem;
+}
+
+.overviewReviewCard {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.overviewReviewStars {
+  color: var(--color-amber);
+  font-size: 1rem;
+  letter-spacing: 0.1em;
+}
+
+.overviewReviewQuote {
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: var(--color-body);
+  margin: 0;
+}
+
+.overviewReviewAuthor {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.8125rem;
+  border-top: 1px solid var(--color-border);
+  padding-top: 0.5rem;
+  color: var(--color-slate);
+}
+
+.overviewReviewAuthor strong {
+  color: var(--color-ink);
+}

@@ -1,0 +1,117 @@
+.pageContainer {
+  background-color: var(--color-bg);
+  min-height: 80vh;
+  padding: 60px 0 80px;
+}
+
+.wrapper {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 48px;
+  align-items: flex-start;
+}
+
+@media (min-width: 992px) {
+  .wrapper {
+    grid-template-columns: 1fr 1fr;
+    gap: 64px;
+  }
+}
+
+.infoCol {
+  display: flex;
+  flex-direction: column;
+}
+
+.eyebrow {
+  display: block;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: var(--color-cta-deep);
+  margin-bottom: 6px;
+}
+
+.mainHeading {
+  font-size: clamp(28px, 4vw, 42px);
+  font-weight: 800;
+  color: var(--color-ink);
+  line-height: 1.2;
+  margin-bottom: 16px;
+}
+
+.leadText {
+  font-size: 15px;
+  line-height: 1.65;
+  color: var(--color-body);
+  margin-bottom: 32px;
+}
+
+.trustHighlights {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin-bottom: 36px;
+}
+
+.trustItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.trustIcon {
+  font-size: 24px;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-line);
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.trustItem h4 {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--color-ink);
+  margin-bottom: 2px;
+}
+
+.trustItem p {
+  font-size: 13px;
+  color: var(--color-slate);
+  line-height: 1.45;
+}
+
+.helplineBox {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.helplineBox p {
+  font-size: 13px;
+  color: var(--color-slate);
+}
+
+.phoneLink {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--color-cta-deep);
+}
+
+.hoursNotice {
+  font-size: 11px;
+  color: var(--color-slate);
+}
+
+.formCol {
+  width: 100%;
+}

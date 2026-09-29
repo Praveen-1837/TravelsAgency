@@ -1,0 +1,400 @@
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  width: 100%;
+  background-color: var(--color-surface);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+/* 1. Top Utility Bar */
+.topBar {
+  background-color: var(--color-dark);
+  color: #ffffff;
+  font-size: 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 6px 0;
+}
+
+.topBarContainer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.promoItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+}
+
+.promoTag {
+  background-color: var(--color-cta);
+  color: #ffffff;
+  font-size: 10px;
+  font-weight: 800;
+  padding: 2px 6px;
+  border-radius: var(--radius-xs);
+  letter-spacing: 0.06em;
+}
+
+.utilityActions {
+  display: none;
+  align-items: center;
+  gap: 18px;
+}
+
+@media (min-width: 768px) {
+  .utilityActions {
+    display: flex;
+  }
+}
+
+.currencyBadge {
+  font-weight: 700;
+  color: var(--color-blush);
+  background-color: rgba(255, 255, 255, 0.1);
+  padding: 2px 8px;
+  border-radius: var(--radius-xs);
+}
+
+.whatsappLink {
+  color: #25d366;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.whatsappLink:hover {
+  text-decoration: underline;
+}
+
+.helplineLink {
+  color: #ffffff;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.helplineLink:hover {
+  color: var(--color-blush);
+}
+
+/* 2. Main Navigation Bar */
+.mainNav {
+  background-color: var(--color-surface);
+  border-bottom: 1px solid var(--color-line);
+}
+
+.mainNavContainer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 72px;
+}
+
+.logoLink {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.logoWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background-color: #ffffff;
+}
+
+.logoImg {
+  object-fit: contain;
+}
+
+.brandText {
+  display: flex;
+  flex-direction: column;
+}
+
+.brandTitle {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--color-ink);
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+
+.brandSubtitle {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--color-slate);
+  margin-top: 2px;
+}
+
+.desktopNav {
+  display: none;
+  align-items: center;
+  gap: 24px;
+}
+
+@media (min-width: 992px) {
+  .desktopNav {
+    display: flex;
+  }
+}
+
+.navLink {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-ink);
+  position: relative;
+  padding: 6px 0;
+}
+
+.navLink:hover {
+  color: var(--color-cta-deep);
+}
+
+.rightActions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.requestCallbackBtn {
+  background-color: var(--color-cta);
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 700;
+  padding: 10px 20px;
+  border-radius: var(--radius-md);
+  box-shadow: 0 2px 8px rgba(255, 87, 34, 0.25);
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+}
+
+.requestCallbackBtn:hover {
+  background-color: var(--color-cta-hover);
+  box-shadow: var(--shadow-cta);
+  transform: translateY(-1px);
+}
+
+.hamburgerBtn {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  width: 40px;
+  height: 40px;
+  padding: 8px;
+  border-radius: var(--radius-md);
+  background-color: var(--color-surface-2);
+}
+
+@media (min-width: 992px) {
+  .hamburgerBtn {
+    display: none;
+  }
+}
+
+.bar {
+  width: 100%;
+  height: 2px;
+  background-color: var(--color-ink);
+  transition: all var(--transition-fast);
+  border-radius: 2px;
+}
+
+.barOpenTop {
+  transform: translateY(7px) rotate(45deg);
+}
+
+.barOpenMid {
+  opacity: 0;
+}
+
+.barOpenBot {
+  transform: translateY(-7px) rotate(-45deg);
+}
+
+/* 3. Sub Navigation Bar */
+.subNavBar {
+  background-color: var(--color-surface-2);
+  border-bottom: 1px solid var(--color-line);
+  padding: 8px 0;
+  overflow-x: auto;
+  white-space: nowrap;
+}
+
+.subNavContainer {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.hubEyebrow {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: var(--color-slate);
+  flex-shrink: 0;
+}
+
+.hubLinks {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.hubLink {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-body);
+}
+
+.hubLink:hover {
+  color: var(--color-cta-deep);
+}
+
+.highlightHub {
+  color: var(--color-cta-deep);
+  font-weight: 700;
+}
+
+.dot {
+  color: var(--color-blush);
+  font-size: 10px;
+}
+
+/* 4. Mobile Drawer */
+.drawerOverlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(25, 28, 30, 0.6);
+  z-index: 999;
+  opacity: 0;
+  visibility: hidden;
+  transition: all var(--transition-normal);
+}
+
+.drawerOpen {
+  opacity: 1;
+  visibility: visible;
+}
+
+.drawerContent {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 85%;
+  max-width: 340px;
+  height: 100%;
+  background-color: #ffffff;
+  box-shadow: var(--shadow-drawer);
+  display: flex;
+  flex-direction: column;
+  padding: 24px 20px;
+  transform: translateX(100%);
+  transition: transform var(--transition-normal);
+}
+
+.drawerOpen .drawerContent {
+  transform: translateX(0);
+}
+
+.drawerHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--color-line);
+}
+
+.closeDrawerBtn {
+  width: 36px;
+  height: 36px;
+  background-color: var(--color-surface-2);
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  color: var(--color-slate);
+}
+
+.drawerNav {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.drawerLink {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--color-ink);
+  padding: 10px 12px;
+  border-radius: var(--radius-md);
+  transition: background-color var(--transition-fast);
+}
+
+.drawerLink:hover {
+  background-color: var(--color-surface-2);
+  color: var(--color-cta-deep);
+}
+
+.drawerActionBox {
+  margin-top: auto;
+  padding-top: 20px;
+  border-top: 1px solid var(--color-line);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.drawerCallbackBtn {
+  background-color: var(--color-cta);
+  color: #ffffff;
+  padding: 14px;
+  font-size: 15px;
+  font-weight: 800;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-cta);
+  text-align: center;
+  width: 100%;
+}
+
+.drawerHelpline {
+  background-color: var(--color-surface-2);
+  padding: 12px;
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  text-align: center;
+}
+
+.drawerHelpline p {
+  font-size: 12px;
+  color: var(--color-slate);
+  margin-bottom: 4px;
+}
+
+.drawerPhone {
+  display: block;
+  font-weight: 700;
+  color: var(--color-ink);
+  margin-bottom: 6px;
+}
+
+.drawerWhatsapp {
+  display: inline-block;
+  color: #128c7e;
+  font-weight: 700;
+}

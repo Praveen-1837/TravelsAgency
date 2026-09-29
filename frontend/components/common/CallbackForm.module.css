@@ -1,0 +1,236 @@
+.formContainer {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-lg);
+  padding: 32px;
+  box-shadow: var(--shadow-card);
+}
+
+.header {
+  margin-bottom: 24px;
+}
+
+.eyebrow {
+  display: block;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: var(--color-cta-deep);
+  margin-bottom: 4px;
+}
+
+.title {
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--color-ink);
+  margin-bottom: 6px;
+}
+
+.subtitle {
+  font-size: 14px;
+  color: var(--color-slate);
+  line-height: 1.5;
+}
+
+.errorAlert {
+  background-color: var(--color-error-light);
+  color: var(--color-error);
+  padding: 12px 16px;
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 20px;
+  border: 1px solid rgba(186, 26, 26, 0.2);
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.gridRow {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
+@media (min-width: 600px) {
+  .gridRow {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.field label {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--color-ink);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.field input,
+.field select,
+.field textarea {
+  font-family: var(--font-sans);
+  font-size: 14px;
+  color: var(--color-ink);
+  background-color: var(--color-surface-2);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-md);
+  padding: 12px 16px;
+  transition: all var(--transition-fast);
+}
+
+.field input:focus,
+.field select:focus,
+.field textarea:focus {
+  outline: none;
+  background-color: #ffffff;
+  border-color: var(--color-cta);
+  box-shadow: 0 0 0 3px rgba(255, 87, 34, 0.15);
+}
+
+.phoneWrapper {
+  display: flex;
+  align-items: center;
+  background-color: var(--color-surface-2);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.prefix {
+  padding: 0 14px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--color-slate);
+  background-color: var(--color-surface-3);
+  height: 48px;
+  display: flex;
+  align-items: center;
+  border-right: 1px solid var(--color-line);
+}
+
+.phoneWrapper input {
+  flex: 1;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+}
+
+.phoneWrapper:focus-within {
+  background-color: #ffffff;
+  border-color: var(--color-cta);
+  box-shadow: 0 0 0 3px rgba(255, 87, 34, 0.15);
+}
+
+.securityNote {
+  font-size: 12px;
+  color: var(--color-slate);
+}
+
+.submitBtn {
+  background-color: var(--color-cta);
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 800;
+  padding: 16px 28px;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-cta);
+  transition: all var(--transition-fast);
+  width: 100%;
+}
+
+.submitBtn:hover {
+  background-color: var(--color-cta-hover);
+  transform: translateY(-1px);
+}
+
+.submitBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Success Card */
+.successCard {
+  text-align: center;
+  padding: 40px 20px;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+}
+
+.successIcon {
+  width: 64px;
+  height: 64px;
+  border-radius: var(--radius-full);
+  background-color: var(--color-success);
+  color: #ffffff;
+  font-size: 32px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 16px;
+  box-shadow: 0 8px 24px rgba(0, 108, 73, 0.25);
+}
+
+.successTitle {
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--color-ink);
+  margin-bottom: 8px;
+}
+
+.successMsg {
+  font-size: 16px;
+  color: var(--color-ink);
+  margin-bottom: 6px;
+}
+
+.successSub {
+  font-size: 14px;
+  color: var(--color-slate);
+  margin-bottom: 24px;
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.helplineNotice {
+  background-color: var(--color-surface-2);
+  padding: 14px;
+  border-radius: var(--radius-md);
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 13px;
+  margin-bottom: 24px;
+}
+
+.directCallLink {
+  font-weight: 800;
+  color: var(--color-cta-deep);
+}
+
+.anotherBtn {
+  background-color: var(--color-dark);
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 700;
+  padding: 12px 24px;
+  border-radius: var(--radius-md);
+}
+
+.anotherBtn:hover {
+  background-color: var(--color-dark-hover);
+}

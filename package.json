@@ -1,0 +1,29 @@
+{
+  "name": "aariva-voyages",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Aariva Voyages — Domestic Travel Website (India)",
+  "workspaces": [
+    "frontend",
+    "backend"
+  ],
+  "scripts": {
+    "dev": "npm run dev --prefix frontend",
+    "dev:all": "concurrently \"npm run dev --prefix frontend\" \"npm run dev --prefix backend\"",
+    "dev:frontend": "npm run dev --prefix frontend",
+    "dev:backend": "npm run dev --prefix backend",
+    "build:frontend": "npm run build --prefix frontend",
+    "build:backend": "npm run build --prefix backend",
+    "build": "npm run build:frontend && npm run build:backend",
+    "lint:frontend": "npm run lint --prefix frontend",
+    "lint:backend": "npm run lint --prefix backend",
+    "lint": "npm run lint:frontend && npm run lint:backend",
+    "seed": "npm run db:seed --prefix backend",
+    "test": "npm run test --prefix backend",
+    "format": "prettier --write \"frontend/**/*.{ts,tsx,css,json}\" \"backend/**/*.{ts,json}\""
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2",
+    "prettier": "^3.5.3"
+  }
+}
