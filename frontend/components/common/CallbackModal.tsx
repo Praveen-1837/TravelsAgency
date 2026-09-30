@@ -4,7 +4,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import styles from './CallbackModal.module.css';
 import { submitCallbackInquiry } from '@/lib/api';
 import { gsap, useGSAP } from '@/lib/gsap';
-import { useAuth } from '@/context/AuthContext';
+import { useAuth } from '@/lib/auth/AuthContext';
 import { RequireAuth } from '../auth/RequireAuth';
 
 interface CallbackModalProps {

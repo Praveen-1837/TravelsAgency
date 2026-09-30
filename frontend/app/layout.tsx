@@ -83,7 +83,7 @@ export const metadata: Metadata = {
 };
 
 import { CountryProvider } from '@/context/CountryContext';
-import { AuthProvider } from '@/context/AuthContext';
+import { AuthProvider } from '@/lib/auth/AuthContext';
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const jsonLd = {

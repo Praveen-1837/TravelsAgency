@@ -3,13 +3,15 @@
 import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useAuth } from '@/context/AuthContext';
+import { useAuth } from '@/lib/auth/AuthContext';
 
 interface RequireAuthProps {
   children: React.ReactNode;
   fallback?: React.ReactNode;
   openCallbackOnLogin?: boolean;
 }
+
+import { LoginButton } from './LoginButton';
 
 export const RequireAuth: React.FC<RequireAuthProps> = ({
   children,
@@ -49,11 +51,6 @@ export const RequireAuth: React.FC<RequireAuthProps> = ({
     return <>{fallback}</>;
   }
 
-  const returnParam = openCallbackOnLogin
-    ? `${pathname}?openCallback=true`
-    : pathname;
-  const loginUrl = `/login?returnTo=${encodeURIComponent(returnParam)}`;
-
   return (
     <div
       style={{
@@ -87,27 +84,8 @@ export const RequireAuth: React.FC<RequireAuthProps> = ({
       <p style={{ fontSize: '14px', color: '#64748b', marginBottom: '18px', lineHeight: 1.5 }}>
         Please log in to your Aariva Voyages account to request a free callback &amp; custom itinerary quote.
       </p>
-      <Link
-        href={loginUrl}
-        style={{
-          display: 'inline-flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          backgroundColor: '#ff5722',
-          color: '#ffffff',
-          fontWeight: 700,
-          fontSize: '15px',
-          padding: '12px 24px',
-          borderRadius: '8px',
-          textDecoration: 'none',
-          boxShadow: '0 4px 14px rgba(255, 87, 34, 0.25)',
-          minHeight: '44px',
-          width: '100%',
-          maxWidth: '280px',
-        }}
-      >
-        Login to Request Callback →
-      </Link>
+      <LoginButton openCallbackOnLogin={openCallbackOnLogin} />
     </div>
   );
 };
+

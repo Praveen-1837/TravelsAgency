@@ -5,9 +5,9 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter, useSearchParams } from 'next/navigation';
 import styles from './auth.module.css';
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/lib/supabase/client';
 
-export default function SignupPage() {
+export default function SignupForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const returnTo = searchParams.get('returnTo') || '/';

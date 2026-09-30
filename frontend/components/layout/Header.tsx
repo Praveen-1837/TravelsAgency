@@ -5,7 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
 import styles from './Header.module.css';
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/lib/supabase/client';
 import { useCountry, Country } from '@/context/CountryContext';
 import { User } from '@supabase/supabase-js';
 

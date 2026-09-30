@@ -1,6 +1,6 @@
 import { Suspense } from 'react';
 import { Metadata } from 'next';
-import SignupPage from '@/components/auth/signup-page';
+import SignupForm from '@/components/auth/SignupForm';
 
 export const metadata: Metadata = {
   title: 'Sign Up | Aariva Voyages',
@@ -16,7 +16,7 @@ export default function Page() {
         </div>
       }
     >
-      <SignupPage />
+      <SignupForm />
     </Suspense>
   );
 }

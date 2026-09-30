@@ -1,6 +1,6 @@
 import { Suspense } from 'react';
 import { Metadata } from 'next';
-import LoginPage from '@/components/auth/login-page';
+import LoginForm from '@/components/auth/LoginForm';
 
 export const metadata: Metadata = {
   title: 'Log In | Aariva Voyages',
@@ -16,7 +16,7 @@ export default function Page() {
         </div>
       }
     >
-      <LoginPage />
+      <LoginForm />
     </Suspense>
   );
 }

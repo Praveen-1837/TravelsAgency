@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { useAuth } from '@/context/AuthContext';
+import { useAuth } from '@/lib/auth/AuthContext';
 import { fetchUserCallbacks } from '@/lib/api';
 import { CallbackRecord } from '@/lib/types';
 import { RequireAuth } from '@/components/auth/RequireAuth';
