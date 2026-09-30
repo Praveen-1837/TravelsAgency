@@ -94,7 +94,7 @@ export const LOCAL_SEED_PACKAGES: Package[] = [
     ],
     images: [
       'https://images.unsplash.com/photo-1544735716-392fe2489ffa?auto=format&fit=crop&w=1200&q=80',
-      'https://images.unsplash.com/photo-1626014303757-646736203cf3?auto=format&fit=crop&w=800&q=80',
+      'https://images.unsplash.com/photo-1544735716-392fe2489ffa?auto=format&fit=crop&w=800&q=80',
       'https://images.unsplash.com/photo-1571536802807-30451e3955d8?auto=format&fit=crop&w=800&q=80',
     ],
     rating_avg: 4.8,
