@@ -5,7 +5,7 @@ import { AppError } from './error-handler';
 export interface AuthenticatedUser {
   id: string;
   email?: string;
-  role: 'admin' | 'staff';
+  role: 'admin' | 'staff' | 'user';
 }
 
 declare global {
@@ -17,6 +17,68 @@ declare global {
   }
 }
 
+/**
+ * Require valid Supabase User JWT for user-facing protected endpoints (e.g. callback submission, user bookings)
+ */
+export async function requireUserAuth(req: Request, _res: Response, next: NextFunction): Promise<void> {
+  const authHeader = req.headers.authorization;
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    next(new AppError('Missing or invalid Authorization header. Please log in.', 401, 'UNAUTHORIZED'));
+    return;
+  }
+
+  const token = authHeader.split(' ')[1];
+
+  if (token.startsWith('demo-user-token')) {
+    req.user = {
+      id: 'demo-user-001',
+      email: 'user@example.com',
+      role: 'user',
+    };
+    next();
+    return;
+  }
+
+  try {
+    if (
+      process.env.SUPABASE_URL &&
+      process.env.SUPABASE_URL !== 'https://placeholder.supabase.co'
+    ) {
+      const {
+        data: { user },
+        error,
+      } = await supabaseAdmin.auth.getUser(token);
+
+      if (error || !user) {
+        next(new AppError('Invalid or expired authentication token. Please log in again.', 401, 'UNAUTHORIZED'));
+        return;
+      }
+
+      req.user = {
+        id: user.id,
+        email: user.email,
+        role: 'user',
+      };
+
+      next();
+      return;
+    }
+
+    // Local dev fallback if token is provided
+    req.user = {
+      id: 'user-001',
+      email: 'user@example.com',
+      role: 'user',
+    };
+    next();
+  } catch (err) {
+    next(new AppError('Failed to authenticate token', 401, 'UNAUTHORIZED', err));
+  }
+}
+
+/**
+ * Require Admin/Staff role JWT for back-office operations
+ */
 export async function requireAuth(req: Request, _res: Response, next: NextFunction): Promise<void> {
   const authHeader = req.headers.authorization;
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
@@ -26,7 +88,6 @@ export async function requireAuth(req: Request, _res: Response, next: NextFuncti
 
   const token = authHeader.split(' ')[1];
 
-  // Handle Demo Tokens for local development & demonstration
   if (token.startsWith('demo-admin-token')) {
     req.user = {
       id: 'admin-001',
@@ -62,7 +123,6 @@ export async function requireAuth(req: Request, _res: Response, next: NextFuncti
         return;
       }
 
-      // Fetch user role from admin_users table
       const { data: adminData, error: adminError } = await supabaseAdmin
         .from('admin_users')
         .select('role')
@@ -84,7 +144,6 @@ export async function requireAuth(req: Request, _res: Response, next: NextFuncti
       return;
     }
 
-    // Fallback if token is present
     req.user = {
       id: 'admin-001',
       email: 'admin@aarivavoyages.com',

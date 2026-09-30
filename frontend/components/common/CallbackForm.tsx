@@ -3,7 +3,9 @@
 import React, { useState, useRef, useEffect } from 'react';
 import styles from './CallbackForm.module.css';
 import { submitCallbackInquiry } from '@/lib/api';
-import { gsap, useGSAP, DrawSVGPlugin, CustomEase, CustomWiggle } from '@/lib/gsap';
+import { gsap, useGSAP } from '@/lib/gsap';
+import { useAuth } from '@/context/AuthContext';
+import { RequireAuth } from '../auth/RequireAuth';
 
 interface CallbackFormProps {
   packageId?: string | null;
@@ -24,6 +26,8 @@ export const CallbackForm: React.FC<CallbackFormProps> = ({
   title = 'Request a Free Callback',
   subtitle = 'Share your travel preferences and our destination specialist will contact you with customized options.',
 }) => {
+  const { user, session } = useAuth();
+
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
@@ -38,14 +42,27 @@ export const CallbackForm: React.FC<CallbackFormProps> = ({
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [success, setSuccess] = useState(false);
 
+  // Prefill user details when logged in
+  useEffect(() => {
+    if (user) {
+      if (user.user_metadata?.full_name && !name) {
+        setName(user.user_metadata.full_name);
+      }
+      if (user.email && !email) {
+        setEmail(user.email);
+      }
+      if (user.user_metadata?.phone && !phone) {
+        setPhone(user.user_metadata.phone);
+      }
+    }
+  }, [user, name, email, phone]);
+
   // Field refs for CustomWiggle shake & accessibility focus
   const nameRef = useRef<HTMLInputElement>(null);
   const phoneRef = useRef<HTMLInputElement>(null);
   const emailRef = useRef<HTMLInputElement>(null);
   const travelFromRef = useRef<HTMLInputElement>(null);
   const travelToRef = useRef<HTMLInputElement>(null);
-  const groupSizeRef = useRef<HTMLSelectElement>(null);
-  const specialRequestsRef = useRef<HTMLTextAreaElement>(null);
 
   // Confirmation panel refs
   const panelRef = useRef<HTMLDivElement>(null);
@@ -53,14 +70,12 @@ export const CallbackForm: React.FC<CallbackFormProps> = ({
   const checkRef = useRef<SVGPathElement>(null);
   const textRef = useRef<HTMLDivElement>(null);
 
-  // Focus confirmation panel when success becomes true
   useEffect(() => {
     if (success && panelRef.current) {
       panelRef.current.focus();
     }
   }, [success]);
 
-  // GSAP DrawSVGPlugin timeline (~0.9s total)
   useGSAP(
     () => {
       if (!success) return;
@@ -78,19 +93,16 @@ export const CallbackForm: React.FC<CallbackFormProps> = ({
 
         const tl = gsap.timeline();
 
-        // 1. Circle draws (~0.4s)
         tl.to(circleRef.current, {
           drawSVG: '100%',
           duration: 0.4,
           ease: 'power2.out',
         })
-          // 2. Checkmark draws (~0.3s)
           .to(checkRef.current, {
             drawSVG: '100%',
             duration: 0.3,
             ease: 'power2.out',
           })
-          // 3. Text fades in (~0.2s) -> Total ~0.9s
           .to(textRef.current, {
             opacity: 1,
             duration: 0.2,
@@ -103,6 +115,13 @@ export const CallbackForm: React.FC<CallbackFormProps> = ({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (loading || success) return;
+
+    if (!user) {
+      setError('Please log in to submit a callback request.');
+      return;
+    }
+
     setError(null);
     setFieldErrors({});
 
@@ -123,7 +142,7 @@ export const CallbackForm: React.FC<CallbackFormProps> = ({
       if (phoneRef.current) invalidEls.push(phoneRef.current);
     }
 
-    // 3. Email validation (optional, check format if entered)
+    // 3. Email validation
     if (email.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
       newFieldErrors.email = 'Please enter a valid email address.';
       if (emailRef.current) invalidEls.push(emailRef.current);
@@ -135,12 +154,10 @@ export const CallbackForm: React.FC<CallbackFormProps> = ({
       if (travelToRef.current) invalidEls.push(travelToRef.current);
     }
 
-    // If validation fails
     if (Object.keys(newFieldErrors).length > 0) {
       setFieldErrors(newFieldErrors);
       setError('Please correct the highlighted errors before submitting.');
 
-      // Shake each invalid field using CustomWiggle (wiggles: 6, easeOut, x: 6)
       const isReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       if (!isReducedMotion && invalidEls.length > 0) {
         gsap.killTweensOf(invalidEls);
@@ -152,7 +169,6 @@ export const CallbackForm: React.FC<CallbackFormProps> = ({
         });
       }
 
-      // Focus the FIRST invalid field
       if (invalidEls.length > 0) {
         invalidEls[0].focus();
       }
@@ -162,25 +178,41 @@ export const CallbackForm: React.FC<CallbackFormProps> = ({
 
     setLoading(true);
 
-    const res = await submitCallbackInquiry({
-      package_id: packageId,
-      name,
-      phone: cleanPhone,
-      email: email || undefined,
-      travel_from: travelFrom || undefined,
-      travel_to: travelTo || undefined,
-      group_size: Number(groupSize),
-      special_requests: specialRequests || undefined,
-      website_hp: honeypot,
-    });
+    try {
+      const res = await submitCallbackInquiry(
+        {
+          package_id: packageId,
+          name,
+          phone: cleanPhone,
+          email: email || undefined,
+          travel_from: travelFrom || undefined,
+          travel_to: travelTo || undefined,
+          group_size: Number(groupSize),
+          special_requests: specialRequests || undefined,
+          website_hp: honeypot,
+        },
+        session?.access_token
+      );
 
-    setLoading(false);
+      setLoading(false);
 
-    if (res.success) {
-      setSuccess(true);
-      if (onSuccess) onSuccess();
-    } else {
-      setError(res.error || 'Failed to submit request. Please try again or call our helpline.');
+      if (res.success) {
+        setSuccess(true);
+        if (onSuccess) onSuccess();
+      } else {
+        if (res.error?.includes('401') || res.error?.includes('UNAUTHORIZED')) {
+          localStorage.setItem(
+            'callback_draft',
+            JSON.stringify({ name, phone, email, travelFrom, travelTo, groupSize, specialRequests })
+          );
+          setError('Session expired. Please log in again to complete your request.');
+        } else {
+          setError(res.error || 'Failed to submit request. Please try again or call our helpline.');
+        }
+      }
+    } catch {
+      setLoading(false);
+      setError('Network connection error. Please try again.');
     }
   };
 
@@ -247,182 +279,181 @@ export const CallbackForm: React.FC<CallbackFormProps> = ({
 
   return (
     <div className={styles.formContainer}>
-      <div className={styles.header}>
-        <span className={styles.eyebrow}>EXPERT ASSISTANCE</span>
-        <h3 className={styles.title}>{title}</h3>
-        <p className={styles.subtitle}>
-          {packageTitle ? (
-            <>
-              Customizing quote for: <strong>{packageTitle}</strong>
-            </>
-          ) : (
-            subtitle
-          )}
-        </p>
-      </div>
-
-      {error && <div className={styles.errorAlert}>{error}</div>}
-
-      <form onSubmit={handleSubmit} className={styles.form} noValidate>
-        {/* Invisible honeypot field for bot detection */}
-        <div className="sr-only" aria-hidden="true">
-          <input
-            type="text"
-            name="website_hp"
-            tabIndex={-1}
-            autoComplete="off"
-            value={honeypot}
-            onChange={(e) => setHoneypot(e.target.value)}
-          />
+      <RequireAuth>
+        <div className={styles.header}>
+          <span className={styles.eyebrow}>EXPERT ASSISTANCE</span>
+          <h3 className={styles.title}>{title}</h3>
+          <p className={styles.subtitle}>
+            {packageTitle ? (
+              <>
+                Customizing quote for: <strong>{packageTitle}</strong>
+              </>
+            ) : (
+              subtitle
+            )}
+          </p>
         </div>
 
-        <div className={styles.gridRow}>
-          <div className={styles.field}>
-            <label htmlFor="full-name">Full Name *</label>
+        {error && <div className={styles.errorAlert}>{error}</div>}
+
+        <form onSubmit={handleSubmit} className={styles.form} noValidate>
+          <div className="sr-only" aria-hidden="true">
             <input
-              ref={nameRef}
-              id="full-name"
               type="text"
-              required
-              placeholder="e.g. Rahul Sharma"
-              value={name}
-              onChange={(e) => {
-                setName(e.target.value);
-                if (fieldErrors.name) setFieldErrors((prev) => ({ ...prev, name: '' }));
-              }}
-              className={fieldErrors.name ? styles.inputError : ''}
-              aria-invalid={!!fieldErrors.name}
-              aria-describedby={fieldErrors.name ? 'full-name-error' : undefined}
+              name="website_hp"
+              tabIndex={-1}
+              autoComplete="off"
+              value={honeypot}
+              onChange={(e) => setHoneypot(e.target.value)}
             />
-            {fieldErrors.name && (
-              <p id="full-name-error" className={styles.fieldErrorMsg} role="alert">
-                {fieldErrors.name}
-              </p>
-            )}
           </div>
 
-          <div className={styles.field}>
-            <label htmlFor="mobile-number">10-Digit Mobile Number *</label>
-            <div className={`${styles.phoneWrapper} ${fieldErrors.phone ? styles.inputError : ''}`}>
-              <span className={styles.prefix}>+91</span>
+          <div className={styles.gridRow}>
+            <div className={styles.field}>
+              <label htmlFor="full-name">Full Name *</label>
               <input
-                ref={phoneRef}
-                id="mobile-number"
-                type="tel"
+                ref={nameRef}
+                id="full-name"
+                type="text"
                 required
-                placeholder="9876543210"
-                value={phone}
+                placeholder="e.g. Rahul Sharma"
+                value={name}
                 onChange={(e) => {
-                  setPhone(e.target.value);
-                  if (fieldErrors.phone) setFieldErrors((prev) => ({ ...prev, phone: '' }));
+                  setName(e.target.value);
+                  if (fieldErrors.name) setFieldErrors((prev) => ({ ...prev, name: '' }));
                 }}
-                aria-invalid={!!fieldErrors.phone}
-                aria-describedby={fieldErrors.phone ? 'mobile-number-error' : undefined}
+                className={fieldErrors.name ? styles.inputError : ''}
+                aria-invalid={!!fieldErrors.name}
+                aria-describedby={fieldErrors.name ? 'full-name-error' : undefined}
+              />
+              {fieldErrors.name && (
+                <p id="full-name-error" className={styles.fieldErrorMsg} role="alert">
+                  {fieldErrors.name}
+                </p>
+              )}
+            </div>
+
+            <div className={styles.field}>
+              <label htmlFor="mobile-number">10-Digit Mobile Number *</label>
+              <div className={`${styles.phoneWrapper} ${fieldErrors.phone ? styles.inputError : ''}`}>
+                <span className={styles.prefix}>+91</span>
+                <input
+                  ref={phoneRef}
+                  id="mobile-number"
+                  type="tel"
+                  required
+                  placeholder="9876543210"
+                  value={phone}
+                  onChange={(e) => {
+                    setPhone(e.target.value);
+                    if (fieldErrors.phone) setFieldErrors((prev) => ({ ...prev, phone: '' }));
+                  }}
+                  aria-invalid={!!fieldErrors.phone}
+                  aria-describedby={fieldErrors.phone ? 'mobile-number-error' : undefined}
+                />
+              </div>
+              {fieldErrors.phone && (
+                <p id="mobile-number-error" className={styles.fieldErrorMsg} role="alert">
+                  {fieldErrors.phone}
+                </p>
+              )}
+            </div>
+          </div>
+
+          <div className={styles.gridRow}>
+            <div className={styles.field}>
+              <label htmlFor="email-address">Email Address (Optional)</label>
+              <input
+                ref={emailRef}
+                id="email-address"
+                type="email"
+                placeholder="rahul@example.com"
+                value={email}
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                  if (fieldErrors.email) setFieldErrors((prev) => ({ ...prev, email: '' }));
+                }}
+                className={fieldErrors.email ? styles.inputError : ''}
+                aria-invalid={!!fieldErrors.email}
+                aria-describedby={fieldErrors.email ? 'email-address-error' : undefined}
+              />
+              {fieldErrors.email && (
+                <p id="email-address-error" className={styles.fieldErrorMsg} role="alert">
+                  {fieldErrors.email}
+                </p>
+              )}
+            </div>
+
+            <div className={styles.field}>
+              <label htmlFor="group-size">Number of Travelers</label>
+              <select
+                id="group-size"
+                value={groupSize}
+                onChange={(e) => setGroupSize(Number(e.target.value))}
+              >
+                <option value={1}>1 Traveler (Solo)</option>
+                <option value={2}>2 Travelers (Couple / Honeymoon)</option>
+                <option value={3}>3 - 5 Travelers (Small Group / Family)</option>
+                <option value={6}>6+ Travelers (Large Group)</option>
+              </select>
+            </div>
+          </div>
+
+          <div className={styles.gridRow}>
+            <div className={styles.field}>
+              <label htmlFor="travel-from">Preferred Travel Date</label>
+              <input
+                ref={travelFromRef}
+                id="travel-from"
+                type="date"
+                value={travelFrom}
+                onChange={(e) => setTravelFrom(e.target.value)}
               />
             </div>
-            {fieldErrors.phone && (
-              <p id="mobile-number-error" className={styles.fieldErrorMsg} role="alert">
-                {fieldErrors.phone}
-              </p>
-            )}
-          </div>
-        </div>
 
-        <div className={styles.gridRow}>
-          <div className={styles.field}>
-            <label htmlFor="email-address">Email Address (Optional)</label>
-            <input
-              ref={emailRef}
-              id="email-address"
-              type="email"
-              placeholder="rahul@example.com"
-              value={email}
-              onChange={(e) => {
-                setEmail(e.target.value);
-                if (fieldErrors.email) setFieldErrors((prev) => ({ ...prev, email: '' }));
-              }}
-              className={fieldErrors.email ? styles.inputError : ''}
-              aria-invalid={!!fieldErrors.email}
-              aria-describedby={fieldErrors.email ? 'email-address-error' : undefined}
-            />
-            {fieldErrors.email && (
-              <p id="email-address-error" className={styles.fieldErrorMsg} role="alert">
-                {fieldErrors.email}
-              </p>
-            )}
+            <div className={styles.field}>
+              <label htmlFor="travel-to">Return Date (Optional)</label>
+              <input
+                ref={travelToRef}
+                id="travel-to"
+                type="date"
+                value={travelTo}
+                onChange={(e) => {
+                  setTravelTo(e.target.value);
+                  if (fieldErrors.travelTo) setFieldErrors((prev) => ({ ...prev, travelTo: '' }));
+                }}
+                className={fieldErrors.travelTo ? styles.inputError : ''}
+                aria-invalid={!!fieldErrors.travelTo}
+                aria-describedby={fieldErrors.travelTo ? 'travel-to-error' : undefined}
+              />
+              {fieldErrors.travelTo && (
+                <p id="travel-to-error" className={styles.fieldErrorMsg} role="alert">
+                  {fieldErrors.travelTo}
+                </p>
+              )}
+            </div>
           </div>
 
           <div className={styles.field}>
-            <label htmlFor="group-size">Number of Travelers</label>
-            <select
-              ref={groupSizeRef}
-              id="group-size"
-              value={groupSize}
-              onChange={(e) => setGroupSize(Number(e.target.value))}
-            >
-              <option value={1}>1 Traveler (Solo)</option>
-              <option value={2}>2 Travelers (Couple / Honeymoon)</option>
-              <option value={3}>3 - 5 Travelers (Small Group / Family)</option>
-              <option value={6}>6+ Travelers (Large Group)</option>
-            </select>
-          </div>
-        </div>
-
-        <div className={styles.gridRow}>
-          <div className={styles.field}>
-            <label htmlFor="travel-from">Preferred Travel Date</label>
-            <input
-              ref={travelFromRef}
-              id="travel-from"
-              type="date"
-              value={travelFrom}
-              onChange={(e) => setTravelFrom(e.target.value)}
+            <label htmlFor="special-requests">Special Customization &amp; Preferences</label>
+            <textarea
+              id="special-requests"
+              rows={3}
+              placeholder="e.g. Need sea view resort, private candlelit dinner, high altitude permit assistance..."
+              value={specialRequests}
+              onChange={(e) => setSpecialRequests(e.target.value)}
             />
           </div>
 
-          <div className={styles.field}>
-            <label htmlFor="travel-to">Return Date (Optional)</label>
-            <input
-              ref={travelToRef}
-              id="travel-to"
-              type="date"
-              value={travelTo}
-              onChange={(e) => {
-                setTravelTo(e.target.value);
-                if (fieldErrors.travelTo) setFieldErrors((prev) => ({ ...prev, travelTo: '' }));
-              }}
-              className={fieldErrors.travelTo ? styles.inputError : ''}
-              aria-invalid={!!fieldErrors.travelTo}
-              aria-describedby={fieldErrors.travelTo ? 'travel-to-error' : undefined}
-            />
-            {fieldErrors.travelTo && (
-              <p id="travel-to-error" className={styles.fieldErrorMsg} role="alert">
-                {fieldErrors.travelTo}
-              </p>
-            )}
+          <div className={styles.securityNote}>
+            🔒 Your contact details are 100% confidential. No spam or unauthorized calls.
           </div>
-        </div>
 
-        <div className={styles.field}>
-          <label htmlFor="special-requests">Special Customization &amp; Preferences</label>
-          <textarea
-            ref={specialRequestsRef}
-            id="special-requests"
-            rows={3}
-            placeholder="e.g. Need sea view resort, private candlelit dinner, high altitude permit assistance..."
-            value={specialRequests}
-            onChange={(e) => setSpecialRequests(e.target.value)}
-          />
-        </div>
-
-        <div className={styles.securityNote}>
-          🔒 Your contact details are 100% confidential. No spam or unauthorized calls.
-        </div>
-
-        <button type="submit" disabled={loading} className={styles.submitBtn}>
-          {loading ? 'Submitting Inquiry...' : 'Request Callback'}
-        </button>
-      </form>
+          <button type="submit" disabled={loading} className={styles.submitBtn}>
+            {loading ? 'Submitting Inquiry...' : 'Request Callback'}
+          </button>
+        </form>
+      </RequireAuth>
     </div>
   );
 };

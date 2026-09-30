@@ -83,6 +83,7 @@ export const metadata: Metadata = {
 };
 
 import { CountryProvider } from '@/context/CountryContext';
+import { AuthProvider } from '@/context/AuthContext';
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const jsonLd = {
@@ -138,13 +139,16 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
-        <CountryProvider>
-          <Header />
-          <main style={{ flex: 1 }}>{children}</main>
-          <Footer />
-        </CountryProvider>
+        <AuthProvider>
+          <CountryProvider>
+            <Header />
+            <main style={{ flex: 1 }}>{children}</main>
+            <Footer />
+          </CountryProvider>
+        </AuthProvider>
       </body>
     </html>
   );
 }
+
 

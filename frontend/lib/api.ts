@@ -101,14 +101,20 @@ export async function fetchPackageBySlug(slug: string): Promise<Package | null> 
 }
 
 export async function submitCallbackInquiry(
-  payload: CallbackRequestPayload
+  payload: CallbackRequestPayload,
+  token?: string
 ): Promise<{ success: boolean; message?: string; error?: string }> {
   try {
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+    };
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+
     const res = await fetch(`${API_BASE_URL}/callbacks`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers,
       body: JSON.stringify(payload),
     });
 
@@ -130,6 +136,24 @@ export async function submitCallbackInquiry(
     };
   }
 }
+
+export async function fetchUserCallbacks(token: string): Promise<CallbackRecord[]> {
+  try {
+    const res = await fetch(`${API_BASE_URL}/callbacks/me`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    if (res.ok) {
+      const json = await res.json();
+      if (json?.data) return json.data;
+    }
+  } catch {
+    // Fail silently
+  }
+  return [];
+}
+
 
 export async function fetchPackageReviews(
   slug: string

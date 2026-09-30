@@ -136,13 +136,16 @@ async function runTests() {
   // ------------------------------------------------------------------
   console.info('\n[4/5] Testing Callback Service Business Logic...');
 
-  const createdInquiry = await createCallbackRequest({
-    name: 'Unit Test Traveler',
-    phone: '9988776655',
-    email: 'test@aarivavoyages.com',
-    group_size: 3,
-    special_requests: 'Require vegetarian meals',
-  });
+  const createdInquiry = await createCallbackRequest(
+    {
+      name: 'Unit Test Traveler',
+      phone: '9988776655',
+      email: 'test@aarivavoyages.com',
+      group_size: 3,
+      special_requests: 'Require vegetarian meals',
+    },
+    'user-123'
+  );
   assert(
     createdInquiry.id !== undefined && createdInquiry.status === 'new',
     'Callback request created with unique ID and default status "new"'

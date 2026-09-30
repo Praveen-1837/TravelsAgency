@@ -4,6 +4,8 @@ import React, { useState, useRef, useEffect } from 'react';
 import styles from './CallbackModal.module.css';
 import { submitCallbackInquiry } from '@/lib/api';
 import { gsap, useGSAP } from '@/lib/gsap';
+import { useAuth } from '@/context/AuthContext';
+import { RequireAuth } from '../auth/RequireAuth';
 
 interface CallbackModalProps {
   isOpen: boolean;
@@ -18,6 +20,8 @@ export const CallbackModal: React.FC<CallbackModalProps> = ({
   packageId,
   packageTitle,
 }) => {
+  const { user, session } = useAuth();
+
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
@@ -32,6 +36,43 @@ export const CallbackModal: React.FC<CallbackModalProps> = ({
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [success, setSuccess] = useState(false);
   const [showToast, setShowToast] = useState(false);
+
+  // Prefill user profile details when logged in
+  useEffect(() => {
+    if (user) {
+      if (user.user_metadata?.full_name && !name) {
+        setName(user.user_metadata.full_name);
+      }
+      if (user.email && !email) {
+        setEmail(user.email);
+      }
+      if (user.user_metadata?.phone && !phone) {
+        setPhone(user.user_metadata.phone);
+      }
+    }
+  }, [user, name, email, phone]);
+
+  // Restore draft if session was interrupted
+  useEffect(() => {
+    if (isOpen && user) {
+      try {
+        const savedDraft = localStorage.getItem('callback_draft');
+        if (savedDraft) {
+          const parsed = JSON.parse(savedDraft);
+          if (parsed.name) setName(parsed.name);
+          if (parsed.phone) setPhone(parsed.phone);
+          if (parsed.email) setEmail(parsed.email);
+          if (parsed.travelFrom) setTravelFrom(parsed.travelFrom);
+          if (parsed.travelTo) setTravelTo(parsed.travelTo);
+          if (parsed.groupSize) setGroupSize(parsed.groupSize);
+          if (parsed.specialRequests) setSpecialRequests(parsed.specialRequests);
+          localStorage.removeItem('callback_draft');
+        }
+      } catch {
+        // Ignore JSON parse errors
+      }
+    }
+  }, [isOpen, user]);
 
   // Field refs for validation shake & focus
   const nameRef = useRef<HTMLInputElement>(null);
@@ -194,7 +235,6 @@ export const CallbackModal: React.FC<CallbackModalProps> = ({
       }
 
       if (isReducedMotion) {
-        // Reduced motion: no pop, ring, draw or scale, skip auto-close
         if (formContentRef.current) gsap.set(formContentRef.current, { display: 'none' });
         if (successPanelRef.current) gsap.set(successPanelRef.current, { display: 'flex', opacity: 0 });
         if (badgeCircleRef.current) gsap.set(badgeCircleRef.current, { scale: 1, opacity: 1 });
@@ -212,7 +252,6 @@ export const CallbackModal: React.FC<CallbackModalProps> = ({
         return;
       }
 
-      // Single GSAP timeline
       const tl = gsap.timeline({
         onComplete: () => {
           triggerCloseAndToast();
@@ -220,14 +259,12 @@ export const CallbackModal: React.FC<CallbackModalProps> = ({
       });
       tlRef.current = tl;
 
-      // Setup initial states
       if (successPanelRef.current) gsap.set(successPanelRef.current, { display: 'none', opacity: 0 });
       if (badgeCircleRef.current) gsap.set(badgeCircleRef.current, { scale: 0, transformOrigin: '48px 48px' });
       if (pulseRingRef.current) gsap.set(pulseRingRef.current, { scale: 1, opacity: 0.35, transformOrigin: '48px 48px' });
       if (checkmarkPathRef.current) gsap.set(checkmarkPathRef.current, { drawSVG: '0%' });
       if (textGroupRef.current) gsap.set(textGroupRef.current, { opacity: 0, y: 12 });
 
-      // Step 1: Form content fades out (opacity 0, y -8, 0.25s)
       tl.to(formContentRef.current, {
         opacity: 0,
         y: -8,
@@ -244,7 +281,6 @@ export const CallbackModal: React.FC<CallbackModalProps> = ({
 
       tl.addLabel('popStart');
 
-      // Step 2: Tick badge "pop" - #FF5722 filled circle scales 0 to 1 back.out(1.8) over 0.45s
       tl.to(
         badgeCircleRef.current,
         {
@@ -255,7 +291,6 @@ export const CallbackModal: React.FC<CallbackModalProps> = ({
         'popStart'
       );
 
-      // Soft ring behind scales 1 to 1.6 while fading 0.35 to 0 over 0.35s
       tl.to(
         pulseRingRef.current,
         {
@@ -267,7 +302,6 @@ export const CallbackModal: React.FC<CallbackModalProps> = ({
         'popStart'
       );
 
-      // Step 3: White checkmark path draws (DrawSVG 0% to 100%, 0.4s, power2.out), 0.15s after pop begins
       tl.to(
         checkmarkPathRef.current,
         {
@@ -278,7 +312,6 @@ export const CallbackModal: React.FC<CallbackModalProps> = ({
         'popStart+=0.15'
       );
 
-      // Step 4: Heading and text fade up (y 12 to 0, 0.35s)
       tl.to(
         textGroupRef.current,
         {
@@ -293,10 +326,8 @@ export const CallbackModal: React.FC<CallbackModalProps> = ({
         'popStart+=0.25'
       );
 
-      // Step 5: Hold for 2.5 seconds (paused if hovered or focused)
       tl.to({}, { duration: 2.5 });
 
-      // Step 6: Modal panel fades and scales out (opacity 0, scale 0.96, 0.3s), overlay fades
       tl.to(modalBoxRef.current, {
         opacity: 0,
         scale: 0.96,
@@ -319,8 +350,12 @@ export const CallbackModal: React.FC<CallbackModalProps> = ({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Prevent double submits
     if (loading || success) return;
+
+    if (!user) {
+      setError('Please log in to submit a callback request.');
+      return;
+    }
 
     setError(null);
     setFieldErrors({});
@@ -354,7 +389,6 @@ export const CallbackModal: React.FC<CallbackModalProps> = ({
       if (travelToRef.current) invalidEls.push(travelToRef.current);
     }
 
-    // If validation fails
     if (Object.keys(newFieldErrors).length > 0) {
       setFieldErrors(newFieldErrors);
       setError('Please correct the highlighted errors before submitting.');
@@ -379,24 +413,41 @@ export const CallbackModal: React.FC<CallbackModalProps> = ({
 
     setLoading(true);
 
-    const res = await submitCallbackInquiry({
-      package_id: packageId,
-      name,
-      phone: cleanPhone,
-      email: email || undefined,
-      travel_from: travelFrom || undefined,
-      travel_to: travelTo || undefined,
-      group_size: Number(groupSize),
-      special_requests: specialRequests || undefined,
-      website_hp: honeypot,
-    });
+    try {
+      const res = await submitCallbackInquiry(
+        {
+          package_id: packageId,
+          name,
+          phone: cleanPhone,
+          email: email || undefined,
+          travel_from: travelFrom || undefined,
+          travel_to: travelTo || undefined,
+          group_size: Number(groupSize),
+          special_requests: specialRequests || undefined,
+          website_hp: honeypot,
+        },
+        session?.access_token
+      );
 
-    setLoading(false);
+      setLoading(false);
 
-    if (res.success) {
-      setSuccess(true);
-    } else {
-      setError(res.error || 'Failed to submit inquiry. Please try again.');
+      if (res.success) {
+        setSuccess(true);
+      } else {
+        if (res.error?.includes('401') || res.error?.includes('expired') || res.error?.includes('UNAUTHORIZED')) {
+          // Save draft in localStorage for session expiry recovery
+          localStorage.setItem(
+            'callback_draft',
+            JSON.stringify({ name, phone, email, travelFrom, travelTo, groupSize, specialRequests })
+          );
+          setError('Session expired. Please log in again to complete your request.');
+        } else {
+          setError(res.error || 'Failed to submit inquiry. Please try again.');
+        }
+      }
+    } catch {
+      setLoading(false);
+      setError('Network connection error. Please try again.');
     }
   };
 
@@ -435,7 +486,6 @@ export const CallbackModal: React.FC<CallbackModalProps> = ({
               className={styles.successState}
             >
               <svg viewBox="0 0 96 96" className={styles.successBadgeSvg} aria-hidden="true">
-                {/* Soft pulse ring behind */}
                 <circle
                   ref={pulseRingRef}
                   cx="48"
@@ -446,9 +496,7 @@ export const CallbackModal: React.FC<CallbackModalProps> = ({
                   strokeWidth="4"
                   opacity="0.35"
                 />
-                {/* Filled badge circle */}
                 <circle ref={badgeCircleRef} cx="48" cy="48" r="32" fill="#FF5722" />
-                {/* White checkmark path */}
                 <path
                   ref={checkmarkPathRef}
                   d="M 32 48 L 43 59 L 64 37"
@@ -482,184 +530,185 @@ export const CallbackModal: React.FC<CallbackModalProps> = ({
               </div>
             </div>
 
-            {/* Form Content */}
+            {/* Form Content wrapped in RequireAuth */}
             <div ref={formContentRef} style={{ display: success ? 'none' : 'block' }}>
-              <div className={styles.modalHeader}>
-                <span className={styles.eyebrow}>EXPERT-ASSISTED PLANNING</span>
-                <h2 id="modal-title" className={styles.modalTitle}>
-                  Request a Free Callback
-                </h2>
-                <p className={styles.modalSubtitle}>
-                  {packageTitle ? (
-                    <>
-                      Inquiring for: <strong>{packageTitle}</strong>
-                    </>
-                  ) : (
-                    'Speak with our India domestic travel specialist — no booking fees or obligations.'
-                  )}
-                </p>
-              </div>
-
-              {error && <div className={styles.errorAlert}>{error}</div>}
-
-              <form onSubmit={handleSubmit} className={styles.form} noValidate>
-                {/* Honeypot field invisible to humans */}
-                <div className="sr-only" aria-hidden="true">
-                  <input
-                    type="text"
-                    name="website_hp"
-                    tabIndex={-1}
-                    autoComplete="off"
-                    value={honeypot}
-                    onChange={(e) => setHoneypot(e.target.value)}
-                  />
+              <RequireAuth>
+                <div className={styles.modalHeader}>
+                  <span className={styles.eyebrow}>EXPERT-ASSISTED PLANNING</span>
+                  <h2 id="modal-title" className={styles.modalTitle}>
+                    Request a Free Callback
+                  </h2>
+                  <p className={styles.modalSubtitle}>
+                    {packageTitle ? (
+                      <>
+                        Inquiring for: <strong>{packageTitle}</strong>
+                      </>
+                    ) : (
+                      'Speak with our India domestic travel specialist — no booking fees or obligations.'
+                    )}
+                  </p>
                 </div>
 
-                <div className={styles.row}>
-                  <div className={styles.field}>
-                    <label htmlFor="modal-name">Your Full Name *</label>
+                {error && <div className={styles.errorAlert}>{error}</div>}
+
+                <form onSubmit={handleSubmit} className={styles.form} noValidate>
+                  <div className="sr-only" aria-hidden="true">
                     <input
-                      ref={nameRef}
-                      id="modal-name"
                       type="text"
-                      required
-                      placeholder="e.g. Rahul Sharma"
-                      value={name}
-                      onChange={(e) => {
-                        setName(e.target.value);
-                        if (fieldErrors.name) setFieldErrors((prev) => ({ ...prev, name: '' }));
-                      }}
-                      className={fieldErrors.name ? styles.inputError : ''}
-                      aria-invalid={!!fieldErrors.name}
-                      aria-describedby={fieldErrors.name ? 'modal-name-error' : undefined}
+                      name="website_hp"
+                      tabIndex={-1}
+                      autoComplete="off"
+                      value={honeypot}
+                      onChange={(e) => setHoneypot(e.target.value)}
                     />
-                    {fieldErrors.name && (
-                      <p id="modal-name-error" className={styles.fieldErrorMsg} role="alert">
-                        {fieldErrors.name}
-                      </p>
-                    )}
                   </div>
 
-                  <div className={styles.field}>
-                    <label htmlFor="modal-phone">10-Digit Mobile Number *</label>
-                    <div
-                      className={`${styles.phoneInput} ${
-                        fieldErrors.phone ? styles.inputError : ''
-                      }`}
-                    >
-                      <span className={styles.countryCode}>+91</span>
+                  <div className={styles.row}>
+                    <div className={styles.field}>
+                      <label htmlFor="modal-name">Your Full Name *</label>
                       <input
-                        ref={phoneRef}
-                        id="modal-phone"
-                        type="tel"
+                        ref={nameRef}
+                        id="modal-name"
+                        type="text"
                         required
-                        placeholder="9876543210"
-                        value={phone}
+                        placeholder="e.g. Rahul Sharma"
+                        value={name}
                         onChange={(e) => {
-                          setPhone(e.target.value);
-                          if (fieldErrors.phone) setFieldErrors((prev) => ({ ...prev, phone: '' }));
+                          setName(e.target.value);
+                          if (fieldErrors.name) setFieldErrors((prev) => ({ ...prev, name: '' }));
                         }}
-                        aria-invalid={!!fieldErrors.phone}
-                        aria-describedby={fieldErrors.phone ? 'modal-phone-error' : undefined}
+                        className={fieldErrors.name ? styles.inputError : ''}
+                        aria-invalid={!!fieldErrors.name}
+                        aria-describedby={fieldErrors.name ? 'modal-name-error' : undefined}
+                      />
+                      {fieldErrors.name && (
+                        <p id="modal-name-error" className={styles.fieldErrorMsg} role="alert">
+                          {fieldErrors.name}
+                        </p>
+                      )}
+                    </div>
+
+                    <div className={styles.field}>
+                      <label htmlFor="modal-phone">10-Digit Mobile Number *</label>
+                      <div
+                        className={`${styles.phoneInput} ${
+                          fieldErrors.phone ? styles.inputError : ''
+                        }`}
+                      >
+                        <span className={styles.countryCode}>+91</span>
+                        <input
+                          ref={phoneRef}
+                          id="modal-phone"
+                          type="tel"
+                          required
+                          placeholder="9876543210"
+                          value={phone}
+                          onChange={(e) => {
+                            setPhone(e.target.value);
+                            if (fieldErrors.phone) setFieldErrors((prev) => ({ ...prev, phone: '' }));
+                          }}
+                          aria-invalid={!!fieldErrors.phone}
+                          aria-describedby={fieldErrors.phone ? 'modal-phone-error' : undefined}
+                        />
+                      </div>
+                      {fieldErrors.phone && (
+                        <p id="modal-phone-error" className={styles.fieldErrorMsg} role="alert">
+                          {fieldErrors.phone}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className={styles.row}>
+                    <div className={styles.field}>
+                      <label htmlFor="modal-email">Email Address (Optional)</label>
+                      <input
+                        ref={emailRef}
+                        id="modal-email"
+                        type="email"
+                        placeholder="rahul@example.com"
+                        value={email}
+                        onChange={(e) => {
+                          setEmail(e.target.value);
+                          if (fieldErrors.email) setFieldErrors((prev) => ({ ...prev, email: '' }));
+                        }}
+                        className={fieldErrors.email ? styles.inputError : ''}
+                        aria-invalid={!!fieldErrors.email}
+                        aria-describedby={fieldErrors.email ? 'modal-email-error' : undefined}
+                      />
+                      {fieldErrors.email && (
+                        <p id="modal-email-error" className={styles.fieldErrorMsg} role="alert">
+                          {fieldErrors.email}
+                        </p>
+                      )}
+                    </div>
+
+                    <div className={styles.field}>
+                      <label htmlFor="modal-travelers">Number of Travelers</label>
+                      <select
+                        id="modal-travelers"
+                        value={groupSize}
+                        onChange={(e) => setGroupSize(Number(e.target.value))}
+                      >
+                        <option value={1}>1 Traveler (Solo)</option>
+                        <option value={2}>2 Travelers (Couple / Honeymoon)</option>
+                        <option value={3}>3 - 5 Travelers (Small Group / Family)</option>
+                        <option value={6}>6+ Travelers (Large Group)</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div className={styles.row}>
+                    <div className={styles.field}>
+                      <label htmlFor="modal-travel-from">Preferred Travel Date</label>
+                      <input
+                        id="modal-travel-from"
+                        type="date"
+                        value={travelFrom}
+                        onChange={(e) => setTravelFrom(e.target.value)}
                       />
                     </div>
-                    {fieldErrors.phone && (
-                      <p id="modal-phone-error" className={styles.fieldErrorMsg} role="alert">
-                        {fieldErrors.phone}
-                      </p>
-                    )}
-                  </div>
-                </div>
 
-                <div className={styles.row}>
-                  <div className={styles.field}>
-                    <label htmlFor="modal-email">Email Address (Optional)</label>
-                    <input
-                      ref={emailRef}
-                      id="modal-email"
-                      type="email"
-                      placeholder="rahul@example.com"
-                      value={email}
-                      onChange={(e) => {
-                        setEmail(e.target.value);
-                        if (fieldErrors.email) setFieldErrors((prev) => ({ ...prev, email: '' }));
-                      }}
-                      className={fieldErrors.email ? styles.inputError : ''}
-                      aria-invalid={!!fieldErrors.email}
-                      aria-describedby={fieldErrors.email ? 'modal-email-error' : undefined}
-                    />
-                    {fieldErrors.email && (
-                      <p id="modal-email-error" className={styles.fieldErrorMsg} role="alert">
-                        {fieldErrors.email}
-                      </p>
-                    )}
+                    <div className={styles.field}>
+                      <label htmlFor="modal-travel-to">Return Date (Optional)</label>
+                      <input
+                        ref={travelToRef}
+                        id="modal-travel-to"
+                        type="date"
+                        value={travelTo}
+                        onChange={(e) => {
+                          setTravelTo(e.target.value);
+                          if (fieldErrors.travelTo)
+                            setFieldErrors((prev) => ({ ...prev, travelTo: '' }));
+                        }}
+                        className={fieldErrors.travelTo ? styles.inputError : ''}
+                        aria-invalid={!!fieldErrors.travelTo}
+                        aria-describedby={fieldErrors.travelTo ? 'modal-travel-to-error' : undefined}
+                      />
+                      {fieldErrors.travelTo && (
+                        <p id="modal-travel-to-error" className={styles.fieldErrorMsg} role="alert">
+                          {fieldErrors.travelTo}
+                        </p>
+                      )}
+                    </div>
                   </div>
 
                   <div className={styles.field}>
-                    <label htmlFor="modal-travelers">Number of Travelers</label>
-                    <select
-                      id="modal-travelers"
-                      value={groupSize}
-                      onChange={(e) => setGroupSize(Number(e.target.value))}
-                    >
-                      <option value={1}>1 Traveler (Solo)</option>
-                      <option value={2}>2 Travelers (Couple / Honeymoon)</option>
-                      <option value={3}>3 - 5 Travelers (Small Group / Family)</option>
-                      <option value={6}>6+ Travelers (Large Group)</option>
-                    </select>
-                  </div>
-                </div>
-
-                <div className={styles.row}>
-                  <div className={styles.field}>
-                    <label htmlFor="modal-travel-from">Preferred Travel Date</label>
-                    <input
-                      id="modal-travel-from"
-                      type="date"
-                      value={travelFrom}
-                      onChange={(e) => setTravelFrom(e.target.value)}
+                    <label htmlFor="modal-requests">Special Customizations &amp; Notes</label>
+                    <textarea
+                      id="modal-requests"
+                      rows={3}
+                      placeholder="Tell us about preferred resorts, meal plans, or vehicle preferences..."
+                      value={specialRequests}
+                      onChange={(e) => setSpecialRequests(e.target.value)}
                     />
                   </div>
 
-                  <div className={styles.field}>
-                    <label htmlFor="modal-travel-to">Return Date (Optional)</label>
-                    <input
-                      ref={travelToRef}
-                      id="modal-travel-to"
-                      type="date"
-                      value={travelTo}
-                      onChange={(e) => {
-                        setTravelTo(e.target.value);
-                        if (fieldErrors.travelTo)
-                          setFieldErrors((prev) => ({ ...prev, travelTo: '' }));
-                      }}
-                      className={fieldErrors.travelTo ? styles.inputError : ''}
-                      aria-invalid={!!fieldErrors.travelTo}
-                      aria-describedby={fieldErrors.travelTo ? 'modal-travel-to-error' : undefined}
-                    />
-                    {fieldErrors.travelTo && (
-                      <p id="modal-travel-to-error" className={styles.fieldErrorMsg} role="alert">
-                        {fieldErrors.travelTo}
-                      </p>
-                    )}
-                  </div>
-                </div>
-
-                <div className={styles.field}>
-                  <label htmlFor="modal-requests">Special Customizations &amp; Notes</label>
-                  <textarea
-                    id="modal-requests"
-                    rows={3}
-                    placeholder="Tell us about preferred resorts, meal plans, or vehicle preferences..."
-                    value={specialRequests}
-                    onChange={(e) => setSpecialRequests(e.target.value)}
-                  />
-                </div>
-
-                <button type="submit" disabled={loading} className={styles.submitBtn}>
-                  {loading ? 'Submitting Request...' : 'Request Callback'}
-                </button>
-              </form>
+                  <button type="submit" disabled={loading} className={styles.submitBtn}>
+                    {loading ? 'Submitting Request...' : 'Request Callback'}
+                  </button>
+                </form>
+              </RequireAuth>
             </div>
           </div>
         </div>
@@ -693,4 +742,3 @@ export const CallbackModal: React.FC<CallbackModalProps> = ({
     </>
   );
 };
-
