@@ -1,30 +1,49 @@
 'use client';
 
-import React, { useState, useMemo, Suspense } from 'react';
+import React, { useState, useMemo, useRef, Suspense } from 'react';
 import Link from 'next/link';
 import { useSearchParams, useRouter } from 'next/navigation';
 import styles from './packages.module.css';
 import { Package } from '@/lib/types';
 import { LOCAL_SEED_PACKAGES } from '@/lib/seed-data';
 import { PackageCard } from '@/components/packages/PackageCard';
+import { gsap, Flip, useGSAP } from '@/lib/gsap';
 
 function PackagesListingContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
+  const resultsContainerRef = useRef<HTMLDivElement>(null);
+  const flipStateRef = useRef<any>(null);
 
-  // Read URL params directly as single source of truth
+  // Read URL params
   const selectedDestination = searchParams.get('destination') || '';
   const selectedAudience = searchParams.get('audience') || '';
   const sortBy = searchParams.get('sort') || 'popular';
 
-  // Client-only UI states
+  // Client UI states
   const [selectedPriceRange, setSelectedPriceRange] = useState<string>('all');
   const [selectedDuration, setSelectedDuration] = useState<string>('all');
   const [viewMode, setViewMode] = useState<'grid' | 'horizontal'>('grid');
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
 
-  // Helper to update URL search parameters
-  const updateFilter = (key: string, value: string) => {
+  // Helper to capture Flip state before filter/sort updates
+  const captureFlipState = () => {
+    if (typeof window === 'undefined') return;
+    const isReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (isReducedMotion) return;
+
+    const cards = resultsContainerRef.current?.querySelectorAll('[data-flip-id]');
+    if (cards && cards.length > 0) {
+      // Kill any in-progress Flip animations to handle rapid repeated clicks cleanly
+      gsap.killTweensOf(cards);
+      flipStateRef.current = Flip.getState(cards);
+    }
+  };
+
+  // Helper to update URL search parameters while capturing GSAP Flip state
+  const updateFilter = (key: string, value: string, e?: React.SyntheticEvent) => {
+    captureFlipState();
+
     const params = new URLSearchParams(searchParams.toString());
     if (value) {
       params.set(key, value);
@@ -32,9 +51,30 @@ function PackagesListingContent() {
       params.delete(key);
     }
     router.push(`/packages?${params.toString()}`);
+
+    // Maintain keyboard focus on current element if passed
+    if (e && e.currentTarget && 'focus' in e.currentTarget) {
+      (e.currentTarget as HTMLElement).focus();
+    }
   };
 
-  // Available filter options
+  const handlePriceChange = (val: string, e?: React.SyntheticEvent) => {
+    captureFlipState();
+    setSelectedPriceRange(val);
+    if (e && e.currentTarget && 'focus' in e.currentTarget) {
+      (e.currentTarget as HTMLElement).focus();
+    }
+  };
+
+  const handleDurationChange = (val: string, e?: React.SyntheticEvent) => {
+    captureFlipState();
+    setSelectedDuration(val);
+    if (e && e.currentTarget && 'focus' in e.currentTarget) {
+      (e.currentTarget as HTMLElement).focus();
+    }
+  };
+
+  // Destinations list
   const destinations = [
     { label: 'All Destinations', value: '' },
     { label: 'Sikkim & Darjeeling', value: 'Sikkim' },
@@ -57,7 +97,13 @@ function PackagesListingContent() {
     }
 
     // 2. Audience filter
-    if (selectedAudience) {
+    if (selectedAudience === 'couple') {
+      result = result.filter((p) => p.audience.includes('couple'));
+    } else if (selectedAudience === 'group_family') {
+      result = result.filter(
+        (p) => p.audience.includes('group') || p.audience.includes('family')
+      );
+    } else if (selectedAudience) {
       result = result.filter((p) => p.audience.includes(selectedAudience));
     }
 
@@ -94,7 +140,40 @@ function PackagesListingContent() {
     return result;
   }, [selectedDestination, selectedAudience, selectedPriceRange, selectedDuration, sortBy]);
 
+  // GSAP Flip animation on filter/sort changes
+  useGSAP(
+    () => {
+      if (!flipStateRef.current || !resultsContainerRef.current) return;
+
+      const mm = gsap.matchMedia();
+      mm.add('(prefers-reduced-motion: no-preference)', () => {
+        Flip.from(flipStateRef.current, {
+          duration: 0.5,
+          ease: 'power2.inOut',
+          absolute: true,
+          onLeave: (elements) =>
+            gsap.to(elements, {
+              opacity: 0,
+              scale: 0.95,
+              duration: 0.3,
+              ease: 'power2.out',
+            }),
+          onEnter: (elements) =>
+            gsap.fromTo(
+              elements,
+              { opacity: 0 },
+              { opacity: 1, duration: 0.4, ease: 'power2.out' }
+            ),
+        });
+      });
+
+      flipStateRef.current = null;
+    },
+    { scope: resultsContainerRef, dependencies: [filteredPackages, viewMode] }
+  );
+
   const handleResetFilters = () => {
+    captureFlipState();
     setSelectedPriceRange('all');
     setSelectedDuration('all');
     router.push('/packages');
@@ -142,7 +221,7 @@ function PackagesListingContent() {
               <select
                 id="sort-select"
                 value={sortBy}
-                onChange={(e) => updateFilter('sort', e.target.value)}
+                onChange={(e) => updateFilter('sort', e.target.value, e)}
                 className={styles.sortSelect}
               >
                 <option value="popular">Popularity &amp; Reviews</option>
@@ -158,7 +237,11 @@ function PackagesListingContent() {
               <button
                 type="button"
                 className={`${styles.viewBtn} ${viewMode === 'grid' ? styles.viewBtnActive : ''}`}
-                onClick={() => setViewMode('grid')}
+                onClick={(e) => {
+                  captureFlipState();
+                  setViewMode('grid');
+                  e.currentTarget.focus();
+                }}
                 title="Grid View"
               >
                 ⊞
@@ -166,7 +249,11 @@ function PackagesListingContent() {
               <button
                 type="button"
                 className={`${styles.viewBtn} ${viewMode === 'horizontal' ? styles.viewBtnActive : ''}`}
-                onClick={() => setViewMode('horizontal')}
+                onClick={(e) => {
+                  captureFlipState();
+                  setViewMode('horizontal');
+                  e.currentTarget.focus();
+                }}
                 title="List View"
               >
                 ☰
@@ -209,7 +296,7 @@ function PackagesListingContent() {
                       type="radio"
                       name="destination"
                       checked={selectedDestination === d.value}
-                      onChange={() => updateFilter('destination', d.value)}
+                      onChange={(e) => updateFilter('destination', d.value, e)}
                     />
                     <span>{d.label}</span>
                   </label>
@@ -219,14 +306,14 @@ function PackagesListingContent() {
 
             {/* Travel Audience / Style Filter */}
             <div className={styles.filterSection}>
-              <h4 className={styles.filterSectionTitle}>Travel Style</h4>
+              <h4 className={styles.filterSectionTitle}>Travel Style &amp; Audience</h4>
               <div className={styles.filterOptions}>
                 <label className={styles.filterOption}>
                   <input
                     type="radio"
                     name="audience"
                     checked={selectedAudience === ''}
-                    onChange={() => updateFilter('audience', '')}
+                    onChange={(e) => updateFilter('audience', '', e)}
                   />
                   <span>All Styles</span>
                 </label>
@@ -235,7 +322,7 @@ function PackagesListingContent() {
                     type="radio"
                     name="audience"
                     checked={selectedAudience === 'couple'}
-                    onChange={() => updateFilter('audience', 'couple')}
+                    onChange={(e) => updateFilter('audience', 'couple', e)}
                   />
                   <span>Honeymoon &amp; Couples</span>
                 </label>
@@ -243,19 +330,10 @@ function PackagesListingContent() {
                   <input
                     type="radio"
                     name="audience"
-                    checked={selectedAudience === 'group'}
-                    onChange={() => updateFilter('audience', 'group')}
+                    checked={selectedAudience === 'group_family'}
+                    onChange={(e) => updateFilter('audience', 'group_family', e)}
                   />
-                  <span>Group Expeditions</span>
-                </label>
-                <label className={styles.filterOption}>
-                  <input
-                    type="radio"
-                    name="audience"
-                    checked={selectedAudience === 'family'}
-                    onChange={() => updateFilter('audience', 'family')}
-                  />
-                  <span>Family Holidays</span>
+                  <span>Group &amp; Family Trips</span>
                 </label>
               </div>
             </div>
@@ -269,7 +347,7 @@ function PackagesListingContent() {
                     type="radio"
                     name="price"
                     checked={selectedPriceRange === 'all'}
-                    onChange={() => setSelectedPriceRange('all')}
+                    onChange={(e) => handlePriceChange('all', e)}
                   />
                   <span>Any Budget</span>
                 </label>
@@ -278,7 +356,7 @@ function PackagesListingContent() {
                     type="radio"
                     name="price"
                     checked={selectedPriceRange === 'under15'}
-                    onChange={() => setSelectedPriceRange('under15')}
+                    onChange={(e) => handlePriceChange('under15', e)}
                   />
                   <span>Under ₹15,000</span>
                 </label>
@@ -287,7 +365,7 @@ function PackagesListingContent() {
                     type="radio"
                     name="price"
                     checked={selectedPriceRange === '15to25'}
-                    onChange={() => setSelectedPriceRange('15to25')}
+                    onChange={(e) => handlePriceChange('15to25', e)}
                   />
                   <span>₹15,000 – ₹25,000</span>
                 </label>
@@ -296,7 +374,7 @@ function PackagesListingContent() {
                     type="radio"
                     name="price"
                     checked={selectedPriceRange === 'above25'}
-                    onChange={() => setSelectedPriceRange('above25')}
+                    onChange={(e) => handlePriceChange('above25', e)}
                   />
                   <span>Luxury (₹25,000+)</span>
                 </label>
@@ -312,7 +390,7 @@ function PackagesListingContent() {
                     type="radio"
                     name="duration"
                     checked={selectedDuration === 'all'}
-                    onChange={() => setSelectedDuration('all')}
+                    onChange={(e) => handleDurationChange('all', e)}
                   />
                   <span>Any Duration</span>
                 </label>
@@ -321,7 +399,7 @@ function PackagesListingContent() {
                     type="radio"
                     name="duration"
                     checked={selectedDuration === 'short'}
-                    onChange={() => setSelectedDuration('short')}
+                    onChange={(e) => handleDurationChange('short', e)}
                   />
                   <span>4 – 5 Days (Weekend &amp; Short)</span>
                 </label>
@@ -330,7 +408,7 @@ function PackagesListingContent() {
                     type="radio"
                     name="duration"
                     checked={selectedDuration === 'week'}
-                    onChange={() => setSelectedDuration('week')}
+                    onChange={(e) => handleDurationChange('week', e)}
                   />
                   <span>6 – 7 Days (Full Escapes)</span>
                 </label>
@@ -348,11 +426,10 @@ function PackagesListingContent() {
           </aside>
 
           {/* Results Column */}
-          <main className={styles.resultsArea}>
-            <div className={styles.resultsCountBar}>
-              <span>
-                Showing <strong>{filteredPackages.length}</strong> verified domestic packages
-              </span>
+          <main className={styles.resultsArea} ref={resultsContainerRef}>
+            {/* Live region for accessibility result count announcements */}
+            <div className={styles.resultsCountBar} aria-live="polite" aria-atomic="true">
+              Showing <strong>{filteredPackages.length}</strong> verified domestic packages
               {(selectedDestination ||
                 selectedAudience ||
                 selectedPriceRange !== 'all' ||

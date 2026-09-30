@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import styles from './package-detail.module.css';
@@ -12,6 +12,8 @@ import { PackageCard } from '@/components/packages/PackageCard';
 import { ReviewScoreCard } from '@/components/reviews/ReviewScoreCard';
 import { ReviewList } from '@/components/reviews/ReviewList';
 import { ReviewModal } from '@/components/reviews/ReviewModal';
+import { gsap, useGSAP, ScrollTrigger, ScrollToPlugin } from '@/lib/gsap';
+import { ItineraryRouteVisual } from '@/components/packages/ItineraryRouteVisual';
 
 interface Props {
   pkg: Package;
@@ -20,9 +22,11 @@ interface Props {
 }
 
 export default function PackageDetailClient({ pkg, similarPackages, initialReviews = [] }: Props) {
-  const [activeTab, setActiveTab] = useState<'overview' | 'itinerary' | 'inclusions' | 'reviews'>(
-    'overview'
-  );
+  const containerRef = useRef<HTMLDivElement>(null);
+  const galleryRef = useRef<HTMLDivElement>(null);
+  const stickyCallbackRef = useRef<HTMLDivElement>(null);
+
+  const [activeTab, setActiveTab] = useState<string>('overview');
   const [openDays, setOpenDays] = useState<number[]>([1]); // First day open by default
   const [travelers, setTravelers] = useState<number>(2);
   const [preferredDate, setPreferredDate] = useState<string>('');
@@ -33,6 +37,93 @@ export default function PackageDetailClient({ pkg, similarPackages, initialRevie
   const [reviews, setReviews] = useState<Review[]>(initialReviews);
   const [isReviewModalOpen, setIsReviewModalOpen] = useState<boolean>(false);
   const [selectedStarFilter, setSelectedStarFilter] = useState<number | null>(null);
+
+  // GSAP animations & ScrollTrigger scroll-sync
+  useGSAP(
+    () => {
+      const isReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      // 1. Entrance animation for header
+      if (!isReducedMotion) {
+        gsap.fromTo(
+          '.gsap-detail-anim',
+          { opacity: 0, y: 16 },
+          { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out', stagger: 0.08 }
+        );
+      }
+
+      // 2. Active tab indicator synchronization via ScrollTrigger
+      const sections = ['overview', 'itinerary', 'reviews', 'inquiries'];
+      sections.forEach((sectionId) => {
+        const el = document.getElementById(sectionId);
+        if (!el) return;
+
+        ScrollTrigger.create({
+          trigger: el,
+          start: 'top 40%',
+          end: 'bottom 40%',
+          onToggle: (self) => {
+            if (self.isActive) {
+              setActiveTab(sectionId);
+            }
+          },
+        });
+      });
+
+      // 3. Sticky "Request Callback" button slide-in after Hero/Gallery leaves viewport
+      if (stickyCallbackRef.current && galleryRef.current) {
+        if (isReducedMotion) {
+          // Instant jump / visible without slide animation
+          gsap.set(stickyCallbackRef.current, { opacity: 1, y: 0 });
+        } else {
+          gsap.fromTo(
+            stickyCallbackRef.current,
+            { y: 100, opacity: 0 },
+            {
+              y: 0,
+              opacity: 1,
+              duration: 0.4,
+              ease: 'power2.out',
+              scrollTrigger: {
+                trigger: galleryRef.current,
+                start: 'bottom top+=80',
+                toggleActions: 'play reverse play reverse',
+              },
+            }
+          );
+        }
+      }
+    },
+    { scope: containerRef }
+  );
+
+  // Smooth anchor scrolling handler using gsap.to(window, { scrollTo })
+  const handleAnchorClick = (e: React.MouseEvent<HTMLAnchorElement>, targetId: string) => {
+    e.preventDefault();
+    const targetHash = `#${targetId}`;
+    const targetEl = document.getElementById(targetId);
+    if (!targetEl) return;
+
+    const isReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (isReducedMotion) {
+      targetEl.scrollIntoView();
+      window.history.pushState(null, '', targetHash);
+      setActiveTab(targetId);
+    } else {
+      const headerHeight = 80;
+      const tabsHeight = 56;
+      gsap.to(window, {
+        scrollTo: { y: targetEl, offsetY: headerHeight + tabsHeight },
+        duration: 0.8,
+        ease: 'power2.inOut',
+        onComplete: () => {
+          window.history.pushState(null, '', targetHash);
+          setActiveTab(targetId);
+        },
+      });
+    }
+  };
 
   // Toggle single day accordion
   const toggleDay = (dayNum: number) => {
@@ -65,7 +156,7 @@ export default function PackageDetailClient({ pkg, similarPackages, initialRevie
       : pkg.price_per_person * travelers;
 
   return (
-    <div className={styles.pageWrapper}>
+    <div ref={containerRef} className={styles.pageWrapper}>
       {/* 1. Breadcrumbs */}
       <div className={styles.breadcrumbBar}>
         <div className={`container ${styles.breadcrumbContainer}`}>
@@ -83,7 +174,7 @@ export default function PackageDetailClient({ pkg, similarPackages, initialRevie
 
       <div className="container">
         {/* 2. Tour Header Title & Badges */}
-        <div className={styles.tourHeader}>
+        <div className={`${styles.tourHeader} gsap-detail-anim`}>
           <div className={styles.badgeRow}>
             <span className={styles.bestsellerBadge}>BESTSELLER</span>
             <span className={styles.durationBadge}>{pkg.duration}</span>
@@ -106,8 +197,8 @@ export default function PackageDetailClient({ pkg, similarPackages, initialRevie
           </div>
         </div>
 
-        {/* 3. Photo Gallery per Figma (1 Large Hero + 2 Side Tiles) */}
-        <div className={styles.gallery}>
+        {/* 3. Photo Gallery Hero */}
+        <div ref={galleryRef} className={styles.gallery}>
           <div className={styles.mainGalleryImage}>
             <Image
               src={images[activeImageIndex] || images[0]}
@@ -142,271 +233,205 @@ export default function PackageDetailClient({ pkg, similarPackages, initialRevie
         <div className={styles.twoColumnLayout}>
           {/* LEFT CONTENT COLUMN */}
           <div className={styles.mainContent}>
-            {/* Tab Navigation */}
-            <div className={styles.tabNav} role="tablist">
-              <button
-                type="button"
+            {/* Sticky Anchor Tab Navigation */}
+            <div className={`${styles.tabNav} ${styles.tabNavSticky}`} role="tablist">
+              <a
+                href="#overview"
                 role="tab"
                 aria-selected={activeTab === 'overview'}
                 className={`${styles.tabBtn} ${activeTab === 'overview' ? styles.activeTab : ''}`}
-                onClick={() => setActiveTab('overview')}
+                onClick={(e) => handleAnchorClick(e, 'overview')}
               >
                 Overview
-              </button>
-              <button
-                type="button"
+              </a>
+              <a
+                href="#itinerary"
                 role="tab"
                 aria-selected={activeTab === 'itinerary'}
                 className={`${styles.tabBtn} ${activeTab === 'itinerary' ? styles.activeTab : ''}`}
-                onClick={() => setActiveTab('itinerary')}
+                onClick={(e) => handleAnchorClick(e, 'itinerary')}
               >
-                Day-by-Day Plan
-              </button>
-              <button
-                type="button"
-                role="tab"
-                aria-selected={activeTab === 'inclusions'}
-                className={`${styles.tabBtn} ${activeTab === 'inclusions' ? styles.activeTab : ''}`}
-                onClick={() => setActiveTab('inclusions')}
-              >
-                Inclusions &amp; Exclusions
-              </button>
-              <button
-                type="button"
+                Itinerary
+              </a>
+              <a
+                href="#reviews"
                 role="tab"
                 aria-selected={activeTab === 'reviews'}
                 className={`${styles.tabBtn} ${activeTab === 'reviews' ? styles.activeTab : ''}`}
-                onClick={() => setActiveTab('reviews')}
+                onClick={(e) => handleAnchorClick(e, 'reviews')}
               >
                 Reviews ({pkg.review_count})
-              </button>
+              </a>
+              <a
+                href="#inquiries"
+                role="tab"
+                aria-selected={activeTab === 'inquiries'}
+                className={`${styles.tabBtn} ${activeTab === 'inquiries' ? styles.activeTab : ''}`}
+                onClick={(e) => handleAnchorClick(e, 'inquiries')}
+              >
+                Inquiries &amp; Quote
+              </a>
             </div>
 
-            {/* TAB 1: OVERVIEW */}
-            {activeTab === 'overview' && (
-              <div className={styles.tabContent}>
-                <section className={styles.sectionBlock}>
-                  <h3 className={styles.blockTitle}>Expedition Overview</h3>
-                  <p className={styles.overviewText}>{pkg.description}</p>
-                </section>
+            {/* SECTION 1: OVERVIEW */}
+            <div id="overview" className={styles.tabContent}>
+              <section className={styles.sectionBlock}>
+                <h3 className={styles.blockTitle}>Expedition Overview</h3>
+                <p className={styles.overviewText}>{pkg.description}</p>
+              </section>
 
-                <section className={styles.sectionBlock}>
-                  <h3 className={styles.blockTitle}>Trip Highlights</h3>
-                  <div className={styles.highlightsGrid}>
-                    <div className={styles.highlightCard}>
-                      <span className={styles.highlightIcon}>🏔️</span>
-                      <div>
-                        <h4>Scenic Landscapes</h4>
-                        <p>High altitude valleys, glacial mountain lakes, and virgin beaches.</p>
-                      </div>
-                    </div>
-
-                    <div className={styles.highlightCard}>
-                      <span className={styles.highlightIcon}>🚗</span>
-                      <div>
-                        <h4>Private Chauffeur</h4>
-                        <p>
-                          Dedicated sanitized SUV throughout the entire journey with fuel &amp;
-                          tolls included.
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className={styles.highlightCard}>
-                      <span className={styles.highlightIcon}>🏨</span>
-                      <div>
-                        <h4>Hand-Picked Stays</h4>
-                        <p>
-                          Checked for safety, hygiene, premium bedding, and scenic panoramic views.
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className={styles.highlightCard}>
-                      <span className={styles.highlightIcon}>🛡️</span>
-                      <div>
-                        <h4>24x7 Trip Marshal</h4>
-                        <p>
-                          Direct line of contact for permit clearances, check-ins, and local
-                          recommendations.
-                        </p>
-                      </div>
+              <section className={styles.sectionBlock}>
+                <h3 className={styles.blockTitle}>Trip Highlights</h3>
+                <div className={styles.highlightsGrid}>
+                  <div className={styles.highlightCard}>
+                    <span className={styles.highlightIcon}>🏔️</span>
+                    <div>
+                      <h4>Scenic Landscapes</h4>
+                      <p>High altitude valleys, glacial mountain lakes, and virgin beaches.</p>
                     </div>
                   </div>
-                </section>
 
-                {/* Social Proof & Traveler Feedback Teaser */}
-                {reviews.length > 0 && (
-                  <section className={styles.sectionBlock}>
-                    <div className={styles.reviewsOverviewHeader}>
-                      <div>
-                        <h3 className={styles.blockTitle}>Traveler Feedback &amp; Stories</h3>
-                        <p className={styles.overviewSubtext}>
-                          ★ {pkg.rating_avg.toFixed(1)} out of 5.0 • Rated by {pkg.review_count}{' '}
-                          verified Indian travelers
-                        </p>
-                      </div>
-                      <button
-                        type="button"
-                        className={styles.viewAllReviewsBtn}
-                        onClick={() => setActiveTab('reviews')}
-                      >
-                        View All {reviews.length} Reviews →
-                      </button>
+                  <div className={styles.highlightCard}>
+                    <span className={styles.highlightIcon}>🚗</span>
+                    <div>
+                      <h4>Private Chauffeur</h4>
+                      <p>
+                        Dedicated sanitized SUV throughout the entire journey with fuel &amp; tolls
+                        included.
+                      </p>
                     </div>
+                  </div>
 
-                    <div className={styles.overviewReviewsGrid}>
-                      {reviews.slice(0, 2).map((r) => (
-                        <div key={r.id} className={styles.overviewReviewCard}>
-                          <div className={styles.overviewReviewStars}>{'★'.repeat(r.rating)}</div>
-                          <p className={styles.overviewReviewQuote}>&ldquo;{r.comment}&rdquo;</p>
-                          <div className={styles.overviewReviewAuthor}>
-                            <strong>{r.traveler_name}</strong>
-                            <span>{r.trip_label || 'Verified Traveler'}</span>
-                          </div>
-                        </div>
-                      ))}
+                  <div className={styles.highlightCard}>
+                    <span className={styles.highlightIcon}>🏨</span>
+                    <div>
+                      <h4>Hand-Picked Stays</h4>
+                      <p>
+                        Checked for safety, hygiene, premium bedding, and scenic panoramic views.
+                      </p>
                     </div>
-                  </section>
-                )}
-              </div>
-            )}
+                  </div>
 
-            {/* TAB 2: DAY-BY-DAY ITINERARY ACCORDION */}
-            {activeTab === 'itinerary' && (
-              <div className={styles.tabContent}>
-                <div className={styles.itineraryHeader}>
-                  <h3 className={styles.blockTitle}>Day-by-Day Itinerary</h3>
-                  <button
-                    type="button"
-                    onClick={handleToggleAllDays}
-                    className={styles.toggleAllBtn}
-                  >
-                    {openDays.length === pkg.itinerary.length ? 'COLLAPSE ALL' : 'EXPAND ALL'}
-                  </button>
+                  <div className={styles.highlightCard}>
+                    <span className={styles.highlightIcon}>🛡️</span>
+                    <div>
+                      <h4>24x7 Trip Marshal</h4>
+                      <p>
+                        Direct line of contact for permit clearances, check-ins, and local
+                        recommendations.
+                      </p>
+                    </div>
+                  </div>
                 </div>
+              </section>
 
-                <div className={styles.itineraryList}>
-                  {pkg.itinerary.map((dayPlan) => {
-                    const isOpen = openDays.includes(dayPlan.day);
-                    return (
-                      <div key={dayPlan.day} className={styles.itineraryDayCard}>
-                        <div
-                          className={styles.dayCardHeader}
-                          onClick={() => toggleDay(dayPlan.day)}
-                        >
-                          <div className={styles.dayTitleGroup}>
-                            <span className={styles.dayBadge}>DAY {dayPlan.day}</span>
-                            <h4 className={styles.dayTitle}>{dayPlan.title}</h4>
-                          </div>
-                          <span className={styles.chevron}>{isOpen ? '▲' : '▼'}</span>
-                        </div>
-
-                        {isOpen && (
-                          <div className={styles.dayCardBody}>
-                            <div className={styles.dayMetaRow}>
-                              {dayPlan.stay && (
-                                <span className={styles.dayMetaChip}>🏨 Stay: {dayPlan.stay}</span>
-                              )}
-                              {dayPlan.meals && (
-                                <span className={styles.dayMetaChip}>
-                                  🍽️ Meals: {dayPlan.meals}
-                                </span>
-                              )}
-                              {dayPlan.altitude && (
-                                <span className={styles.dayMetaChip}>
-                                  ⛰️ Altitude: {dayPlan.altitude}
-                                </span>
-                              )}
-                            </div>
-
-                            <p className={styles.dayDescription}>{dayPlan.description}</p>
-
-                            {dayPlan.highlights && dayPlan.highlights.length > 0 && (
-                              <div className={styles.dayHighlightsPills}>
-                                {dayPlan.highlights.map((h, i) => (
-                                  <span key={i} className={styles.dayHighlightPill}>
-                                    ✓ {h}
-                                  </span>
-                                ))}
-                              </div>
-                            )}
-                          </div>
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
-
-            {/* TAB 3: INCLUSIONS & EXCLUSIONS */}
-            {activeTab === 'inclusions' && (
-              <div className={styles.tabContent}>
+              {/* Social Proof & Traveler Feedback Teaser */}
+              {reviews.length > 0 && (
                 <section className={styles.sectionBlock}>
-                  <h3 className={styles.blockTitle}>What&apos;s Included</h3>
-                  <ul className={styles.inclusionsList}>
-                    {pkg.inclusions.map((inc, i) => (
-                      <li key={i} className={styles.inclusionItem}>
-                        <span className={styles.checkIcon}>✓</span>
-                        <span>{inc}</span>
-                      </li>
+                  <div className={styles.reviewsOverviewHeader}>
+                    <div>
+                      <h3 className={styles.blockTitle}>Traveler Feedback &amp; Stories</h3>
+                      <p className={styles.overviewSubtext}>
+                        ★ {pkg.rating_avg.toFixed(1)} out of 5.0 • Rated by {pkg.review_count}{' '}
+                        verified Indian travelers
+                      </p>
+                    </div>
+                    <a
+                      href="#reviews"
+                      className={styles.viewAllReviewsBtn}
+                      onClick={(e) => handleAnchorClick(e, 'reviews')}
+                    >
+                      View All {reviews.length} Reviews →
+                    </a>
+                  </div>
+
+                  <div className={styles.overviewReviewsGrid}>
+                    {reviews.slice(0, 2).map((r) => (
+                      <div key={r.id} className={styles.overviewReviewCard}>
+                        <div className={styles.overviewReviewStars}>{'★'.repeat(r.rating)}</div>
+                        <p className={styles.overviewReviewQuote}>&ldquo;{r.comment}&rdquo;</p>
+                        <div className={styles.overviewReviewAuthor}>
+                          <strong>{r.traveler_name}</strong>
+                          <span>{r.trip_label || 'Verified Traveler'}</span>
+                        </div>
+                      </div>
                     ))}
-                  </ul>
+                  </div>
                 </section>
+              )}
+            </div>
 
-                <section className={styles.sectionBlock}>
-                  <h3 className={styles.blockTitle}>What&apos;s Excluded</h3>
-                  <ul className={styles.exclusionsList}>
-                    <li className={styles.exclusionItem}>
-                      <span className={styles.crossIcon}>✕</span>
-                      <span>Airfare / Train tickets to arrival and departure hubs</span>
-                    </li>
-                    <li className={styles.exclusionItem}>
-                      <span className={styles.crossIcon}>✕</span>
-                      <span>
-                        Personal laundry, telephone calls, room service, alcoholic beverages
-                      </span>
-                    </li>
-                    <li className={styles.exclusionItem}>
-                      <span className={styles.crossIcon}>✕</span>
-                      <span>
-                        Optional adventure activities (e.g. Scuba diving, Paragliding, Pony rides)
-                      </span>
-                    </li>
-                    <li className={styles.exclusionItem}>
-                      <span className={styles.crossIcon}>✕</span>
-                      <span>
-                        Any expenses arising due to natural calamities or flight cancellations
-                      </span>
-                    </li>
-                  </ul>
-                </section>
-              </div>
-            )}
+            {/* SECTION 2: DAY-BY-DAY ITINERARY ACCORDION & ROUTE VISUAL */}
+            <div id="itinerary" className={styles.tabContent}>
+              <ItineraryRouteVisual
+                itinerary={pkg.itinerary}
+                openDays={openDays}
+                onToggleDay={toggleDay}
+                onToggleAllDays={handleToggleAllDays}
+              />
 
-            {/* TAB 4: REVIEWS & TESTIMONIALS */}
-            {activeTab === 'reviews' && (
-              <div className={styles.tabContent}>
-                <ReviewScoreCard
-                  ratingAvg={pkg.rating_avg}
-                  reviewCount={pkg.review_count}
-                  onWriteReviewClick={() => setIsReviewModalOpen(true)}
-                  selectedStarFilter={selectedStarFilter}
-                  onSelectStarFilter={(star) => setSelectedStarFilter(star)}
-                />
+              {/* Inclusions & Exclusions */}
+              <section className={styles.sectionBlock} style={{ marginTop: '40px' }}>
+                <h3 className={styles.blockTitle}>What&apos;s Included</h3>
+                <ul className={styles.inclusionsList}>
+                  {pkg.inclusions.map((inc, i) => (
+                    <li key={i} className={styles.inclusionItem}>
+                      <span className={styles.checkIcon}>✓</span>
+                      <span>{inc}</span>
+                    </li>
+                  ))}
+                </ul>
+              </section>
 
-                <ReviewList
-                  reviews={reviews}
-                  packageTitle={pkg.title}
-                  selectedStarFilter={selectedStarFilter}
-                  onClearStarFilter={() => setSelectedStarFilter(null)}
-                />
-              </div>
-            )}
+              <section className={styles.sectionBlock}>
+                <h3 className={styles.blockTitle}>What&apos;s Excluded</h3>
+                <ul className={styles.exclusionsList}>
+                  <li className={styles.exclusionItem}>
+                    <span className={styles.crossIcon}>✕</span>
+                    <span>Airfare / Train tickets to arrival and departure hubs</span>
+                  </li>
+                  <li className={styles.exclusionItem}>
+                    <span className={styles.crossIcon}>✕</span>
+                    <span>
+                      Personal laundry, telephone calls, room service, alcoholic beverages
+                    </span>
+                  </li>
+                  <li className={styles.exclusionItem}>
+                    <span className={styles.crossIcon}>✕</span>
+                    <span>
+                      Optional adventure activities (e.g. Scuba diving, Paragliding, Pony rides)
+                    </span>
+                  </li>
+                  <li className={styles.exclusionItem}>
+                    <span className={styles.crossIcon}>✕</span>
+                    <span>
+                      Any expenses arising due to natural calamities or flight cancellations
+                    </span>
+                  </li>
+                </ul>
+              </section>
+            </div>
 
-            {/* FULL CALLBACK FORM ON DETAIL PAGE */}
-            <div className={styles.embeddedFormSection}>
+            {/* SECTION 3: REVIEWS & TESTIMONIALS */}
+            <div id="reviews" className={styles.tabContent}>
+              <ReviewScoreCard
+                ratingAvg={pkg.rating_avg}
+                reviewCount={pkg.review_count}
+                onWriteReviewClick={() => setIsReviewModalOpen(true)}
+                selectedStarFilter={selectedStarFilter}
+                onSelectStarFilter={(star) => setSelectedStarFilter(star)}
+              />
+
+              <ReviewList
+                reviews={reviews}
+                packageTitle={pkg.title}
+                selectedStarFilter={selectedStarFilter}
+                onClearStarFilter={() => setSelectedStarFilter(null)}
+              />
+            </div>
+
+            {/* SECTION 4: FULL CALLBACK FORM & INQUIRIES */}
+            <div id="inquiries" className={styles.embeddedFormSection}>
               <CallbackForm
                 packageId={pkg.id}
                 packageTitle={pkg.title}
@@ -498,7 +523,7 @@ export default function PackageDetailClient({ pkg, similarPackages, initialRevie
                 <button
                   type="button"
                   className={styles.bookingCtaBtn}
-                  onClick={() => setIsCallbackOpen(true)}
+                  onClick={(e) => handleAnchorClick(e as any, 'inquiries')}
                 >
                   Request Callback
                 </button>
@@ -547,8 +572,8 @@ export default function PackageDetailClient({ pkg, similarPackages, initialRevie
         </section>
       </div>
 
-      {/* 6. Mobile Sticky Bottom CTA Bar */}
-      <div className={styles.mobileBottomBar}>
+      {/* 6. Sticky Floating "Request Callback" Action Bar (Slides in after Hero leaves viewport) */}
+      <div ref={stickyCallbackRef} className={styles.stickyCallbackContainer}>
         <div className={styles.mobileBarPrice}>
           <span className={styles.mobileBarLabel}>From</span>
           <span className={styles.mobileBarAmount}>
@@ -558,8 +583,9 @@ export default function PackageDetailClient({ pkg, similarPackages, initialRevie
         </div>
         <button
           type="button"
-          className={styles.mobileBarBtn}
-          onClick={() => setIsCallbackOpen(true)}
+          className={styles.stickyCallbackBtn}
+          onClick={(e) => handleAnchorClick(e as any, 'inquiries')}
+          aria-label="Request callback for this tour package"
         >
           Request Callback
         </button>

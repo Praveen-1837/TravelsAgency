@@ -28,7 +28,10 @@ export const PackageCard: React.FC<PackageCardProps> = ({ pkg, variant = 'grid' 
 
   return (
     <>
-      <div className={`${styles.card} ${variant === 'horizontal' ? styles.horizontalCard : ''}`}>
+      <div
+        className={`${styles.card} ${variant === 'horizontal' ? styles.horizontalCard : ''}`}
+        data-flip-id={pkg.id}
+      >
         {/* Card Image with badges */}
         <div className={styles.imageContainer}>
           <Link href={`/packages/${pkg.slug}`} className={styles.imageLink}>

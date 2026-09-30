@@ -1003,3 +1003,76 @@
 .overviewReviewAuthor strong {
   color: var(--color-ink);
 }
+
+/* Sticky Tab Nav */
+.tabNavSticky {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  background-color: var(--color-bg);
+  padding-top: 12px;
+  padding-bottom: 4px;
+  border-bottom: 2px solid var(--color-line);
+}
+
+/* Floating Sticky Callback Action Bar */
+.stickyCallbackContainer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  background-color: rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(8px);
+  border-top: 1px solid var(--color-line);
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.12);
+  padding: 12px 18px;
+  padding-bottom: max(12px, env(safe-area-inset-bottom, 12px));
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+@media (min-width: 768px) {
+  .stickyCallbackContainer {
+    left: auto;
+    right: 28px;
+    bottom: 28px;
+    width: auto;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-line);
+    padding: 12px 20px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.16);
+  }
+}
+
+.stickyCallbackBtn {
+  background-color: var(--color-cta);
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 800;
+  min-height: 48px;
+  padding: 0 24px;
+  border-radius: var(--radius-md);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-cta);
+  transition: all var(--transition-fast);
+  cursor: pointer;
+  border: none;
+  width: 100%;
+}
+
+@media (min-width: 768px) {
+  .stickyCallbackBtn {
+    width: auto;
+  }
+}
+
+.stickyCallbackBtn:hover {
+  background-color: var(--color-cta-hover);
+  transform: translateY(-2px);
+}
+

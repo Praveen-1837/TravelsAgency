@@ -6,6 +6,7 @@ import Link from 'next/link';
 import styles from './ReviewCarousel.module.css';
 import { Review } from '@/lib/types';
 import { PhotoLightboxModal } from './PhotoLightboxModal';
+import { gsap, ScrollTrigger, useGSAP } from '@/lib/gsap';
 
 interface Props {
   reviews: Review[];
@@ -18,11 +19,41 @@ export const ReviewCarousel: React.FC<Props> = ({
   title = 'Verified Traveler Stories & Unforgettable Journeys',
   eyebrow = 'FROM OUR COMMUNITY',
 }) => {
+  const carouselSectionRef = useRef<HTMLDivElement>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [lightboxImg, setLightboxImg] = useState<string | null>(null);
   const [lightboxTraveler, setLightboxTraveler] = useState<string>('');
   const [lightboxTripLabel, setLightboxTripLabel] = useState<string | undefined>(undefined);
   const [lightboxPkgTitle, setLightboxPkgTitle] = useState<string | undefined>(undefined);
+
+  useGSAP(
+    () => {
+      const mm = gsap.matchMedia();
+
+      mm.add('(prefers-reduced-motion: no-preference)', () => {
+        const cards = carouselSectionRef.current?.querySelectorAll(`.${styles.storyCard}`);
+        if (!cards || cards.length === 0) return;
+
+        gsap.fromTo(
+          cards,
+          { opacity: 0, y: 24 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.5,
+            ease: 'power2.out',
+            stagger: 0.08,
+            scrollTrigger: {
+              trigger: carouselSectionRef.current,
+              start: 'top 85%',
+              toggleActions: 'play none none none',
+            },
+          }
+        );
+      });
+    },
+    { scope: carouselSectionRef }
+  );
 
   const scroll = (direction: 'left' | 'right') => {
     if (scrollContainerRef.current) {
@@ -55,7 +86,7 @@ export const ReviewCarousel: React.FC<Props> = ({
   };
 
   return (
-    <section className={styles.carouselSection} id="community-reviews">
+    <section ref={carouselSectionRef} className={styles.carouselSection} id="community-reviews">
       <div className="container">
         {/* Header Row */}
         <div className={styles.headerRow}>
