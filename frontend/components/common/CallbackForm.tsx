@@ -3,7 +3,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import styles from './CallbackForm.module.css';
 import { submitCallbackInquiry } from '@/lib/api';
-import { gsap, useGSAP, DrawSVGPlugin } from '@/lib/gsap';
+import { gsap, useGSAP, DrawSVGPlugin, CustomEase, CustomWiggle } from '@/lib/gsap';
 
 interface CallbackFormProps {
   packageId?: string | null;
@@ -35,8 +35,19 @@ export const CallbackForm: React.FC<CallbackFormProps> = ({
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [success, setSuccess] = useState(false);
 
+  // Field refs for CustomWiggle shake & accessibility focus
+  const nameRef = useRef<HTMLInputElement>(null);
+  const phoneRef = useRef<HTMLInputElement>(null);
+  const emailRef = useRef<HTMLInputElement>(null);
+  const travelFromRef = useRef<HTMLInputElement>(null);
+  const travelToRef = useRef<HTMLInputElement>(null);
+  const groupSizeRef = useRef<HTMLSelectElement>(null);
+  const specialRequestsRef = useRef<HTMLTextAreaElement>(null);
+
+  // Confirmation panel refs
   const panelRef = useRef<HTMLDivElement>(null);
   const circleRef = useRef<SVGCircleElement>(null);
   const checkRef = useRef<SVGPathElement>(null);
@@ -57,19 +68,17 @@ export const CallbackForm: React.FC<CallbackFormProps> = ({
       const isReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
       if (isReducedMotion) {
-        // Show finished checkmark without drawing animation
         if (circleRef.current) gsap.set(circleRef.current, { drawSVG: '100%' });
         if (checkRef.current) gsap.set(checkRef.current, { drawSVG: '100%' });
         if (textRef.current) gsap.set(textRef.current, { opacity: 1 });
       } else {
-        // Set initial hidden state in JS
         if (circleRef.current) gsap.set(circleRef.current, { drawSVG: '0%' });
         if (checkRef.current) gsap.set(checkRef.current, { drawSVG: '0%' });
         if (textRef.current) gsap.set(textRef.current, { opacity: 0 });
 
         const tl = gsap.timeline();
 
-        // 1. Circle draws itself (~0.4s)
+        // 1. Circle draws (~0.4s)
         tl.to(circleRef.current, {
           drawSVG: '100%',
           duration: 0.4,
@@ -95,16 +104,59 @@ export const CallbackForm: React.FC<CallbackFormProps> = ({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+    setFieldErrors({});
 
-    // Validate 10-digit Indian phone
-    const cleanPhone = phone.replace(/\D/g, '');
-    if (cleanPhone.length !== 10 || !['6', '7', '8', '9'].includes(cleanPhone[0])) {
-      setError('Please enter a valid 10-digit Indian mobile number starting with 6, 7, 8, or 9.');
-      return;
+    const newFieldErrors: Record<string, string> = {};
+    const invalidEls: HTMLElement[] = [];
+
+    // 1. Name validation
+    if (!name.trim()) {
+      newFieldErrors.name = 'Full name is required.';
+      if (nameRef.current) invalidEls.push(nameRef.current);
     }
 
+    // 2. Phone validation (10-digit Indian starting 6-9)
+    const cleanPhone = phone.replace(/\D/g, '');
+    if (cleanPhone.length !== 10 || !['6', '7', '8', '9'].includes(cleanPhone[0])) {
+      newFieldErrors.phone =
+        'Please enter a valid 10-digit Indian mobile number starting with 6, 7, 8, or 9.';
+      if (phoneRef.current) invalidEls.push(phoneRef.current);
+    }
+
+    // 3. Email validation (optional, check format if entered)
+    if (email.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
+      newFieldErrors.email = 'Please enter a valid email address.';
+      if (emailRef.current) invalidEls.push(emailRef.current);
+    }
+
+    // 4. Travel dates validation
     if (travelFrom && travelTo && travelTo < travelFrom) {
-      setError('Return date cannot be earlier than departure date.');
+      newFieldErrors.travelTo = 'Return date cannot be earlier than departure date.';
+      if (travelToRef.current) invalidEls.push(travelToRef.current);
+    }
+
+    // If validation fails
+    if (Object.keys(newFieldErrors).length > 0) {
+      setFieldErrors(newFieldErrors);
+      setError('Please correct the highlighted errors before submitting.');
+
+      // Shake each invalid field using CustomWiggle (wiggles: 6, easeOut, x: 6)
+      const isReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (!isReducedMotion && invalidEls.length > 0) {
+        gsap.killTweensOf(invalidEls);
+        gsap.to(invalidEls, {
+          x: 6,
+          duration: 0.5,
+          ease: 'invalidWiggle',
+          clearProps: 'x',
+        });
+      }
+
+      // Focus the FIRST invalid field
+      if (invalidEls.length > 0) {
+        invalidEls[0].focus();
+      }
+
       return;
     }
 
@@ -139,6 +191,7 @@ export const CallbackForm: React.FC<CallbackFormProps> = ({
     setTravelFrom('');
     setTravelTo('');
     setSpecialRequests('');
+    setFieldErrors({});
     setSuccess(false);
     setError(null);
   };
@@ -210,7 +263,7 @@ export const CallbackForm: React.FC<CallbackFormProps> = ({
 
       {error && <div className={styles.errorAlert}>{error}</div>}
 
-      <form onSubmit={handleSubmit} className={styles.form}>
+      <form onSubmit={handleSubmit} className={styles.form} noValidate>
         {/* Invisible honeypot field for bot detection */}
         <div className="sr-only" aria-hidden="true">
           <input
@@ -227,28 +280,51 @@ export const CallbackForm: React.FC<CallbackFormProps> = ({
           <div className={styles.field}>
             <label htmlFor="full-name">Full Name *</label>
             <input
+              ref={nameRef}
               id="full-name"
               type="text"
               required
               placeholder="e.g. Rahul Sharma"
               value={name}
-              onChange={(e) => setName(e.target.value)}
+              onChange={(e) => {
+                setName(e.target.value);
+                if (fieldErrors.name) setFieldErrors((prev) => ({ ...prev, name: '' }));
+              }}
+              className={fieldErrors.name ? styles.inputError : ''}
+              aria-invalid={!!fieldErrors.name}
+              aria-describedby={fieldErrors.name ? 'full-name-error' : undefined}
             />
+            {fieldErrors.name && (
+              <p id="full-name-error" className={styles.fieldErrorMsg} role="alert">
+                {fieldErrors.name}
+              </p>
+            )}
           </div>
 
           <div className={styles.field}>
             <label htmlFor="mobile-number">10-Digit Mobile Number *</label>
-            <div className={styles.phoneWrapper}>
+            <div className={`${styles.phoneWrapper} ${fieldErrors.phone ? styles.inputError : ''}`}>
               <span className={styles.prefix}>+91</span>
               <input
+                ref={phoneRef}
                 id="mobile-number"
                 type="tel"
                 required
                 placeholder="9876543210"
                 value={phone}
-                onChange={(e) => setPhone(e.target.value)}
+                onChange={(e) => {
+                  setPhone(e.target.value);
+                  if (fieldErrors.phone) setFieldErrors((prev) => ({ ...prev, phone: '' }));
+                }}
+                aria-invalid={!!fieldErrors.phone}
+                aria-describedby={fieldErrors.phone ? 'mobile-number-error' : undefined}
               />
             </div>
+            {fieldErrors.phone && (
+              <p id="mobile-number-error" className={styles.fieldErrorMsg} role="alert">
+                {fieldErrors.phone}
+              </p>
+            )}
           </div>
         </div>
 
@@ -256,17 +332,30 @@ export const CallbackForm: React.FC<CallbackFormProps> = ({
           <div className={styles.field}>
             <label htmlFor="email-address">Email Address (Optional)</label>
             <input
+              ref={emailRef}
               id="email-address"
               type="email"
               placeholder="rahul@example.com"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={(e) => {
+                setEmail(e.target.value);
+                if (fieldErrors.email) setFieldErrors((prev) => ({ ...prev, email: '' }));
+              }}
+              className={fieldErrors.email ? styles.inputError : ''}
+              aria-invalid={!!fieldErrors.email}
+              aria-describedby={fieldErrors.email ? 'email-address-error' : undefined}
             />
+            {fieldErrors.email && (
+              <p id="email-address-error" className={styles.fieldErrorMsg} role="alert">
+                {fieldErrors.email}
+              </p>
+            )}
           </div>
 
           <div className={styles.field}>
             <label htmlFor="group-size">Number of Travelers</label>
             <select
+              ref={groupSizeRef}
               id="group-size"
               value={groupSize}
               onChange={(e) => setGroupSize(Number(e.target.value))}
@@ -283,6 +372,7 @@ export const CallbackForm: React.FC<CallbackFormProps> = ({
           <div className={styles.field}>
             <label htmlFor="travel-from">Preferred Travel Date</label>
             <input
+              ref={travelFromRef}
               id="travel-from"
               type="date"
               value={travelFrom}
@@ -293,17 +383,30 @@ export const CallbackForm: React.FC<CallbackFormProps> = ({
           <div className={styles.field}>
             <label htmlFor="travel-to">Return Date (Optional)</label>
             <input
+              ref={travelToRef}
               id="travel-to"
               type="date"
               value={travelTo}
-              onChange={(e) => setTravelTo(e.target.value)}
+              onChange={(e) => {
+                setTravelTo(e.target.value);
+                if (fieldErrors.travelTo) setFieldErrors((prev) => ({ ...prev, travelTo: '' }));
+              }}
+              className={fieldErrors.travelTo ? styles.inputError : ''}
+              aria-invalid={!!fieldErrors.travelTo}
+              aria-describedby={fieldErrors.travelTo ? 'travel-to-error' : undefined}
             />
+            {fieldErrors.travelTo && (
+              <p id="travel-to-error" className={styles.fieldErrorMsg} role="alert">
+                {fieldErrors.travelTo}
+              </p>
+            )}
           </div>
         </div>
 
         <div className={styles.field}>
           <label htmlFor="special-requests">Special Customization &amp; Preferences</label>
           <textarea
+            ref={specialRequestsRef}
             id="special-requests"
             rows={3}
             placeholder="e.g. Need sea view resort, private candlelit dinner, high altitude permit assistance..."

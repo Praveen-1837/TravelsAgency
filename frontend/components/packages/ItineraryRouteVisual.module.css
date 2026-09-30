@@ -34,37 +34,23 @@
   color: #ffffff;
 }
 
-/* Timeline Layout: Left SVG Track + Right Cards */
+/* Timeline relative container */
 .timelineWrapper {
-  display: grid;
-  grid-template-columns: 44px 1fr;
-  gap: 16px;
-  position: relative;
-}
-
-@media (min-width: 768px) {
-  .timelineWrapper {
-    grid-template-columns: 56px 1fr;
-    gap: 24px;
-  }
-}
-
-/* SVG Track */
-.svgTrackContainer {
   position: relative;
   width: 100%;
-  height: 100%;
-  display: flex;
-  justify-content: center;
 }
 
-.timelineSvg {
-  width: 100%;
-  height: 100%;
+/* SVG Line in left rail */
+.lineSvg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  z-index: 1;
   overflow: visible;
 }
 
-.backgroundLine {
+.bgPath {
   stroke: #e0e3e5;
   stroke-width: 3px;
   stroke-dasharray: 6 6;
@@ -78,48 +64,109 @@
   fill: none;
 }
 
-.markerGroup {
-  transform-origin: center;
-  transition: transform 0.2s ease, opacity 0.2s ease;
-  cursor: pointer;
-}
-
-.markerOuterCircle {
-  fill: #ffffff;
-  stroke: #ff5722;
-  stroke-width: 3px;
-}
-
-.markerActiveCircle {
-  fill: #ff5722;
-}
-
-.markerText {
-  fill: #ffffff;
-  font-size: 11px;
-  font-weight: 800;
-  text-anchor: middle;
-  dominant-baseline: central;
-}
-
-/* Day Cards List */
-.cardsList {
+/* Day List & Day Rows */
+.dayList {
   display: flex;
   flex-direction: column;
   gap: 18px;
+  position: relative;
+  z-index: 2;
 }
 
+.dayRow {
+  position: relative;
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+@media (min-width: 768px) {
+  .dayRow {
+    gap: 24px;
+  }
+}
+
+/* Left Rail column placeholder inside dayRow */
+.leftRail {
+  position: relative;
+  width: 36px;
+  flex-shrink: 0;
+}
+
+@media (min-width: 768px) {
+  .leftRail {
+    width: 56px;
+  }
+}
+
+/* Real DOM Marker element placed absolutely in dayRow left rail */
+.markerDom {
+  position: absolute;
+  left: 50%;
+  top: 27px; /* Aligned with center of dayCardHeader title */
+  transform: translate(-50%, -50%) scale(1);
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background-color: #ffffff;
+  border: 2px solid #cbd5e1;
+  color: #64748b;
+  font-size: 11px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 3;
+  transition: border-color 0.25s ease, background-color 0.25s ease, color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
+  user-select: none;
+}
+
+@media (min-width: 768px) {
+  .markerDom {
+    width: 32px;
+    height: 32px;
+    font-size: 12px;
+  }
+}
+
+.markerText {
+  line-height: 1;
+  text-align: center;
+}
+
+/* Marker States toggled by ScrollTrigger via CSS classes */
+.isMarkerActive {
+  background-color: #ff5722 !important;
+  border-color: #ff5722 !important;
+  color: #ffffff !important;
+  transform: translate(-50%, -50%) scale(1.18) !important;
+  box-shadow: 0 0 14px rgba(255, 87, 34, 0.45) !important;
+}
+
+.isMarkerDone {
+  background-color: #ff5722 !important;
+  border-color: #ff5722 !important;
+  color: #ffffff !important;
+  transform: translate(-50%, -50%) scale(1) !important;
+  box-shadow: none !important;
+}
+
+/* Day Card List & Cards */
 .itineraryDayCard {
+  flex: 1;
   background-color: var(--color-surface);
   border: 1px solid var(--color-line);
   border-radius: var(--radius-lg);
   overflow: hidden;
-  transition: all var(--transition-normal);
+  transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease, opacity 0.25s ease;
+  will-change: transform, border-color, box-shadow;
 }
 
-.itineraryDayCardActive {
+.isCardActive {
   border-color: #ff5722 !important;
-  box-shadow: 0 4px 18px rgba(255, 87, 34, 0.16) !important;
+  box-shadow: 0 6px 20px rgba(255, 87, 34, 0.18) !important;
+  transform: translateY(-2px) !important;
 }
 
 .dayCardHeader {
@@ -130,6 +177,7 @@
   cursor: pointer;
   user-select: none;
   background-color: #ffffff;
+  min-height: 54px;
 }
 
 .dayCardHeader:hover {
@@ -158,6 +206,7 @@
   font-weight: 700;
   color: var(--color-ink);
   line-height: 1.3;
+  margin: 0;
 }
 
 .chevron {
@@ -208,3 +257,13 @@
   padding: 4px 10px;
   border-radius: var(--radius-sm);
 }
+
+/* Temporary DEBUG flag styling */
+.debugMarker {
+  outline: 1px dashed red;
+}
+
+.debugCard {
+  outline: 1px dashed blue;
+}
+

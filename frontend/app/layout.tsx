@@ -82,6 +82,8 @@ export const metadata: Metadata = {
   },
 };
 
+import { CountryProvider } from '@/context/CountryContext';
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -136,10 +138,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
-        <Header />
-        <main style={{ flex: 1 }}>{children}</main>
-        <Footer />
+        <CountryProvider>
+          <Header />
+          <main style={{ flex: 1 }}>{children}</main>
+          <Footer />
+        </CountryProvider>
       </body>
     </html>
   );
 }
+

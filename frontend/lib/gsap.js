@@ -23,6 +23,9 @@ if (typeof window !== 'undefined') {
     CustomEase,
     CustomWiggle
   );
+
+  // Register wiggle ease once at module level for form validation feedback
+  CustomWiggle.create('invalidWiggle', { wiggles: 6, type: 'easeOut' });
 }
 
 /**
@@ -53,4 +56,14 @@ export function usePrefersReducedMotion() {
   return prefersReducedMotion;
 }
 
-export { gsap, useGSAP, ScrollTrigger, ScrollToPlugin, Flip, SplitText, DrawSVGPlugin };
+export {
+  gsap,
+  useGSAP,
+  ScrollTrigger,
+  ScrollToPlugin,
+  Flip,
+  SplitText,
+  DrawSVGPlugin,
+  CustomEase,
+  CustomWiggle,
+};

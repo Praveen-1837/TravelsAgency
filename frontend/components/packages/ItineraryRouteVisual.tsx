@@ -1,15 +1,27 @@
 'use client';
 
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect, useCallback } from 'react';
 import styles from './ItineraryRouteVisual.module.css';
 import { ItineraryDay } from '@/lib/types';
-import { gsap, ScrollTrigger, DrawSVGPlugin, useGSAP } from '@/lib/gsap';
+import { gsap, ScrollTrigger, useGSAP } from '@/lib/gsap';
+
+const DEBUG = false;
 
 interface ItineraryRouteVisualProps {
   itinerary: ItineraryDay[];
   openDays: number[];
   onToggleDay: (dayNum: number) => void;
   onToggleAllDays: () => void;
+}
+
+interface PathMetrics {
+  startX: number;
+  startY: number;
+  endY: number;
+  lastMarkerToBottom: number;
+  measuredHeight: number;
+  railWidth: number;
+  pathD: string;
 }
 
 export const ItineraryRouteVisual: React.FC<ItineraryRouteVisualProps> = ({
@@ -19,129 +31,232 @@ export const ItineraryRouteVisual: React.FC<ItineraryRouteVisualProps> = ({
   onToggleAllDays,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const pathRef = useRef<SVGPathElement>(null);
-  const [markerYPositions, setMarkerYPositions] = useState<number[]>([]);
-  const [svgHeight, setSvgHeight] = useState<number>(600);
+  const timelineWrapperRef = useRef<HTMLDivElement>(null);
+  const activePathRef = useRef<SVGPathElement>(null);
 
-  // Measure card Y positions to position SVG markers accurately aligned with each day card
-  useEffect(() => {
-    const updatePositions = () => {
-      const container = containerRef.current;
-      if (!container) return;
+  const markerRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
 
-      const cards = container.querySelectorAll<HTMLElement>(`.${styles.itineraryDayCard}`);
-      if (!cards || cards.length === 0) return;
+  const [metrics, setMetrics] = useState<PathMetrics>({
+    startX: 28,
+    startY: 27,
+    endY: 300,
+    lastMarkerToBottom: 40,
+    measuredHeight: 400,
+    railWidth: 56,
+    pathD: '',
+  });
 
-      const containerRect = container.getBoundingClientRect();
-      const positions: number[] = [];
+  const getActiveY = useCallback(() => {
+    if (typeof window === 'undefined') return 300;
+    const isMobile = window.innerWidth < 768;
+    return isMobile ? Math.round(window.innerHeight * 0.4) : Math.round(window.innerHeight * 0.5);
+  }, []);
 
-      cards.forEach((card) => {
-        const cardRect = card.getBoundingClientRect();
-        // Calculate center Y of header relative to SVG container top
-        const relativeY = cardRect.top - containerRect.top + 28;
-        positions.push(relativeY);
-      });
+  const measureAndBuildPath = useCallback(() => {
+    if (!timelineWrapperRef.current) return;
 
-      setMarkerYPositions(positions);
-      const totalH = cards[cards.length - 1].getBoundingClientRect().bottom - containerRect.top;
-      setSvgHeight(Math.max(totalH, 400));
-    };
+    const wrapperEl = timelineWrapperRef.current;
+    const wrapperRect = wrapperEl.getBoundingClientRect();
 
-    updatePositions();
+    const validMarkers = markerRefs.current.filter((m): m is HTMLDivElement => m !== null);
+    if (validMarkers.length === 0) return;
 
-    // Re-measure when window resizes or accordion days open/close
-    window.addEventListener('resize', updatePositions);
-    const timeout = setTimeout(updatePositions, 150);
+    const firstMarker = validMarkers[0];
+    const lastMarker = validMarkers[validMarkers.length - 1];
 
-    return () => {
-      window.removeEventListener('resize', updatePositions);
-      clearTimeout(timeout);
-    };
-  }, [itinerary, openDays]);
+    const firstRect = firstMarker.getBoundingClientRect();
+    const lastRect = lastMarker.getBoundingClientRect();
 
-  // Construct SVG Path string connecting all marker Y positions
-  const pathD = React.useMemo(() => {
-    if (markerYPositions.length === 0) return 'M 24 20 L 24 600';
-    const startY = markerYPositions[0];
-    const endY = markerYPositions[markerYPositions.length - 1];
-    return `M 24 ${startY} L 24 ${endY}`;
-  }, [markerYPositions]);
+    const isMobile = window.innerWidth < 768;
+    const railWidth = isMobile ? 36 : 56;
 
-  // GSAP ScrollTrigger Scrub + DrawSVGPlugin animation
+    const startX = (firstRect.left + firstRect.right) / 2 - wrapperRect.left;
+    const startY = (firstRect.top + firstRect.bottom) / 2 - wrapperRect.top;
+    const endY = (lastRect.top + lastRect.bottom) / 2 - wrapperRect.top;
+    const totalHeight = Math.max(wrapperRect.height, endY + 20);
+
+    const pathString = `M ${startX.toFixed(1)} ${startY.toFixed(1)} L ${startX.toFixed(1)} ${endY.toFixed(1)}`;
+
+    setMetrics({
+      startX,
+      startY,
+      endY,
+      lastMarkerToBottom: totalHeight - endY,
+      measuredHeight: totalHeight,
+      railWidth,
+      pathD: pathString,
+    });
+  }, []);
+
+  // Set up GSAP DrawSVG scrub line and per-marker ScrollTriggers using ONE ACTIVE_Y
   useGSAP(
     () => {
-      if (!pathRef.current || markerYPositions.length === 0) return;
+      if (!timelineWrapperRef.current || !activePathRef.current || !metrics.pathD) return;
 
       const isReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const activeY = getActiveY();
 
       if (isReducedMotion) {
-        // Show full path and all markers statically for reduced motion
-        gsap.set(pathRef.current, { drawSVG: '100%' });
-        gsap.set('.route-marker-node', { scale: 1, opacity: 1 });
-      } else {
-        // Initial hidden state set in JS
-        gsap.set(pathRef.current, { drawSVG: '0%' });
-        gsap.set('.route-marker-node', { scale: 0.6, opacity: 0.4 });
+        gsap.set(activePathRef.current, { drawSVG: '100%' });
+        markerRefs.current.forEach((m) => {
+          if (m) {
+            m.classList.add(styles.isMarkerDone);
+            m.classList.remove(styles.isMarkerActive);
+          }
+        });
+        cardRefs.current.forEach((c) => {
+          c?.classList.remove(styles.isCardActive);
+        });
+        return;
+      }
 
-        // ScrollTrigger timeline scrubbed to user scroll
-        const tl = gsap.timeline({
-          scrollTrigger: {
-            trigger: containerRef.current,
-            start: 'top 70%',
-            end: 'bottom 70%',
-            scrub: 0.5,
-          },
+      // Initial SVG line state
+      gsap.set(activePathRef.current, { drawSVG: '0%' });
+
+      // Single ScrollTrigger scrub line
+      const lineTrigger = ScrollTrigger.create({
+        trigger: timelineWrapperRef.current,
+        start: () => `top+=${metrics.startY} ${activeY}px`,
+        end: () => `bottom-=${metrics.lastMarkerToBottom} ${activeY}px`,
+        scrub: true,
+        invalidateOnRefresh: true,
+        animation: gsap.fromTo(
+          activePathRef.current,
+          { drawSVG: '0%' },
+          { drawSVG: '100%', ease: 'none' }
+        ),
+      });
+
+      // Synchronize active and done states for markers & cards at ACTIVE_Y
+      const updateActiveStates = () => {
+        const currentActiveY = getActiveY();
+        let activeIndex = -1;
+
+        markerRefs.current.forEach((markerEl, idx) => {
+          if (!markerEl) return;
+          const rect = markerEl.getBoundingClientRect();
+          const centerY = rect.top + rect.height / 2;
+          if (centerY <= currentActiveY) {
+            activeIndex = idx;
+          }
         });
 
-        // 1. Progressively draw the #FF5722 path
-        tl.fromTo(
-          pathRef.current,
-          { drawSVG: '0%' },
-          { drawSVG: '100%', ease: 'none', duration: 1 }
-        );
+        markerRefs.current.forEach((m, idx) => {
+          const c = cardRefs.current[idx];
+          if (!m) return;
 
-        // 2. Pop each marker node and highlight corresponding day card when line reaches it
-        const markers = containerRef.current?.querySelectorAll('.route-marker-node');
-        const cards = containerRef.current?.querySelectorAll(`.${styles.itineraryDayCard}`);
+          if (idx === activeIndex) {
+            m.classList.add(styles.isMarkerActive);
+            m.classList.remove(styles.isMarkerDone);
+            c?.classList.add(styles.isCardActive);
+          } else if (idx < activeIndex) {
+            m.classList.remove(styles.isMarkerActive);
+            m.classList.add(styles.isMarkerDone);
+            c?.classList.remove(styles.isCardActive);
+          } else {
+            m.classList.remove(styles.isMarkerActive);
+            m.classList.remove(styles.isMarkerDone);
+            c?.classList.remove(styles.isCardActive);
+          }
+        });
+      };
 
-        if (markers && markers.length > 0) {
-          markers.forEach((marker, idx) => {
-            const card = cards?.[idx];
-            const progress = idx / (markers.length - 1 || 1);
+      // Individual marker/card triggers using the exact same ACTIVE_Y reference line
+      const markerTriggers: ScrollTrigger[] = [];
 
-            // Pop marker node
-            tl.to(
-              marker,
-              {
-                scale: 1,
-                opacity: 1,
-                duration: 0.1,
-                ease: 'back.out(1.7)',
-              },
-              progress * 0.95
-            );
+      markerRefs.current.forEach((markerEl, idx) => {
+        if (!markerEl) return;
+        const nextMarker = markerRefs.current[idx + 1];
 
-            // Highlight day card
-            if (card) {
-              tl.to(
-                card,
-                {
-                  borderColor: '#FF5722',
-                  boxShadow: '0 4px 18px rgba(255, 87, 34, 0.18)',
-                  duration: 0.1,
-                },
-                progress * 0.95
-              );
-            }
-          });
-        }
-      }
+        const st = ScrollTrigger.create({
+          trigger: markerEl,
+          start: () => `top ${activeY}px`,
+          end: () => (nextMarker ? `top ${activeY}px` : `bottom ${activeY}px`),
+          endTrigger: nextMarker || timelineWrapperRef.current,
+          invalidateOnRefresh: true,
+          onToggle: updateActiveStates,
+          onRefresh: updateActiveStates,
+        });
+        markerTriggers.push(st);
+      });
+
+      updateActiveStates();
+
+      return () => {
+        lineTrigger.kill();
+        markerTriggers.forEach((st) => st.kill());
+      };
     },
-    { scope: containerRef, dependencies: [markerYPositions, itinerary] }
+    { scope: containerRef, dependencies: [metrics, itinerary] }
   );
+
+  // Measure and re-refresh on resize, fonts, images, tab mount, and accordion toggle
+  useEffect(() => {
+    measureAndBuildPath();
+
+    const handleRefresh = () => {
+      measureAndBuildPath();
+      ScrollTrigger.refresh();
+    };
+
+    // 1. ResizeObserver for measuring relative container dimensions
+    let observer: ResizeObserver | null = null;
+    if (timelineWrapperRef.current) {
+      observer = new ResizeObserver(() => {
+        handleRefresh();
+      });
+      observer.observe(timelineWrapperRef.current);
+    }
+
+    // 2. Window resize event
+    window.addEventListener('resize', handleRefresh);
+
+    // 3. Fonts ready event
+    if (typeof document !== 'undefined' && document.fonts) {
+      document.fonts.ready.then(handleRefresh);
+    }
+
+    // 4. Card image load event listeners
+    const imgs = timelineWrapperRef.current?.querySelectorAll('img');
+    imgs?.forEach((img) => img.addEventListener('load', handleRefresh));
+
+    return () => {
+      observer?.disconnect();
+      window.removeEventListener('resize', handleRefresh);
+      imgs?.forEach((img) => img.removeEventListener('load', handleRefresh));
+    };
+  }, [measureAndBuildPath, itinerary]);
+
+  // Recalculate and refresh when accordion days expand or collapse
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      measureAndBuildPath();
+      ScrollTrigger.refresh();
+    }, 60);
+    return () => clearTimeout(timer);
+  }, [openDays, measureAndBuildPath]);
+
+  const activeY = getActiveY();
 
   return (
     <div ref={containerRef} className={styles.itinerarySection}>
+      {/* Temporary Debug Line at ACTIVE_Y if DEBUG flag is enabled */}
+      {DEBUG && (
+        <div
+          style={{
+            position: 'fixed',
+            top: `${activeY}px`,
+            left: 0,
+            right: 0,
+            height: '1px',
+            backgroundColor: 'red',
+            zIndex: 99999,
+            pointerEvents: 'none',
+          }}
+        />
+      )}
+
       {/* Header with expand/collapse control */}
       <div className={styles.itineraryHeader}>
         <h3 className={styles.blockTitle}>Day-by-Day Itinerary &amp; Route Visual</h3>
@@ -151,87 +266,109 @@ export const ItineraryRouteVisual: React.FC<ItineraryRouteVisualProps> = ({
       </div>
 
       {/* Timeline Layout */}
-      <div className={styles.timelineWrapper}>
-        {/* Left Vertical SVG Route Axis */}
-        <div className={styles.svgTrackContainer}>
-          <svg className={styles.timelineSvg} style={{ height: `${svgHeight}px` }}>
-            {/* Background dashed guide line */}
-            <path d={pathD} className={styles.backgroundLine} />
+      <div ref={timelineWrapperRef} className={styles.timelineWrapper}>
+        {/* SVG Route Line in Left Rail */}
+        <svg
+          className={styles.lineSvg}
+          style={{
+            width: `${metrics.railWidth}px`,
+            height: `${metrics.measuredHeight}px`,
+          }}
+          viewBox={`0 0 ${metrics.railWidth} ${metrics.measuredHeight}`}
+        >
+          {metrics.pathD && (
+            <>
+              {/* Background guide line */}
+              <path
+                d={metrics.pathD}
+                className={styles.bgPath}
+                vectorEffect="non-scaling-stroke"
+              />
+              {/* Active #FF5722 line drawn by DrawSVG */}
+              <path
+                ref={activePathRef}
+                d={metrics.pathD}
+                className={styles.activePath}
+                vectorEffect="non-scaling-stroke"
+              />
+            </>
+          )}
+        </svg>
 
-            {/* Active progressive #FF5722 line drawn by DrawSVGPlugin */}
-            <path ref={pathRef} d={pathD} className={styles.activePath} />
-
-            {/* Marker Nodes for Day 1 to Day N */}
-            {itinerary.map((dayItem, idx) => {
-              const yPos = markerYPositions[idx] || 40 + idx * 80;
-              const isOpen = openDays.includes(dayItem.day);
-
-              return (
-                <g
-                  key={dayItem.day}
-                  className={`${styles.markerGroup} route-marker-node`}
-                  transform={`translate(24, ${yPos})`}
-                  onClick={() => onToggleDay(dayItem.day)}
-                  role="button"
-                  aria-label={`Toggle Day ${dayItem.day}`}
-                >
-                  <circle r="16" className={isOpen ? styles.markerActiveCircle : styles.markerOuterCircle} />
-                  <text className={styles.markerText}>{dayItem.day}</text>
-                </g>
-              );
-            })}
-          </svg>
-        </div>
-
-        {/* Right Day Cards List */}
-        <div className={styles.cardsList}>
-          {itinerary.map((dayPlan) => {
+        {/* Day Rows */}
+        <div className={styles.dayList}>
+          {itinerary.map((dayPlan, idx) => {
             const isOpen = openDays.includes(dayPlan.day);
             return (
-              <div
-                key={dayPlan.day}
-                className={`${styles.itineraryDayCard} ${
-                  isOpen ? styles.itineraryDayCardActive : ''
-                }`}
-              >
-                <div
-                  className={styles.dayCardHeader}
-                  onClick={() => onToggleDay(dayPlan.day)}
-                >
-                  <div className={styles.dayTitleGroup}>
-                    <span className={styles.dayBadge}>DAY {dayPlan.day}</span>
-                    <h4 className={styles.dayTitle}>{dayPlan.title}</h4>
+              <div key={dayPlan.day} className={styles.dayRow}>
+                {/* Fixed-width left rail containing real DOM marker */}
+                <div className={styles.leftRail}>
+                  <div
+                    ref={(el) => {
+                      markerRefs.current[idx] = el;
+                    }}
+                    className={`${styles.markerDom} ${DEBUG ? styles.debugMarker : ''}`}
+                    onClick={() => onToggleDay(dayPlan.day)}
+                    role="button"
+                    tabIndex={0}
+                    aria-label={`Day ${dayPlan.day} marker`}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        onToggleDay(dayPlan.day);
+                      }
+                    }}
+                  >
+                    <span className={styles.markerText}>{dayPlan.day}</span>
                   </div>
-                  <span className={styles.chevron}>{isOpen ? '▲' : '▼'}</span>
                 </div>
 
-                {isOpen && (
-                  <div className={styles.dayCardBody}>
-                    <div className={styles.dayMetaRow}>
-                      {dayPlan.stay && (
-                        <span className={styles.dayMetaChip}>🏨 Stay: {dayPlan.stay}</span>
-                      )}
-                      {dayPlan.meals && (
-                        <span className={styles.dayMetaChip}>🍽️ Meals: {dayPlan.meals}</span>
-                      )}
-                      {dayPlan.altitude && (
-                        <span className={styles.dayMetaChip}>⛰️ Altitude: {dayPlan.altitude}</span>
+                {/* Day Card */}
+                <div
+                  ref={(el) => {
+                    cardRefs.current[idx] = el;
+                  }}
+                  className={`${styles.itineraryDayCard} ${DEBUG ? styles.debugCard : ''}`}
+                >
+                  <div
+                    className={styles.dayCardHeader}
+                    onClick={() => onToggleDay(dayPlan.day)}
+                  >
+                    <div className={styles.dayTitleGroup}>
+                      <span className={styles.dayBadge}>DAY {dayPlan.day}</span>
+                      <h4 className={styles.dayTitle}>{dayPlan.title}</h4>
+                    </div>
+                    <span className={styles.chevron}>{isOpen ? '▲' : '▼'}</span>
+                  </div>
+
+                  {isOpen && (
+                    <div className={styles.dayCardBody}>
+                      <div className={styles.dayMetaRow}>
+                        {dayPlan.stay && (
+                          <span className={styles.dayMetaChip}>🏨 Stay: {dayPlan.stay}</span>
+                        )}
+                        {dayPlan.meals && (
+                          <span className={styles.dayMetaChip}>🍽️ Meals: {dayPlan.meals}</span>
+                        )}
+                        {dayPlan.altitude && (
+                          <span className={styles.dayMetaChip}>⛰️ Altitude: {dayPlan.altitude}</span>
+                        )}
+                      </div>
+
+                      <p className={styles.dayDescription}>{dayPlan.description}</p>
+
+                      {dayPlan.highlights && dayPlan.highlights.length > 0 && (
+                        <div className={styles.dayHighlightsPills}>
+                          {dayPlan.highlights.map((h: string, i: number) => (
+                            <span key={i} className={styles.dayHighlightPill}>
+                              ✓ {h}
+                            </span>
+                          ))}
+                        </div>
                       )}
                     </div>
-
-                    <p className={styles.dayDescription}>{dayPlan.description}</p>
-
-                    {dayPlan.highlights && dayPlan.highlights.length > 0 && (
-                      <div className={styles.dayHighlightsPills}>
-                        {dayPlan.highlights.map((h: string, i: number) => (
-                          <span key={i} className={styles.dayHighlightPill}>
-                            ✓ {h}
-                          </span>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                )}
+                  )}
+                </div>
               </div>
             );
           })}
@@ -240,3 +377,4 @@ export const ItineraryRouteVisual: React.FC<ItineraryRouteVisualProps> = ({
     </div>
   );
 };
+
