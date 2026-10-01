@@ -302,33 +302,6 @@
   color: var(--color-ink);
 }
 
-.sidebarHelp {
-  background-color: var(--color-surface-2);
-  padding: 16px;
-  border-radius: var(--radius-md);
-  margin-top: 12px;
-}
-
-.sidebarHelp h5 {
-  font-size: 13px;
-  font-weight: 700;
-  margin-bottom: 4px;
-}
-
-.sidebarHelp p {
-  font-size: 12px;
-  color: var(--color-slate);
-  line-height: 1.4;
-  margin-bottom: 10px;
-}
-
-.sidebarCallLink {
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--color-cta-deep);
-  display: inline-block;
-}
-
 /* Results Area */
 .resultsArea {
   display: flex;

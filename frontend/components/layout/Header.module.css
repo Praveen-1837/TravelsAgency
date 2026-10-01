@@ -7,64 +7,6 @@
   border-bottom: 1px solid var(--color-line, #e2e8f0);
 }
 
-/* Top utility bar */
-.topBar {
-  background-color: #0f172a;
-  color: #94a3b8;
-  font-size: 12px;
-  padding: 6px 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-.topBarContainer {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.promoItem {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  color: #cbd5e1;
-}
-
-.promoTag {
-  background-color: #ff5722;
-  color: #ffffff;
-  font-size: 10px;
-  font-weight: 800;
-  padding: 2px 6px;
-  border-radius: 4px;
-  letter-spacing: 0.04em;
-}
-
-.utilityActions {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-
-.currencyBadge {
-  color: #94a3b8;
-  font-weight: 600;
-}
-
-.whatsappLink,
-.helplineLink {
-  color: #cbd5e1;
-  text-decoration: none;
-  transition: color 0.15s ease;
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-
-.whatsappLink:hover,
-.helplineLink:hover {
-  color: #ffffff;
-}
-
 /* Main Navigation Bar */
 .mainNav {
   padding: 12px 0;
@@ -432,10 +374,6 @@
 
 /* Mobile responsive rules */
 @media (max-width: 639px) {
-  .topBar {
-    display: none;
-  }
-
   .desktopNav {
     display: none;
   }

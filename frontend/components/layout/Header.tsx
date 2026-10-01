@@ -165,32 +165,6 @@ export const Header: React.FC = () => {
 
   return (
     <header className={styles.header}>
-      {/* Top Utility Bar */}
-      <div className={styles.topBar}>
-        <div className={`container ${styles.topBarContainer}`}>
-          <div className={styles.promoItem}>
-            <span className={styles.promoTag}>SUMMER SPECIAL</span>
-            <span>Flat 20% OFF on Himalayan &amp; Island Expeditions</span>
-          </div>
-
-          <div className={styles.utilityActions}>
-            <span className={styles.currencyBadge}>
-              {selectedCountry.currency} ({selectedCountry.code})
-            </span>
-            <a
-              href="https://wa.me/919876543210?text=Hi%20Aariva%20Voyages,%20I%20would%20like%20to%20inquire%20about%20domestic%20tour%20packages."
-              target="_blank"
-              rel="noopener noreferrer"
-              className={styles.whatsappLink}
-            >
-              💬 WhatsApp
-            </a>
-            <a href="tel:+919876543210" className={styles.helplineLink}>
-              📞 Helpline: <strong>+91 98765 43210</strong>
-            </a>
-          </div>
-        </div>
-      </div>
 
       {/* Main Header Navigation Bar */}
       <div className={styles.mainNav}>
@@ -209,7 +183,7 @@ export const Header: React.FC = () => {
             </div>
             <div className={styles.brandText}>
               <span className={styles.brandTitle}>Aariva Voyages</span>
-              <span className={styles.brandSubtitle}>DOMESTIC TOURS &amp; EXPEDITIONS</span>
+              <span className={styles.brandSubtitle}>Curated Journeys,Timeless Memories</span>
             </div>
           </Link>
 
@@ -223,9 +197,8 @@ export const Header: React.FC = () => {
             </Link>
             <Link
               href="/packages"
-              className={`${styles.navLink} ${
-                pathname.startsWith('/packages') ? styles.activeNavLink : ''
-              }`}
+              className={`${styles.navLink} ${pathname.startsWith('/packages') ? styles.activeNavLink : ''
+                }`}
             >
               Packages
             </Link>
@@ -236,9 +209,8 @@ export const Header: React.FC = () => {
             {user && (
               <Link
                 href="/bookings"
-                className={`${styles.navLink} ${
-                  pathname.startsWith('/bookings') ? styles.activeNavLink : ''
-                }`}
+                className={`${styles.navLink} ${pathname.startsWith('/bookings') ? styles.activeNavLink : ''
+                  }`}
               >
                 My Bookings
               </Link>
@@ -281,9 +253,8 @@ export const Header: React.FC = () => {
                         key={c.code}
                         role="option"
                         aria-selected={isSelected}
-                        className={`${styles.countryOption} ${
-                          isSelected ? styles.countryOptionSelected : ''
-                        } ${isFocused ? styles.countryOptionFocused : ''}`}
+                        className={`${styles.countryOption} ${isSelected ? styles.countryOptionSelected : ''
+                          } ${isFocused ? styles.countryOptionFocused : ''}`}
                         onClick={() => {
                           setSelectedCountry(c);
                           setIsCountryOpen(false);
@@ -420,9 +391,8 @@ export const Header: React.FC = () => {
             </Link>
             <Link
               href="/packages"
-              className={`${styles.drawerLink} ${
-                pathname.startsWith('/packages') ? styles.drawerLinkActive : ''
-              }`}
+              className={`${styles.drawerLink} ${pathname.startsWith('/packages') ? styles.drawerLinkActive : ''
+                }`}
               onClick={() => setIsDrawerOpen(false)}
             >
               Packages
@@ -437,9 +407,8 @@ export const Header: React.FC = () => {
             {user && (
               <Link
                 href="/bookings"
-                className={`${styles.drawerLink} ${
-                  pathname.startsWith('/bookings') ? styles.drawerLinkActive : ''
-                }`}
+                className={`${styles.drawerLink} ${pathname.startsWith('/bookings') ? styles.drawerLinkActive : ''
+                  }`}
                 onClick={() => setIsDrawerOpen(false)}
               >
                 My Bookings
@@ -457,9 +426,8 @@ export const Header: React.FC = () => {
                   <button
                     key={c.code}
                     type="button"
-                    className={`${styles.drawerCountryItem} ${
-                      isSelected ? styles.drawerCountryItemSelected : ''
-                    }`}
+                    className={`${styles.drawerCountryItem} ${isSelected ? styles.drawerCountryItemSelected : ''
+                      }`}
                     onClick={() => {
                       setSelectedCountry(c);
                       setIsDrawerOpen(false);

@@ -1,147 +1,182 @@
 'use client';
 
-import React, { useRef } from 'react';
-import Link from 'next/link';
-import styles from '@/app/page.module.css';
-import { gsap, SplitText, useGSAP } from '@/lib/gsap';
+import React, { useState, useEffect, useRef } from 'react';
+import Image from 'next/image';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { DestinationIcons } from '@/components/icons/destinations';
+import styles from './AnimatedHeroContent.module.css';
 
-export const AnimatedHeroContent: React.FC = () => {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const titleRef = useRef<HTMLHeadingElement>(null);
+const TABS = [
+  { id: 'explore', label: 'Explore', trending: false },
+  { id: 'rajasthan', label: 'Rajasthan', trending: true },
+  { id: 'kerala', label: 'Kerala', trending: false },
+  { id: 'ladakh', label: 'Ladakh', trending: true },
+  { id: 'kashmir', label: 'Kashmir', trending: false },
+  { id: 'himachal', label: 'Himachal', trending: false },
+  { id: 'goa', label: 'Goa', trending: false },
+  { id: 'andaman', label: 'Andaman', trending: false },
+  { id: 'northeast', label: 'North East', trending: false },
+  { id: 'uttarakhand', label: 'Uttarakhand', trending: false },
+  { id: 'bali', label: 'Bali', trending: true },
+  { id: 'dubai', label: 'Dubai', trending: false },
+  { id: 'thailand', label: 'Thailand', trending: false },
+];
 
-  useGSAP(
-    () => {
-      const mm = gsap.matchMedia();
+const TILE_IMAGES = [
+  '/images/hero/tiles/kashmir-dal-lake.webp',
+  '/images/hero/tiles/kerala-backwaters.webp',
+  '/images/hero/tiles/rajasthan-fort.webp',
+  '/images/hero/tiles/ladakh.webp',
+  '/images/hero/tiles/himachal-snow.webp',
+  '/images/hero/tiles/goa-beach.webp',
+  '/images/hero/tiles/andaman-beach.webp',
+  '/images/hero/tiles/meghalaya-root-bridge.webp',
+  '/images/hero/tiles/uttarakhand-kedarnath.webp',
+  '/images/hero/tiles/taj-mahal.webp',
+  '/images/hero/tiles/varanasi-ghats.webp',
+  '/images/hero/tiles/bali-temple.webp',
+  '/images/hero/tiles/dubai-skyline.webp',
+  '/images/hero/tiles/munnar-tea-hills.webp',
+];
 
-      mm.add('(prefers-reduced-motion: no-preference)', () => {
-        // 1. SplitText animation for Hero Headline
-        if (titleRef.current) {
-          const split = new SplitText(titleRef.current, {
-            type: 'lines',
-            mask: 'lines',
-            linesClass: 'hero-split-line',
-            autoSplit: true,
-          });
-
-          gsap.fromTo(
-            split.lines,
-            { yPercent: 100, opacity: 0 },
-            {
-              yPercent: 0,
-              opacity: 1,
-              duration: 0.7,
-              stagger: 0.1,
-              ease: 'power2.out',
-            }
-          );
-        }
-
-        // 2. Entrance for Trust Pill, Subtitle, CTAs, and Popular Chips
-        // NOTE: The search bar (.searchWidget) and Hero background image are EXPLICITLY NOT ANIMATED.
-        gsap.fromTo(
-          '.gsap-hero-anim',
-          { opacity: 0, y: 16 },
-          {
-            opacity: 1,
-            y: 0,
-            duration: 0.6,
-            ease: 'power2.out',
-            stagger: 0.08,
-          }
-        );
-      });
-    },
-    { scope: containerRef }
-  );
-
+const FlipTile = ({ i, style }: { i: number, style?: React.CSSProperties }) => {
+  const front = TILE_IMAGES[i];
+  const back = TILE_IMAGES[(i + 7) % 14];
+  
   return (
-    <div ref={containerRef} className={`container ${styles.heroContent}`}>
-      {/* Trust Pill */}
-      <div className={`${styles.trustPill} gsap-hero-anim`}>
-        <span className={styles.pulseDot} />
-        <span>OVER 10,000+ CURATED INDIAN JOURNEYS CRAFTED</span>
-      </div>
-
-      {/* Hero Headline with SplitText and accessibility aria-label */}
-      <h1
-        ref={titleRef}
-        className={styles.heroTitle}
-        aria-label="Crafting Unforgettable Domestic Journeys"
-      >
-        Crafting Unforgettable <br />
-        <span className={styles.highlightText}>Domestic Journeys</span>
-      </h1>
-
-      <p className={`${styles.heroSubtitle} gsap-hero-anim`}>
-        From the misty valleys of Kanchenjunga to azure Andaman lagoons. Personalized domestic
-        tours across India with transparent quotes and 24x7 trip marshals.
-      </p>
-
-      {/* Quick CTA Actions */}
-      <div className={`${styles.heroActions} gsap-hero-anim`}>
-        <Link href="/packages" className={styles.primaryCtaBtn}>
-          Explore All Packages
-        </Link>
-        <a href="#honeymoon" className={styles.secondaryCtaBtn}>
-          Honeymoon Specials
-        </a>
-        <a href="#family" className={styles.secondaryCtaBtn}>
-          Family &amp; Group Trips
-        </a>
-      </div>
-
-      {/* Tabbed Search Bar (EXPLICITLY NOT ANIMATED per requirements) */}
-      <div className={styles.searchWidget}>
-        <div className={styles.searchFields}>
-          <div className={styles.searchField}>
-            <span className={styles.searchLabel}>WHERE TO?</span>
-            <input
-              type="text"
-              placeholder="e.g. Sikkim, Andaman, Kashmir..."
-              className={styles.searchInput}
-              readOnly
-            />
-          </div>
-
-          <div className={styles.searchDivider} />
-
-          <div className={styles.searchField}>
-            <span className={styles.searchLabel}>TRAVEL STYLE</span>
-            <div className={styles.searchSelectSimulated}>Honeymoon / Group / Family</div>
-          </div>
-
-          <div className={styles.searchDivider} />
-
-          <div className={styles.searchField}>
-            <span className={styles.searchLabel}>BUDGET</span>
-            <div className={styles.searchSelectSimulated}>From ₹11,300 / person</div>
-          </div>
+    <div className={styles.tile} style={style} aria-hidden="true">
+      <div className={styles.tileInner}>
+        <div className={styles.tileFront}>
+           <Image src={front} alt="" fill sizes="110px" loading="lazy" />
         </div>
-
-        <Link href="/packages" className={styles.searchSubmitBtn}>
-          Search Packages
-        </Link>
-      </div>
-
-      {/* Popular Destination Chips */}
-      <div className={`${styles.popularChips} gsap-hero-anim`}>
-        <span className={styles.popularLabel}>POPULAR:</span>
-        <Link href="/packages/sikkim-darjeeling" className={styles.popularChip}>
-          Sikkim-Darjeeling
-        </Link>
-        <Link href="/packages/andaman-4n-5d" className={styles.popularChip}>
-          Andaman Islands
-        </Link>
-        <Link href="/packages/kashmir-couple-special" className={styles.popularChip}>
-          Kashmir Couple
-        </Link>
-        <Link href="/packages/lakshadweep" className={styles.popularChip}>
-          Lakshadweep
-        </Link>
-        <Link href="/packages/assam-meghalaya" className={styles.popularChip}>
-          Assam-Meghalaya
-        </Link>
+        <div className={styles.tileBack}>
+           <Image src={back} alt="" fill sizes="110px" loading="eager" />
+        </div>
       </div>
     </div>
+  );
+};
+
+export const AnimatedHeroContent: React.FC = () => {
+  const [activeTab, setActiveTab] = useState('explore');
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [showLeftArrow, setShowLeftArrow] = useState(false);
+  const [showRightArrow, setShowRightArrow] = useState(true);
+
+  const handleScroll = () => {
+    if (scrollRef.current) {
+      const { scrollLeft, scrollWidth, clientWidth } = scrollRef.current;
+      setShowLeftArrow(scrollLeft > 10);
+      setShowRightArrow(Math.ceil(scrollLeft + clientWidth) < scrollWidth - 10);
+    }
+  };
+
+  const scrollBy = (direction: 'left' | 'right') => {
+    if (scrollRef.current) {
+      const { clientWidth } = scrollRef.current;
+      scrollRef.current.scrollBy({
+        left: direction === 'left' ? -(clientWidth * 0.7) : (clientWidth * 0.7),
+        behavior: 'smooth'
+      });
+    }
+  };
+
+  useEffect(() => {
+    handleScroll();
+    window.addEventListener('resize', handleScroll);
+    return () => window.removeEventListener('resize', handleScroll);
+  }, []);
+
+  return (
+    <section className={styles.heroContainer}>
+      <div className={`${styles.tilesWrapper} ${styles.tilesLeft}`}>
+        <div className={`${styles.tileRow} ${styles.rowBottom}`}>
+          <FlipTile i={0} style={{ width: 96, height: 107, marginLeft: -27 }} />
+          <FlipTile i={1} style={{ width: 86, height: 86 }} />
+          <FlipTile i={2} style={{ width: 64, height: 64 }} />
+        </div>
+        <div className={`${styles.tileRow} ${styles.rowTop}`}>
+          <FlipTile i={3} style={{ width: 107, height: 107, marginLeft: -92 }} />
+          <FlipTile i={4} style={{ width: 86, height: 86 }} />
+          <FlipTile i={5} style={{ width: 75, height: 75 }} />
+          <FlipTile i={6} style={{ width: 64, height: 64 }} />
+        </div>
+      </div>
+      
+      <div className={styles.centerColumn}>
+         <h1 className={styles.headline}>
+           Curated Journey, <span className={styles.highlight}>Timeless Memories</span>
+         </h1>
+         <p className={styles.subtitle}>Explore expertly curated multi-day tours across India</p>
+      </div>
+
+      <div className={`${styles.tilesWrapper} ${styles.tilesRight}`}>
+        <div className={`${styles.tileRow} ${styles.rowBottom}`}>
+          <FlipTile i={7} style={{ width: 64, height: 64 }} />
+          <FlipTile i={8} style={{ width: 76, height: 76 }} />
+          <FlipTile i={9} style={{ width: 86, height: 86 }} />
+          <FlipTile i={10} style={{ width: 107, height: 107, marginRight: -87 }} />
+        </div>
+        <div className={`${styles.tileRow} ${styles.rowTop}`}>
+          <FlipTile i={11} style={{ width: 75, height: 75 }} />
+          <FlipTile i={12} style={{ width: 86, height: 86 }} />
+          <FlipTile i={13} style={{ width: 107, height: 107, marginRight: -34 }} />
+        </div>
+      </div>
+
+      <div className={styles.tabStripWrapper}>
+         <div className={styles.tabStripContainer}>
+            {showLeftArrow && (
+              <div className={`${styles.scrollArrowWrapper} ${styles.scrollArrowLeft}`}>
+                <button 
+                  className={styles.scrollBtn} 
+                  onClick={() => scrollBy('left')} 
+                  aria-label="Scroll tabs left"
+                >
+                  <ChevronLeft size={20} strokeWidth={1.5} />
+                </button>
+              </div>
+            )}
+            
+            <div 
+              className={styles.tabScrollArea} 
+              ref={scrollRef} 
+              onScroll={handleScroll}
+              role="tablist"
+            >
+               {TABS.map(tab => {
+                 const Icon = DestinationIcons[tab.id];
+                 return (
+                   <button 
+                     key={tab.id}
+                     role="tab"
+                     aria-selected={activeTab === tab.id}
+                     className={`${styles.tabItem} ${activeTab === tab.id ? styles.active : ''}`}
+                     onClick={() => setActiveTab(tab.id)}
+                   >
+                     <div className={styles.iconWrapper}>
+                       {tab.trending && <span className={styles.trendingBadge}>Trending</span>}
+                       {Icon && <Icon size={28} />}
+                     </div>
+                     <span className={styles.tabLabel}>{tab.label}</span>
+                   </button>
+                 );
+               })}
+            </div>
+
+            {showRightArrow && (
+              <div className={`${styles.scrollArrowWrapper} ${styles.scrollArrowRight}`}>
+                <button 
+                  className={styles.scrollBtn} 
+                  onClick={() => scrollBy('right')} 
+                  aria-label="Scroll tabs right"
+                >
+                  <ChevronRight size={20} strokeWidth={1.5} />
+                </button>
+              </div>
+            )}
+         </div>
+      </div>
+    </section>
   );
 };

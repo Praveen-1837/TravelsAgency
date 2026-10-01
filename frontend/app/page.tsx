@@ -25,10 +25,7 @@ export default async function HomePage() {
   return (
     <div className={styles.homeContainer}>
       {/* 1. Hero Section matching Figma Frame (Hero image is LCP and NEVER animated) */}
-      <section className={styles.heroSection}>
-        <div className={styles.heroOverlay} />
-        <AnimatedHeroContent />
-      </section>
+      <AnimatedHeroContent />
 
       {/* 2. Flash Sale Promo Banner (per Figma) */}
       <Reveal className={styles.flashSaleBanner} triggerHook="top 85%">

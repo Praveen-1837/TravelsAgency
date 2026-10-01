@@ -415,14 +415,6 @@ function PackagesListingContent() {
               </div>
             </div>
 
-            {/* Help Callout */}
-            <div className={styles.sidebarHelp}>
-              <h5>Looking for something custom?</h5>
-              <p>Our travel marshals build tailor-made domestic itineraries at zero cost.</p>
-              <a href="tel:+919876543210" className={styles.sidebarCallLink}>
-                📞 Call +91 98765 43210
-              </a>
-            </div>
           </aside>
 
           {/* Results Column */}

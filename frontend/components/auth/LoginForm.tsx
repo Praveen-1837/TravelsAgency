@@ -103,9 +103,9 @@ export default function LoginForm() {
             </div>
             <div className={styles.quoteBox}>
               <p className={styles.quoteText}>
-                &ldquo;Seamless domestic trips across Sikkim, Meghalaya &amp; Andaman with zero hidden fees.&rdquo;
+                &ldquo;Curated journey, Timeless Memories&rdquo;
               </p>
-              <p className={styles.quoteAuthor}>— Over 4.9★ from 4,200+ Verified Travelers</p>
+              <p className={styles.quoteAuthor}>Trusted by 1M+ Travelers</p>
             </div>
           </div>
         </div>
