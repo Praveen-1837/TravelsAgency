@@ -1,26 +1,9 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React from 'react';
 import Image from 'next/image';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { DestinationIcons } from '@/components/icons/destinations';
+import { DestinationTabStrip } from './DestinationTabStrip';
 import styles from './AnimatedHeroContent.module.css';
-
-const TABS = [
-  { id: 'explore', label: 'Explore', trending: false },
-  { id: 'rajasthan', label: 'Rajasthan', trending: true },
-  { id: 'kerala', label: 'Kerala', trending: false },
-  { id: 'ladakh', label: 'Ladakh', trending: true },
-  { id: 'kashmir', label: 'Kashmir', trending: false },
-  { id: 'himachal', label: 'Himachal', trending: false },
-  { id: 'goa', label: 'Goa', trending: false },
-  { id: 'andaman', label: 'Andaman', trending: false },
-  { id: 'northeast', label: 'North East', trending: false },
-  { id: 'uttarakhand', label: 'Uttarakhand', trending: false },
-  { id: 'bali', label: 'Bali', trending: true },
-  { id: 'dubai', label: 'Dubai', trending: false },
-  { id: 'thailand', label: 'Thailand', trending: false },
-];
 
 const TILE_IMAGES = [
   '/images/hero/tiles/kashmir-dal-lake.webp',
@@ -58,35 +41,6 @@ const FlipTile = ({ i, style }: { i: number, style?: React.CSSProperties }) => {
 };
 
 export const AnimatedHeroContent: React.FC = () => {
-  const [activeTab, setActiveTab] = useState('explore');
-  const scrollRef = useRef<HTMLDivElement>(null);
-  const [showLeftArrow, setShowLeftArrow] = useState(false);
-  const [showRightArrow, setShowRightArrow] = useState(true);
-
-  const handleScroll = () => {
-    if (scrollRef.current) {
-      const { scrollLeft, scrollWidth, clientWidth } = scrollRef.current;
-      setShowLeftArrow(scrollLeft > 10);
-      setShowRightArrow(Math.ceil(scrollLeft + clientWidth) < scrollWidth - 10);
-    }
-  };
-
-  const scrollBy = (direction: 'left' | 'right') => {
-    if (scrollRef.current) {
-      const { clientWidth } = scrollRef.current;
-      scrollRef.current.scrollBy({
-        left: direction === 'left' ? -(clientWidth * 0.7) : (clientWidth * 0.7),
-        behavior: 'smooth'
-      });
-    }
-  };
-
-  useEffect(() => {
-    handleScroll();
-    window.addEventListener('resize', handleScroll);
-    return () => window.removeEventListener('resize', handleScroll);
-  }, []);
-
   return (
     <section className={styles.heroContainer}>
       <div className={`${styles.tilesWrapper} ${styles.tilesLeft}`}>
@@ -124,59 +78,7 @@ export const AnimatedHeroContent: React.FC = () => {
         </div>
       </div>
 
-      <div className={styles.tabStripWrapper}>
-         <div className={styles.tabStripContainer}>
-            {showLeftArrow && (
-              <div className={`${styles.scrollArrowWrapper} ${styles.scrollArrowLeft}`}>
-                <button 
-                  className={styles.scrollBtn} 
-                  onClick={() => scrollBy('left')} 
-                  aria-label="Scroll tabs left"
-                >
-                  <ChevronLeft size={20} strokeWidth={1.5} />
-                </button>
-              </div>
-            )}
-            
-            <div 
-              className={styles.tabScrollArea} 
-              ref={scrollRef} 
-              onScroll={handleScroll}
-              role="tablist"
-            >
-               {TABS.map(tab => {
-                 const Icon = DestinationIcons[tab.id];
-                 return (
-                   <button 
-                     key={tab.id}
-                     role="tab"
-                     aria-selected={activeTab === tab.id}
-                     className={`${styles.tabItem} ${activeTab === tab.id ? styles.active : ''}`}
-                     onClick={() => setActiveTab(tab.id)}
-                   >
-                     <div className={styles.iconWrapper}>
-                       {tab.trending && <span className={styles.trendingBadge}>Trending</span>}
-                       {Icon && <Icon size={28} />}
-                     </div>
-                     <span className={styles.tabLabel}>{tab.label}</span>
-                   </button>
-                 );
-               })}
-            </div>
-
-            {showRightArrow && (
-              <div className={`${styles.scrollArrowWrapper} ${styles.scrollArrowRight}`}>
-                <button 
-                  className={styles.scrollBtn} 
-                  onClick={() => scrollBy('right')} 
-                  aria-label="Scroll tabs right"
-                >
-                  <ChevronRight size={20} strokeWidth={1.5} />
-                </button>
-              </div>
-            )}
-         </div>
-      </div>
+      <DestinationTabStrip />
     </section>
   );
 };

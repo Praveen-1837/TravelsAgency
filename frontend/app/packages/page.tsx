@@ -9,14 +9,20 @@ import { LOCAL_SEED_PACKAGES } from '@/lib/seed-data';
 import { PackageCard } from '@/components/packages/PackageCard';
 import { gsap, Flip, useGSAP } from '@/lib/gsap';
 
-function PackagesListingContent() {
+export function PackagesListingContent({ 
+  destinationSlug, 
+  destinationName 
+}: { 
+  destinationSlug?: string; 
+  destinationName?: string;
+} = {}) {
   const searchParams = useSearchParams();
   const router = useRouter();
   const resultsContainerRef = useRef<HTMLDivElement>(null);
   const flipStateRef = useRef<any>(null);
 
   // Read URL params
-  const selectedDestination = searchParams.get('destination') || '';
+  const selectedDestination = destinationSlug || searchParams.get('destination') || '';
   const selectedAudience = searchParams.get('audience') || '';
   const sortBy = searchParams.get('sort') || 'popular';
 
@@ -187,8 +193,9 @@ function PackagesListingContent() {
           <Link href="/" className={styles.breadcrumbLink}>
             Home
           </Link>
-          <span className={styles.breadcrumbSep}>/</span>
-          <span className={styles.breadcrumbCurrent}>Domestic Packages</span>
+          <span className={styles.breadcrumbCurrent}>
+            {destinationName ? `${destinationName} Packages` : 'Domestic Packages'}
+          </span>
         </div>
       </div>
 
@@ -196,8 +203,12 @@ function PackagesListingContent() {
         {/* 2. Listing Title & Count Header */}
         <div className={styles.headerRow}>
           <div>
-            <span className={styles.eyebrow}>CURATED DOMESTIC ESCAPES</span>
-            <h1 className={styles.listingTitle}>India Holiday Packages &amp; Treks</h1>
+            <span className={styles.eyebrow}>
+              {destinationName ? `${destinationName.toUpperCase()} TOURS` : 'CURATED DOMESTIC ESCAPES'}
+            </span>
+            <h1 className={styles.listingTitle}>
+              {destinationName ? `Explore ${destinationName} Holiday Packages` : 'India Holiday Packages & Treks'}
+            </h1>
             <p className={styles.listingSubtitle}>
               Hand-picked itineraries across mountains, islands, and rainforests. Request a callback
               for instant customized quotes.
@@ -287,22 +298,24 @@ function PackagesListingContent() {
             </div>
 
             {/* Destination Filter */}
-            <div className={styles.filterSection}>
-              <h4 className={styles.filterSectionTitle}>Destination</h4>
-              <div className={styles.filterOptions}>
-                {destinations.map((d) => (
-                  <label key={d.value} className={styles.filterOption}>
-                    <input
-                      type="radio"
-                      name="destination"
-                      checked={selectedDestination === d.value}
-                      onChange={(e) => updateFilter('destination', d.value, e)}
-                    />
-                    <span>{d.label}</span>
-                  </label>
-                ))}
+            {!destinationSlug && (
+              <div className={styles.filterSection}>
+                <h4 className={styles.filterSectionTitle}>Destination</h4>
+                <div className={styles.filterOptions}>
+                  {destinations.map((d) => (
+                    <label key={d.value} className={styles.filterOption}>
+                      <input
+                        type="radio"
+                        name="destination"
+                        checked={selectedDestination === d.value}
+                        onChange={(e) => updateFilter('destination', d.value, e)}
+                      />
+                      <span>{d.label}</span>
+                    </label>
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
 
             {/* Travel Audience / Style Filter */}
             <div className={styles.filterSection}>

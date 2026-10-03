@@ -46,7 +46,7 @@ export default function BookingsPage() {
         return (
           <span
             style={{
-              backgroundColor: '#fff7ed',
+              backgroundColor: 'var(--surface-focus)',
               color: '#c2410c',
               padding: '4px 10px',
               borderRadius: '20px',
@@ -78,13 +78,13 @@ export default function BookingsPage() {
         return (
           <span
             style={{
-              backgroundColor: '#f8fafc',
-              color: '#64748b',
+              backgroundColor: 'var(--surface-base)',
+              color: 'var(--neutral-medium)',
               padding: '4px 10px',
               borderRadius: '20px',
               fontSize: '12px',
               fontWeight: 700,
-              border: '1px solid #e2e8f0',
+              border: '1px solid var(--neutral-light)',
             }}
           >
             ⚪ Closed
@@ -94,8 +94,8 @@ export default function BookingsPage() {
         return (
           <span
             style={{
-              backgroundColor: '#f1f5f9',
-              color: '#334155',
+              backgroundColor: 'var(--surface-focus)',
+              color: 'var(--neutral-medium)',
               padding: '4px 10px',
               borderRadius: '20px',
               fontSize: '12px',
@@ -112,7 +112,7 @@ export default function BookingsPage() {
     <div
       style={{
         minHeight: '80vh',
-        backgroundColor: '#f8fafc',
+        backgroundColor: 'var(--surface-base)',
         padding: '40px 16px',
         fontFamily: 'var(--font-sans)',
       }}
@@ -123,7 +123,7 @@ export default function BookingsPage() {
             style={{
               backgroundColor: '#ffffff',
               borderRadius: '12px',
-              border: '1px solid #e2e8f0',
+              border: '1px solid var(--neutral-light)',
               padding: '32px',
               boxShadow: '0 4px 16px rgba(0,0,0,0.03)',
             }}
@@ -134,22 +134,22 @@ export default function BookingsPage() {
                 alignItems: 'center',
                 justifyContent: 'space-between',
                 marginBottom: '24px',
-                borderBottom: '1px solid #f1f5f9',
+                borderBottom: '1px solid var(--surface-focus)',
                 paddingBottom: '16px',
               }}
             >
               <div>
-                <h1 style={{ fontSize: '24px', fontWeight: 800, color: '#0f172a', margin: 0 }}>
+                <h1 style={{ fontSize: '24px', fontWeight: 800, color: 'var(--neutral-dark)', margin: 0 }}>
                   My Bookings &amp; Inquiries
                 </h1>
-                <p style={{ fontSize: '14px', color: '#64748b', marginTop: '4px' }}>
+                <p style={{ fontSize: '14px', color: 'var(--neutral-medium)', marginTop: '4px' }}>
                   Track your requested callback inquiries and trip statuses.
                 </p>
               </div>
               <Link
                 href="/packages"
                 style={{
-                  backgroundColor: '#ff5722',
+                  backgroundColor: 'var(--secondary)',
                   color: '#ffffff',
                   fontWeight: 700,
                   fontSize: '13px',
@@ -165,7 +165,7 @@ export default function BookingsPage() {
             {/* Account Profile Summary */}
             <div
               style={{
-                backgroundColor: '#f8fafc',
+                backgroundColor: 'var(--surface-base)',
                 borderRadius: '8px',
                 padding: '16px',
                 marginBottom: '28px',
@@ -179,7 +179,7 @@ export default function BookingsPage() {
                   width: '44px',
                   height: '44px',
                   borderRadius: '50%',
-                  backgroundColor: '#ff5722',
+                  backgroundColor: 'var(--secondary)',
                   color: '#ffffff',
                   fontSize: '18px',
                   fontWeight: 800,
@@ -191,19 +191,19 @@ export default function BookingsPage() {
                 {user?.email ? user.email[0].toUpperCase() : 'U'}
               </div>
               <div>
-                <div style={{ fontSize: '15px', fontWeight: 700, color: '#0f172a' }}>
+                <div style={{ fontSize: '15px', fontWeight: 700, color: 'var(--neutral-dark)' }}>
                   {user?.user_metadata?.full_name || 'Traveler Account'}
                 </div>
-                <div style={{ fontSize: '13px', color: '#64748b' }}>{user?.email}</div>
+                <div style={{ fontSize: '13px', color: 'var(--neutral-medium)' }}>{user?.email}</div>
               </div>
             </div>
 
-            <h2 style={{ fontSize: '18px', fontWeight: 800, color: '#0f172a', marginBottom: '16px' }}>
+            <h2 style={{ fontSize: '18px', fontWeight: 800, color: 'var(--neutral-dark)', marginBottom: '16px' }}>
               My Callback Requests
             </h2>
 
             {loading ? (
-              <div style={{ textAlign: 'center', padding: '32px', color: '#64748b' }}>
+              <div style={{ textAlign: 'center', padding: '32px', color: 'var(--neutral-medium)' }}>
                 Loading your callback inquiries...
               </div>
             ) : callbacks.length === 0 ? (
@@ -211,22 +211,22 @@ export default function BookingsPage() {
                 style={{
                   textAlign: 'center',
                   padding: '40px 20px',
-                  backgroundColor: '#f8fafc',
+                  backgroundColor: 'var(--surface-base)',
                   borderRadius: '8px',
-                  border: '1px dashed #cbd5e1',
+                  border: '1px dashed var(--neutral-light)',
                 }}
               >
                 <div style={{ fontSize: '32px', marginBottom: '8px' }}>📞</div>
-                <h3 style={{ fontSize: '16px', fontWeight: 700, color: '#0f172a', marginBottom: '4px' }}>
+                <h3 style={{ fontSize: '16px', fontWeight: 700, color: 'var(--neutral-dark)', marginBottom: '4px' }}>
                   No callback requests yet
                 </h3>
-                <p style={{ fontSize: '14px', color: '#64748b', marginBottom: '16px' }}>
+                <p style={{ fontSize: '14px', color: 'var(--neutral-medium)', marginBottom: '16px' }}>
                   When you request a callback on any package, your status will appear here.
                 </p>
                 <Link
                   href="/packages"
                   style={{
-                    color: '#ff5722',
+                    color: 'var(--secondary)',
                     fontWeight: 700,
                     fontSize: '14px',
                     textDecoration: 'none',
@@ -241,7 +241,7 @@ export default function BookingsPage() {
                   <div
                     key={cb.id}
                     style={{
-                      border: '1px solid #e2e8f0',
+                      border: '1px solid var(--neutral-light)',
                       borderRadius: '8px',
                       padding: '16px 20px',
                       display: 'flex',
@@ -253,20 +253,20 @@ export default function BookingsPage() {
                   >
                     <div>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
-                        <span style={{ fontSize: '15px', fontWeight: 700, color: '#0f172a' }}>
+                        <span style={{ fontSize: '15px', fontWeight: 700, color: 'var(--neutral-dark)' }}>
                           Inquiry #{cb.id.substring(0, 8)}
                         </span>
                         {getStatusBadge(cb.status)}
                       </div>
-                      <div style={{ fontSize: '13px', color: '#64748b' }}>
+                      <div style={{ fontSize: '13px', color: 'var(--neutral-medium)' }}>
                         Phone: <strong>+91 {cb.phone}</strong> • Group: {cb.group_size || 2} Travelers
                       </div>
                       {cb.special_requests && (
-                        <div style={{ fontSize: '13px', color: '#334155', marginTop: '6px', fontStyle: 'italic' }}>
+                        <div style={{ fontSize: '13px', color: 'var(--neutral-medium)', marginTop: '6px', fontStyle: 'italic' }}>
                           &ldquo;{cb.special_requests}&rdquo;
                         </div>
                       )}
-                      <div style={{ fontSize: '12px', color: '#94a3b8', marginTop: '4px' }}>
+                      <div style={{ fontSize: '12px', color: 'var(--neutral-medium)', marginTop: '4px' }}>
                         Requested on {new Date(cb.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
                       </div>
                     </div>

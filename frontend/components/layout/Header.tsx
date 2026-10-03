@@ -450,10 +450,10 @@ export const Header: React.FC = () => {
                 <div className={styles.drawerUserHeader}>
                   <div className={styles.drawerUserAvatar}>{userInitial}</div>
                   <div>
-                    <div style={{ fontSize: '14px', fontWeight: 700, color: '#0f172a' }}>
+                    <div style={{ fontSize: '14px', fontWeight: 700, color: 'var(--neutral-dark)' }}>
                       {userName}
                     </div>
-                    <div style={{ fontSize: '11px', color: '#64748b' }}>{user.email}</div>
+                    <div style={{ fontSize: '11px', color: 'var(--neutral-medium)' }}>{user.email}</div>
                   </div>
                 </div>
                 <Link

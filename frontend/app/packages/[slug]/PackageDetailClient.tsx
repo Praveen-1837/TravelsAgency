@@ -545,13 +545,6 @@ export default function PackageDetailClient({ pkg, similarPackages, initialRevie
                   </div>
                 </div>
 
-                {/* Have Questions? */}
-                <div className={styles.haveQuestionsBox}>
-                  <span>Have questions before submitting?</span>
-                  <a href="tel:+919876543210" className={styles.callGuidePill}>
-                    📞 Call Trip Marshal: +91 98765 43210
-                  </a>
-                </div>
               </div>
             </div>
           </aside>

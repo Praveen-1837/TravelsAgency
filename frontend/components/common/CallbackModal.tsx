@@ -492,11 +492,11 @@ export const CallbackModal: React.FC<CallbackModalProps> = ({
                   cy="48"
                   r="32"
                   fill="none"
-                  stroke="#FF5722"
+                  stroke="var(--secondary)"
                   strokeWidth="4"
                   opacity="0.35"
                 />
-                <circle ref={badgeCircleRef} cx="48" cy="48" r="32" fill="#FF5722" />
+                <circle ref={badgeCircleRef} cx="48" cy="48" r="32" fill="var(--secondary)" />
                 <path
                   ref={checkmarkPathRef}
                   d="M 32 48 L 43 59 L 64 37"

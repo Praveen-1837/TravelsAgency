@@ -1,6 +1,6 @@
 .authPage {
   min-height: calc(100vh - 120px);
-  background-color: var(--color-surface-2, #f8fafc);
+  background-color: var(--surface-focus, var(--surface-base));
   display: flex;
   align-items: center;
   justify-content: center;
@@ -10,7 +10,7 @@
 
 .authCard {
   background-color: #ffffff;
-  border: 1px solid var(--color-line, #e2e8f0);
+  border: 1px solid var(--neutral-light, var(--neutral-light));
   border-radius: 12px;
   overflow: hidden;
   width: 100%;
@@ -29,7 +29,7 @@
 /* Left Hero Banner Panel */
 .leftPanel {
   position: relative;
-  background-color: #0f172a;
+  background-color: var(--neutral-dark);
   color: #ffffff;
   padding: 40px 32px;
   display: flex;
@@ -93,7 +93,7 @@
 
 .quoteAuthor {
   font-size: 13px;
-  color: #cbd5e1;
+  color: var(--neutral-light);
   font-weight: 500;
 }
 
@@ -118,14 +118,14 @@
 .heading {
   font-size: 26px;
   font-weight: 800;
-  color: var(--color-ink, #0f172a);
+  color: var(--neutral-dark, var(--neutral-dark));
   margin-bottom: 6px;
   letter-spacing: -0.02em;
 }
 
 .subtext {
   font-size: 14px;
-  color: var(--color-slate, #64748b);
+  color: var(--neutral-medium, var(--neutral-medium));
   line-height: 1.5;
 }
 
@@ -138,26 +138,26 @@
   width: 100%;
   min-height: 44px;
   background-color: #ffffff;
-  border: 1px solid #cbd5e1;
+  border: 1px solid var(--neutral-light);
   border-radius: 8px;
   font-size: 14px;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--neutral-dark);
   cursor: pointer;
   transition: background-color 0.15s ease, border-color 0.15s ease;
   margin-bottom: 20px;
 }
 
 .googleBtn:hover {
-  background-color: #f8fafc;
-  border-color: #94a3b8;
+  background-color: var(--surface-base);
+  border-color: var(--neutral-medium);
 }
 
 .divider {
   display: flex;
   align-items: center;
   text-align: center;
-  color: #94a3b8;
+  color: var(--neutral-medium);
   font-size: 12px;
   font-weight: 600;
   margin-bottom: 20px;
@@ -167,7 +167,7 @@
 .divider::after {
   content: '';
   flex: 1;
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid var(--neutral-light);
 }
 
 .dividerSpan {
@@ -196,13 +196,13 @@
 .label {
   font-size: 13px;
   font-weight: 700;
-  color: var(--color-ink, #0f172a);
+  color: var(--neutral-dark, var(--neutral-dark));
 }
 
 .forgotLink {
   font-size: 13px;
   font-weight: 600;
-  color: #ff5722;
+  color: var(--secondary);
   text-decoration: none;
   transition: opacity 0.15s ease;
 }
@@ -221,9 +221,9 @@
   width: 100%;
   font-family: var(--font-sans);
   font-size: 14px;
-  color: var(--color-ink, #0f172a);
+  color: var(--neutral-dark, var(--neutral-dark));
   background-color: #ffffff;
-  border: 1px solid var(--color-line, #cbd5e1);
+  border: 1px solid var(--neutral-light, var(--neutral-light));
   border-radius: 8px;
   padding: 11px 14px;
   transition: all 0.15s ease;
@@ -231,13 +231,13 @@
 
 .input:focus {
   outline: none;
-  border-color: #ff5722;
+  border-color: var(--secondary);
   box-shadow: 0 0 0 3px rgba(255, 87, 34, 0.15);
 }
 
 .inputError {
-  border-color: var(--color-error, #dc2626) !important;
-  background-color: #fef2f2;
+  border-color: var(--error, var(--error)) !important;
+  background-color: var(--error-light);
 }
 
 .togglePasswordBtn {
@@ -247,7 +247,7 @@
   border: none;
   font-size: 16px;
   cursor: pointer;
-  color: #64748b;
+  color: var(--neutral-medium);
   padding: 4px 8px;
   display: flex;
   align-items: center;
@@ -256,19 +256,19 @@
 }
 
 .togglePasswordBtn:hover {
-  color: #0f172a;
+  color: var(--neutral-dark);
 }
 
 .fieldError {
   font-size: 12px;
   font-weight: 600;
-  color: var(--color-error, #dc2626);
+  color: var(--error, var(--error));
   margin-top: 2px;
 }
 
 .errorBanner {
-  background-color: #fef2f2;
-  border: 1px solid #fecaca;
+  background-color: var(--error-light);
+  border: 1px solid var(--error);
   color: #b91c1c;
   padding: 12px 14px;
   border-radius: 8px;
@@ -290,7 +290,7 @@
 }
 
 .submitBtn {
-  background-color: #ff5722;
+  background-color: var(--secondary);
   color: #ffffff;
   font-size: 15px;
   font-weight: 700;
@@ -318,13 +318,13 @@
 
 .footerText {
   font-size: 14px;
-  color: var(--color-slate, #64748b);
+  color: var(--neutral-medium, var(--neutral-medium));
   text-align: center;
   margin-top: 24px;
 }
 
 .footerLink {
-  color: #ff5722;
+  color: var(--secondary);
   font-weight: 700;
   text-decoration: none;
   margin-left: 4px;

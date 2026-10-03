@@ -1,5 +1,5 @@
 .heroContainer {
-  --accent: #FF5722;
+  --accent: var(--secondary);
   --font-heading: 'Plus Jakarta Sans', sans-serif;
   width: 100%;
   background-color: #fafafa;

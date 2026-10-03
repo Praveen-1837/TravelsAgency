@@ -11,8 +11,8 @@
 
 html {
   font-family: var(--font-sans);
-  background-color: var(--color-bg);
-  color: var(--color-ink);
+  background-color: var(--surface-base);
+  color: var(--neutral-dark);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
@@ -23,8 +23,8 @@ body {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background-color: var(--color-bg);
-  color: var(--color-ink);
+  background-color: var(--surface-base);
+  color: var(--neutral-dark);
   line-height: 1.5;
   font-size: 15px;
 }
@@ -36,7 +36,7 @@ h3,
 h4,
 h5,
 h6 {
-  color: var(--color-ink);
+  color: var(--neutral-dark);
   font-weight: 700;
   line-height: 1.2;
 }
@@ -59,7 +59,7 @@ h3 {
 }
 
 p {
-  color: var(--color-body);
+  color: var(--neutral-dark);
   font-size: 15px;
   line-height: 1.6;
 }
@@ -97,7 +97,7 @@ button {
 
 /* Accessibility: Focus rings */
 :focus-visible {
-  outline: 2px solid var(--color-cta);
+  outline: 2px solid var(--tertiary);
   outline-offset: 2px;
 }
 
@@ -116,14 +116,14 @@ textarea {
   height: 8px;
 }
 ::-webkit-scrollbar-track {
-  background: var(--color-surface-2);
+  background: var(--surface-focus);
 }
 ::-webkit-scrollbar-thumb {
-  background: var(--color-line);
+  background: var(--neutral-light);
   border-radius: var(--radius-full);
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--color-slate);
+  background: var(--neutral-medium);
 }
 
 /* Screen reader only utility */

@@ -26,9 +26,9 @@ export const RequireAuth: React.FC<RequireAuthProps> = ({
       <div
         style={{
           padding: '24px',
-          backgroundColor: '#f8fafc',
+          backgroundColor: 'var(--surface-base)',
           borderRadius: '12px',
-          border: '1px solid #e2e8f0',
+          border: '1px solid var(--neutral-light)',
           textAlign: 'center',
           minHeight: '120px',
           display: 'flex',
@@ -36,7 +36,7 @@ export const RequireAuth: React.FC<RequireAuthProps> = ({
           justifyContent: 'center',
         }}
       >
-        <p style={{ color: '#64748b', fontSize: '14px', fontWeight: 600 }}>
+        <p style={{ color: 'var(--neutral-medium)', fontSize: '14px', fontWeight: 600 }}>
           Verifying account status...
         </p>
       </div>
@@ -57,7 +57,7 @@ export const RequireAuth: React.FC<RequireAuthProps> = ({
         padding: '28px 20px',
         backgroundColor: '#ffffff',
         borderRadius: '12px',
-        border: '1px solid #e2e8f0',
+        border: '1px solid var(--neutral-light)',
         textAlign: 'center',
         boxShadow: '0 2px 10px rgba(0,0,0,0.03)',
       }}
@@ -67,8 +67,8 @@ export const RequireAuth: React.FC<RequireAuthProps> = ({
           width: '48px',
           height: '48px',
           borderRadius: '50%',
-          backgroundColor: '#fff7ed',
-          color: '#ff5722',
+          backgroundColor: 'var(--surface-focus)',
+          color: 'var(--secondary)',
           fontSize: '22px',
           display: 'flex',
           alignItems: 'center',
@@ -78,10 +78,10 @@ export const RequireAuth: React.FC<RequireAuthProps> = ({
       >
         🔒
       </div>
-      <h3 style={{ fontSize: '18px', fontWeight: 800, color: '#0f172a', marginBottom: '6px' }}>
+      <h3 style={{ fontSize: '18px', fontWeight: 800, color: 'var(--neutral-dark)', marginBottom: '6px' }}>
         Log in to Request a Callback
       </h3>
-      <p style={{ fontSize: '14px', color: '#64748b', marginBottom: '18px', lineHeight: 1.5 }}>
+      <p style={{ fontSize: '14px', color: 'var(--neutral-medium)', marginBottom: '18px', lineHeight: 1.5 }}>
         Please log in to your Aariva Voyages account to request a free callback &amp; custom itinerary quote.
       </p>
       <LoginButton openCallbackOnLogin={openCallbackOnLogin} />

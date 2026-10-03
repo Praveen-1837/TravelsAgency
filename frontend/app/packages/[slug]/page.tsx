@@ -4,6 +4,22 @@ import type { Metadata } from 'next';
 import { fetchPackageBySlug, fetchPackageReviews } from '@/lib/api';
 import { LOCAL_SEED_PACKAGES } from '@/lib/seed-data';
 import PackageDetailClient from './PackageDetailClient';
+import { PackagesListingContent } from '../page';
+
+const DESTINATIONS: Record<string, string> = {
+  rajasthan: 'Rajasthan',
+  kerala: 'Kerala',
+  ladakh: 'Ladakh',
+  kashmir: 'Kashmir',
+  himachal: 'Himachal',
+  goa: 'Goa',
+  andaman: 'Andaman',
+  'north-east': 'North East',
+  uttarakhand: 'Uttarakhand',
+  bali: 'Bali',
+  dubai: 'Dubai',
+  thailand: 'Thailand',
+};
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -23,8 +39,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const pkg = await fetchPackageBySlug(slug);
 
   if (!pkg) {
+    const destName = DESTINATIONS[slug];
     return {
-      title: 'Package Not Found',
+      title: destName ? `${destName} Tour Packages` : 'Package Not Found',
     };
   }
 
@@ -58,6 +75,13 @@ export default async function PackageDetailPage({ params }: Props) {
   const pkg = await fetchPackageBySlug(slug);
 
   if (!pkg) {
+    if (DESTINATIONS[slug]) {
+      return (
+        <React.Suspense fallback={<div style={{ padding: '60px', textAlign: 'center' }}>Loading packages...</div>}>
+          <PackagesListingContent destinationSlug={DESTINATIONS[slug]} destinationName={DESTINATIONS[slug]} />
+        </React.Suspense>
+      );
+    }
     notFound();
   }
 

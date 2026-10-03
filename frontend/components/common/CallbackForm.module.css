@@ -1,6 +1,6 @@
 .formContainer {
-  background-color: var(--color-surface);
-  border: 1px solid var(--color-line);
+  background-color: var(--surface-elevated);
+  border: 1px solid var(--neutral-light);
   border-radius: var(--radius-lg);
   padding: 32px;
   box-shadow: var(--shadow-card);
@@ -15,26 +15,26 @@
   font-size: 11px;
   font-weight: 800;
   letter-spacing: 0.08em;
-  color: var(--color-cta-deep);
+  color: var(--primary-hover);
   margin-bottom: 4px;
 }
 
 .title {
   font-size: 24px;
   font-weight: 800;
-  color: var(--color-ink);
+  color: var(--neutral-dark);
   margin-bottom: 6px;
 }
 
 .subtitle {
   font-size: 14px;
-  color: var(--color-slate);
+  color: var(--neutral-medium);
   line-height: 1.5;
 }
 
 .errorAlert {
-  background-color: var(--color-error-light);
-  color: var(--color-error);
+  background-color: var(--error-light);
+  color: var(--error);
   padding: 12px 16px;
   border-radius: var(--radius-md);
   font-size: 13px;
@@ -70,7 +70,7 @@
 .field label {
   font-size: 12px;
   font-weight: 700;
-  color: var(--color-ink);
+  color: var(--neutral-dark);
   text-transform: uppercase;
   letter-spacing: 0.04em;
 }
@@ -80,9 +80,9 @@
 .field textarea {
   font-family: var(--font-sans);
   font-size: 14px;
-  color: var(--color-ink);
-  background-color: var(--color-surface-2);
-  border: 1px solid var(--color-line);
+  color: var(--neutral-dark);
+  background-color: var(--surface-focus);
+  border: 1px solid var(--neutral-light);
   border-radius: var(--radius-md);
   padding: 12px 16px;
   transition: all var(--transition-fast);
@@ -93,15 +93,15 @@
 .field textarea:focus {
   outline: none;
   background-color: #ffffff;
-  border-color: var(--color-cta);
+  border-color: var(--primary);
   box-shadow: 0 0 0 3px rgba(255, 87, 34, 0.15);
 }
 
 .phoneWrapper {
   display: flex;
   align-items: center;
-  background-color: var(--color-surface-2);
-  border: 1px solid var(--color-line);
+  background-color: var(--surface-focus);
+  border: 1px solid var(--neutral-light);
   border-radius: var(--radius-md);
   overflow: hidden;
 }
@@ -110,12 +110,12 @@
   padding: 0 14px;
   font-size: 14px;
   font-weight: 700;
-  color: var(--color-slate);
-  background-color: var(--color-surface-3);
+  color: var(--neutral-medium);
+  background-color: var(--neutral-light);
   height: 48px;
   display: flex;
   align-items: center;
-  border-right: 1px solid var(--color-line);
+  border-right: 1px solid var(--neutral-light);
 }
 
 .phoneWrapper input {
@@ -127,17 +127,17 @@
 
 .phoneWrapper:focus-within {
   background-color: #ffffff;
-  border-color: var(--color-cta);
+  border-color: var(--primary);
   box-shadow: 0 0 0 3px rgba(255, 87, 34, 0.15);
 }
 
 .securityNote {
   font-size: 12px;
-  color: var(--color-slate);
+  color: var(--neutral-medium);
 }
 
 .submitBtn {
-  background-color: var(--color-cta);
+  background-color: var(--primary);
   color: #ffffff;
   font-size: 16px;
   font-weight: 800;
@@ -149,7 +149,7 @@
 }
 
 .submitBtn:hover {
-  background-color: var(--color-cta-hover);
+  background-color: var(--primary-hover);
   transform: translateY(-1px);
 }
 
@@ -163,8 +163,8 @@
 .successCard {
   text-align: center;
   padding: 40px 20px;
-  background-color: var(--color-surface);
-  border: 1px solid var(--color-line);
+  background-color: var(--surface-elevated);
+  border: 1px solid var(--neutral-light);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-card);
 }
@@ -173,7 +173,7 @@
   width: 64px;
   height: 64px;
   border-radius: var(--radius-full);
-  background-color: var(--color-success);
+  background-color: var(--success);
   color: #ffffff;
   font-size: 32px;
   font-weight: 800;
@@ -187,19 +187,19 @@
 .successTitle {
   font-size: 26px;
   font-weight: 800;
-  color: var(--color-ink);
+  color: var(--neutral-dark);
   margin-bottom: 8px;
 }
 
 .successMsg {
   font-size: 16px;
-  color: var(--color-ink);
+  color: var(--neutral-dark);
   margin-bottom: 6px;
 }
 
 .successSub {
   font-size: 14px;
-  color: var(--color-slate);
+  color: var(--neutral-medium);
   margin-bottom: 24px;
   max-width: 500px;
   margin-left: auto;
@@ -207,7 +207,7 @@
 }
 
 .helplineNotice {
-  background-color: var(--color-surface-2);
+  background-color: var(--surface-focus);
   padding: 14px;
   border-radius: var(--radius-md);
   display: inline-flex;
@@ -219,11 +219,11 @@
 
 .directCallLink {
   font-weight: 800;
-  color: var(--color-cta-deep);
+  color: var(--primary-hover);
 }
 
 .anotherBtn {
-  background-color: var(--color-dark);
+  background-color: var(--primary);
   color: #ffffff;
   font-size: 14px;
   font-weight: 700;
@@ -232,18 +232,18 @@
 }
 
 .anotherBtn:hover {
-  background-color: var(--color-dark-hover);
+  background-color: var(--primary-hover);
 }
 
 .inputError {
-  border-color: var(--color-error) !important;
-  background-color: var(--color-error-light) !important;
+  border-color: var(--error) !important;
+  background-color: var(--error-light) !important;
 }
 
 .fieldErrorMsg {
   font-size: 12px;
   font-weight: 600;
-  color: var(--color-error);
+  color: var(--error);
   margin-top: 4px;
 }
 

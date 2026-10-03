@@ -27,7 +27,7 @@
   max-height: 90vh;
   display: flex;
   flex-direction: column;
-  background-color: var(--color-ink);
+  background-color: var(--neutral-dark);
   border-radius: var(--radius-lg);
   overflow: hidden;
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
@@ -54,8 +54,8 @@
 }
 
 .closeBtn:hover {
-  background-color: var(--color-primary);
-  border-color: var(--color-primary);
+  background-color: var(--primary);
+  border-color: var(--primary);
   transform: scale(1.05);
 }
 
@@ -89,7 +89,7 @@
 
 .captionInfo p {
   font-size: 0.8125rem;
-  color: var(--color-slate);
+  color: var(--neutral-medium);
   margin: 0;
 }
 

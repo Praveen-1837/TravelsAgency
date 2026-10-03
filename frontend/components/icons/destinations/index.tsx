@@ -18,7 +18,7 @@ const SolidFlameIcon = (props: React.SVGProps<SVGSVGElement>) => (
   <svg viewBox="0 0 32 32" fill="url(#flame-grad)" {...props}>
     <defs>
       <linearGradient id="flame-grad" x1="0" y1="100%" x2="0" y2="0%">
-        <stop offset="0%" stopColor="#FF5722" />
+        <stop offset="0%" stopColor="var(--secondary)" />
         <stop offset="100%" stopColor="#FFA726" />
       </linearGradient>
     </defs>

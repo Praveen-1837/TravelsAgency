@@ -1,36 +1,29 @@
-/* Aariva Voyages — Design Tokens (extracted from Figma design) */
+/* Aariva Voyages — Design Tokens (Oceanic Expedition) */
 :root {
   /* Brand & Core Action Colors */
-  --color-cta: #ff5722;
-  --color-cta-deep: #b02f00;
-  --color-cta-hover: #e64a19;
-  --color-cta-light: #fff0eb;
-
+  --primary: #0A2540;
+  --primary-hover: #1E3A8A;
+  --secondary: #0284C7;
+  --secondary-hover: #0369A1;
+  --tertiary: #38BDF8;
+  
   /* Trust & Feedback */
-  --color-success: #006c49;
-  --color-success-bright: #00a572;
-  --color-success-light: #e6f4ea;
-  --color-amber: #f59e0b;
-  --color-amber-deep: #78350f;
-  --color-amber-light: #fef3c7;
-  --color-error: #ba1a1a;
-  --color-error-light: #fde8e8;
+  --success: #10B981;
+  --success-light: rgba(16, 185, 129, 0.1);
+  --warning: #F59E0B;
+  --warning-light: rgba(245, 158, 11, 0.1);
+  --error: #EF4444;
+  --error-light: rgba(239, 68, 68, 0.1);
 
   /* Neutral & Typography */
-  --color-ink: #191c1e;
-  --color-body: #5b4039;
-  --color-slate: #565e74;
-  --color-dark: #2d3133;
-  --color-dark-hover: #1f2224;
+  --neutral-dark: #0F172A;
+  --neutral-medium: #475569;
+  --neutral-light: #E2E8F0;
 
   /* Surfaces & Backgrounds */
-  --color-bg: #f7f9fb;
-  --color-surface: #ffffff;
-  --color-surface-2: #f2f4f6;
-  --color-surface-3: #eceef0;
-  --color-line: #e0e3e5;
-  --color-blush: #ffdbd1;
-  --color-periwinkle: #dae2fd;
+  --surface-base: #F8FAFC;
+  --surface-elevated: #FFFFFF;
+  --surface-focus: #F1F5F9;
 
   /* Typography */
   --font-sans:
@@ -46,13 +39,13 @@
   --radius-full: 9999px;
 
   /* Shadows */
-  --shadow-subtle: 0 1px 2px rgba(0, 0, 0, 0.08);
-  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.06), 0 4px 12px rgba(0, 0, 0, 0.04);
-  --shadow-card-hover: 0 8px 24px rgba(0, 0, 0, 0.08), 0 2px 6px rgba(0, 0, 0, 0.04);
-  --shadow-cta: 0 4px 16px rgba(255, 87, 34, 0.25);
-  --shadow-sticky: 0 -4px 16px rgba(0, 0, 0, 0.06);
-  --shadow-drawer: -4px 0 24px rgba(0, 0, 0, 0.12);
-  --shadow-modal: 0 20px 48px rgba(0, 0, 0, 0.16);
+  --shadow-subtle: 0 1px 3px 0 rgba(10, 37, 64, 0.04), 0 1px 2px -1px rgba(10, 37, 64, 0.04);
+  --shadow-card: 0 1px 3px 0 rgba(10, 37, 64, 0.04), 0 1px 2px -1px rgba(10, 37, 64, 0.04);
+  --shadow-card-hover: 0 10px 25px -5px rgba(10, 37, 64, 0.08), 0 8px 10px -6px rgba(10, 37, 64, 0.04);
+  --shadow-cta: 0 0 0 3px rgba(2, 132, 199, 0.15);
+  --shadow-sticky: 0 -4px 16px rgba(10, 37, 64, 0.06);
+  --shadow-drawer: -4px 0 24px rgba(10, 37, 64, 0.12);
+  --shadow-modal: 0 20px 35px -10px rgba(10, 37, 64, 0.16);
 
   /* Layout */
   --container-width: 1216px;

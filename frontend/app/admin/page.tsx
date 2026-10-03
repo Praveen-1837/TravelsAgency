@@ -296,7 +296,7 @@ export default function AdminDashboardPage() {
               <span>🗺️</span>
               <span>Packages</span>
             </span>
-            <span style={{ fontSize: '0.75rem', color: '#64748b' }}>{packages.length}</span>
+            <span style={{ fontSize: '0.75rem', color: 'var(--neutral-medium)' }}>{packages.length}</span>
           </button>
 
           <button
@@ -319,7 +319,7 @@ export default function AdminDashboardPage() {
         {/* Main Workspace */}
         <main className={styles.mainArea}>
           {loading ? (
-            <div style={{ padding: '3rem', textAlign: 'center', color: '#64748b' }}>
+            <div style={{ padding: '3rem', textAlign: 'center', color: 'var(--neutral-medium)' }}>
               Loading operational dashboard data...
             </div>
           ) : (
@@ -396,7 +396,7 @@ export default function AdminDashboardPage() {
                           <div key={idx} className={styles.topPackageItem}>
                             <div className={styles.topPackageMeta}>
                               <span>{pkg.title}</span>
-                              <span style={{ color: '#ff5722' }}>
+                              <span style={{ color: 'var(--secondary)' }}>
                                 {pkg.count} inquiries ({pkg.conversion})
                               </span>
                             </div>
@@ -422,14 +422,14 @@ export default function AdminDashboardPage() {
                               alignItems: 'center',
                               justifyContent: 'space-between',
                               padding: '0.75rem',
-                              backgroundColor: '#f8fafc',
+                              backgroundColor: 'var(--surface-base)',
                               borderRadius: '6px',
-                              border: '1px solid #e2e8f0',
+                              border: '1px solid var(--neutral-light)',
                             }}
                           >
                             <div>
                               <strong style={{ fontSize: '0.875rem' }}>{cb.name}</strong>
-                              <div style={{ fontSize: '0.75rem', color: '#64748b' }}>
+                              <div style={{ fontSize: '0.75rem', color: 'var(--neutral-medium)' }}>
                                 📞 +91 {cb.phone} • {cb.status.toUpperCase()}
                               </div>
                             </div>
@@ -519,14 +519,14 @@ export default function AdminDashboardPage() {
                               <tr key={cb.id}>
                                 <td>
                                   <strong>{cb.name}</strong>
-                                  <div style={{ fontSize: '0.6875rem', color: '#64748b' }}>
+                                  <div style={{ fontSize: '0.6875rem', color: 'var(--neutral-medium)' }}>
                                     {new Date(cb.created_at).toLocaleDateString('en-IN')}
                                   </div>
                                 </td>
                                 <td>
                                   <div>+91 {cb.phone}</div>
                                   {cb.email && (
-                                    <div style={{ fontSize: '0.75rem', color: '#64748b' }}>
+                                    <div style={{ fontSize: '0.75rem', color: 'var(--neutral-medium)' }}>
                                       {cb.email}
                                     </div>
                                   )}
@@ -644,7 +644,7 @@ export default function AdminDashboardPage() {
                           <div className={styles.pkgMetaRow}>
                             <span className={styles.pkgPrice}>
                               ₹{pkg.price_per_person.toLocaleString('en-IN')}{' '}
-                              <small style={{ fontSize: '0.6875rem', color: '#64748b' }}>
+                              <small style={{ fontSize: '0.6875rem', color: 'var(--neutral-medium)' }}>
                                 / {pkg.price_unit}
                               </small>
                             </span>

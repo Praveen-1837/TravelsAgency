@@ -14,18 +14,18 @@
 }
 
 .bestseller {
-  background-color: var(--color-dark);
+  background-color: var(--primary);
   color: #ffffff;
 }
 
 .discount {
-  background-color: var(--color-cta);
+  background-color: var(--primary);
   color: #ffffff;
   border-radius: var(--radius-sm);
 }
 
 .verified {
-  background-color: var(--color-success);
+  background-color: var(--success);
   color: #ffffff;
 }
 
@@ -35,11 +35,11 @@
 }
 
 .amber {
-  background-color: var(--color-amber-light);
-  color: var(--color-amber-deep);
+  background-color: var(--warning-light);
+  color: var(--warning-dark);
 }
 
 .neutral {
-  background-color: var(--color-surface-3);
-  color: var(--color-slate);
+  background-color: var(--neutral-light);
+  color: var(--neutral-medium);
 }

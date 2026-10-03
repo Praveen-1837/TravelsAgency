@@ -89,13 +89,13 @@
 
 .linkList li a:hover,
 .linkList li button:hover {
-  color: #FF5722;
+  color: var(--secondary);
   text-decoration: underline;
 }
 
 .linkList li a:active,
 .linkList li button:active {
-  color: #FF5722;
+  color: var(--secondary);
 }
 
 .socialIcons {
@@ -114,7 +114,7 @@
 }
 
 .socialIcons a:hover {
-  color: #FF5722;
+  color: var(--secondary);
 }
 
 .socialIcons svg {

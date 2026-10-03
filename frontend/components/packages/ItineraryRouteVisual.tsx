@@ -284,7 +284,7 @@ export const ItineraryRouteVisual: React.FC<ItineraryRouteVisualProps> = ({
                 className={styles.bgPath}
                 vectorEffect="non-scaling-stroke"
               />
-              {/* Active #FF5722 line drawn by DrawSVG */}
+              {/* Active var(--secondary) line drawn by DrawSVG */}
               <path
                 ref={activePathRef}
                 d={metrics.pathD}

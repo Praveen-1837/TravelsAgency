@@ -1,6 +1,6 @@
 .carouselSection {
   padding: 4rem 0;
-  background-color: var(--color-surface);
+  background-color: var(--surface-elevated);
   position: relative;
   overflow: hidden;
 }
@@ -20,14 +20,14 @@
   font-weight: var(--font-bold);
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--color-primary-text);
+  color: var(--primary-text);
   margin-bottom: 0.5rem;
 }
 
 .title {
   font-size: 2rem;
   font-weight: 800;
-  color: var(--color-ink);
+  color: var(--neutral-dark);
   letter-spacing: -0.02em;
   margin: 0 0 0.5rem 0;
 }
@@ -37,7 +37,7 @@
   align-items: center;
   gap: 0.75rem;
   font-size: 0.875rem;
-  color: var(--color-body);
+  color: var(--neutral-dark);
 }
 
 .ratingPill {
@@ -62,9 +62,9 @@
   width: 44px;
   height: 44px;
   border-radius: var(--radius-full);
-  border: 1px solid var(--color-border);
-  background-color: var(--color-surface);
-  color: var(--color-ink);
+  border: 1px solid var(--neutral-light);
+  background-color: var(--surface-elevated);
+  color: var(--neutral-dark);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -74,9 +74,9 @@
 }
 
 .navBtn:hover:not(:disabled) {
-  background-color: var(--color-ink);
+  background-color: var(--neutral-dark);
   color: #ffffff;
-  border-color: var(--color-ink);
+  border-color: var(--neutral-dark);
   box-shadow: var(--shadow-md);
 }
 
@@ -106,8 +106,8 @@
 
 .storyCard {
   width: 380px;
-  background-color: var(--color-surface);
-  border: 1px solid var(--color-border);
+  background-color: var(--surface-elevated);
+  border: 1px solid var(--neutral-light);
   border-radius: var(--radius-lg);
   overflow: hidden;
   box-shadow: var(--shadow-sm);
@@ -129,14 +129,14 @@
 .storyCard:hover {
   transform: translateY(-4px);
   box-shadow: var(--shadow-lg);
-  border-color: #cbd5e1;
+  border-color: var(--neutral-light);
 }
 
 .photoFrame {
   position: relative;
   width: 100%;
   height: 220px;
-  background-color: #f1f5f9;
+  background-color: var(--surface-focus);
 }
 
 .cardImg {
@@ -181,7 +181,7 @@
 }
 
 .ratingTag span {
-  color: var(--color-amber);
+  color: var(--warning);
 }
 
 .cardBody {
@@ -194,7 +194,7 @@
 }
 
 .starsRow {
-  color: var(--color-amber);
+  color: var(--warning);
   font-size: 1.125rem;
   letter-spacing: 0.1em;
   line-height: 1;
@@ -203,7 +203,7 @@
 .quoteText {
   font-size: 0.9375rem;
   line-height: 1.6;
-  color: var(--color-body);
+  color: var(--neutral-dark);
   margin: 0;
   display: -webkit-box;
   -webkit-line-clamp: 4;
@@ -217,7 +217,7 @@
   align-items: center;
   justify-content: space-between;
   padding-top: 1rem;
-  border-top: 1px solid var(--color-border);
+  border-top: 1px solid var(--neutral-light);
 }
 
 .authorMeta {
@@ -230,7 +230,7 @@
   width: 38px;
   height: 38px;
   border-radius: var(--radius-full);
-  background: linear-gradient(135deg, #ff5722 0%, #b02f00 100%);
+  background: linear-gradient(135deg, var(--secondary) 0%, #b02f00 100%);
   color: #ffffff;
   display: flex;
   align-items: center;
@@ -242,20 +242,20 @@
 .authorName {
   font-size: 0.9375rem;
   font-weight: var(--font-bold);
-  color: var(--color-ink);
+  color: var(--neutral-dark);
   margin: 0;
 }
 
 .verifiedText {
   font-size: 0.6875rem;
-  color: var(--color-success);
+  color: var(--success);
   font-weight: var(--font-semibold);
 }
 
 .tourLink {
   font-size: 0.8125rem;
   font-weight: var(--font-bold);
-  color: var(--color-primary-text);
+  color: var(--primary-text);
   text-decoration: none;
 }
 

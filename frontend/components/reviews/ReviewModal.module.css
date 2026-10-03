@@ -21,14 +21,14 @@
 }
 
 .modal {
-  background-color: var(--color-surface);
+  background-color: var(--surface-elevated);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-xl);
   max-width: 580px;
   width: 100%;
   max-height: 90vh;
   overflow-y: auto;
-  border: 1px solid var(--color-border);
+  border: 1px solid var(--neutral-light);
   animation: slideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1);
   position: relative;
 }
@@ -46,7 +46,7 @@
 
 .modalHeader {
   padding: 1.5rem 1.75rem 1.25rem;
-  border-bottom: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--neutral-light);
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
@@ -59,14 +59,14 @@
   font-weight: var(--font-bold);
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: var(--color-primary-text);
+  color: var(--primary-text);
   margin-bottom: 0.25rem;
 }
 
 .modalTitle {
   font-size: 1.25rem;
   font-weight: var(--font-bold);
-  color: var(--color-ink);
+  color: var(--neutral-dark);
   margin: 0;
 }
 
@@ -74,7 +74,7 @@
   background: none;
   border: none;
   font-size: 1.25rem;
-  color: var(--color-slate);
+  color: var(--neutral-medium);
   cursor: pointer;
   padding: 0.25rem;
   line-height: 1;
@@ -83,7 +83,7 @@
 }
 
 .closeBtn:hover {
-  color: var(--color-ink);
+  color: var(--neutral-dark);
 }
 
 .form {
@@ -98,15 +98,15 @@
   flex-direction: column;
   gap: 0.5rem;
   padding: 1rem;
-  background-color: var(--color-surface-subtle);
+  background-color: var(--surface-focus);
   border-radius: var(--radius-md);
-  border: 1px solid var(--color-border);
+  border: 1px solid var(--neutral-light);
 }
 
 .ratingLabel {
   font-size: 0.8125rem;
   font-weight: var(--font-semibold);
-  color: var(--color-ink);
+  color: var(--neutral-dark);
   text-transform: uppercase;
   letter-spacing: 0.04em;
 }
@@ -132,7 +132,7 @@
 
 .starBtn:hover,
 .starBtnActive {
-  color: var(--color-amber);
+  color: var(--warning);
 }
 
 .starBtn:hover {
@@ -142,7 +142,7 @@
 .ratingDescriptor {
   font-size: 0.875rem;
   font-weight: var(--font-semibold);
-  color: var(--color-ink);
+  color: var(--neutral-dark);
   margin-left: 0.5rem;
 }
 
@@ -155,7 +155,7 @@
 .formGroup label {
   font-size: 0.8125rem;
   font-weight: var(--font-semibold);
-  color: var(--color-ink);
+  color: var(--neutral-dark);
 }
 
 .input,
@@ -165,9 +165,9 @@
   padding: 0.75rem 0.875rem;
   font-size: 0.9375rem;
   font-family: inherit;
-  color: var(--color-ink);
-  background-color: var(--color-surface);
-  border: 1px solid var(--color-border);
+  color: var(--neutral-dark);
+  background-color: var(--surface-elevated);
+  border: 1px solid var(--neutral-light);
   border-radius: var(--radius-sm);
   outline: none;
   transition:
@@ -178,7 +178,7 @@
 .input:focus,
 .select:focus,
 .textarea:focus {
-  border-color: var(--color-primary);
+  border-color: var(--primary);
   box-shadow: 0 0 0 3px rgba(255, 87, 34, 0.15);
 }
 
@@ -189,7 +189,7 @@
 
 .helperText {
   font-size: 0.75rem;
-  color: var(--color-slate);
+  color: var(--neutral-medium);
 }
 
 .errorMessage {
@@ -202,7 +202,7 @@
 }
 
 .submitBtn {
-  background-color: var(--color-primary);
+  background-color: var(--primary);
   color: #ffffff;
   border: none;
   padding: 0.875rem 1.5rem;
@@ -240,7 +240,7 @@
   height: 60px;
   border-radius: var(--radius-full);
   background-color: #d1fae5;
-  color: var(--color-success);
+  color: var(--success);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -251,13 +251,13 @@
 .successTitle {
   font-size: 1.375rem;
   font-weight: var(--font-bold);
-  color: var(--color-ink);
+  color: var(--neutral-dark);
   margin: 0;
 }
 
 .successText {
   font-size: 0.9375rem;
-  color: var(--color-body);
+  color: var(--neutral-dark);
   max-width: 440px;
   line-height: 1.6;
   margin: 0;
@@ -266,7 +266,7 @@
 .successCloseBtn {
   margin-top: 1rem;
   padding: 0.75rem 2rem;
-  background-color: var(--color-dark-btn);
+  background-color: var(--primary-btn);
   color: #ffffff;
   border: none;
   border-radius: var(--radius-sm);

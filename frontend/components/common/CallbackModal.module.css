@@ -12,7 +12,7 @@
 }
 
 .modal {
-  background-color: var(--color-surface);
+  background-color: var(--surface-elevated);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-modal);
   width: 100%;
@@ -28,7 +28,7 @@
   position: absolute;
   top: 16px;
   right: 16px;
-  background: var(--color-surface-2);
+  background: var(--surface-focus);
   border-radius: var(--radius-full);
   width: 32px;
   height: 32px;
@@ -36,13 +36,13 @@
   align-items: center;
   justify-content: center;
   font-size: 16px;
-  color: var(--color-slate);
+  color: var(--neutral-medium);
   transition: all var(--transition-fast);
 }
 
 .closeBtn:hover {
-  background-color: var(--color-line);
-  color: var(--color-ink);
+  background-color: var(--neutral-light);
+  color: var(--neutral-dark);
 }
 
 .modalHeader {
@@ -54,26 +54,26 @@
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.08em;
-  color: var(--color-cta-deep);
+  color: var(--primary-hover);
   margin-bottom: 4px;
 }
 
 .modalTitle {
   font-size: 24px;
   font-weight: 800;
-  color: var(--color-ink);
+  color: var(--neutral-dark);
   margin-bottom: 6px;
 }
 
 .modalSubtitle {
   font-size: 14px;
-  color: var(--color-body);
+  color: var(--neutral-dark);
   line-height: 1.4;
 }
 
 .errorAlert {
-  background-color: var(--color-error-light);
-  color: var(--color-error);
+  background-color: var(--error-light);
+  color: var(--error);
   padding: 10px 14px;
   border-radius: var(--radius-md);
   font-size: 13px;
@@ -109,7 +109,7 @@
 .field label {
   font-size: 12px;
   font-weight: 700;
-  color: var(--color-ink);
+  color: var(--neutral-dark);
   text-transform: uppercase;
   letter-spacing: 0.04em;
 }
@@ -119,9 +119,9 @@
 .field textarea {
   font-family: var(--font-sans);
   font-size: 14px;
-  color: var(--color-ink);
-  background-color: var(--color-surface-2);
-  border: 1px solid var(--color-line);
+  color: var(--neutral-dark);
+  background-color: var(--surface-focus);
+  border: 1px solid var(--neutral-light);
   border-radius: var(--radius-md);
   padding: 10px 14px;
   transition: all var(--transition-fast);
@@ -132,15 +132,15 @@
 .field textarea:focus {
   outline: none;
   background-color: #ffffff;
-  border-color: var(--color-cta);
+  border-color: var(--primary);
   box-shadow: 0 0 0 3px rgba(255, 87, 34, 0.15);
 }
 
 .phoneInput {
   display: flex;
   align-items: center;
-  background-color: var(--color-surface-2);
-  border: 1px solid var(--color-line);
+  background-color: var(--surface-focus);
+  border: 1px solid var(--neutral-light);
   border-radius: var(--radius-md);
   overflow: hidden;
 }
@@ -149,12 +149,12 @@
   padding: 0 12px;
   font-size: 14px;
   font-weight: 600;
-  color: var(--color-slate);
-  background-color: var(--color-surface-3);
+  color: var(--neutral-medium);
+  background-color: var(--neutral-light);
   height: 44px;
   display: flex;
   align-items: center;
-  border-right: 1px solid var(--color-line);
+  border-right: 1px solid var(--neutral-light);
 }
 
 .phoneInput input {
@@ -165,20 +165,20 @@
 }
 
 .phoneInput:focus-within {
-  border-color: var(--color-cta);
+  border-color: var(--primary);
   box-shadow: 0 0 0 3px rgba(255, 87, 34, 0.15);
   background-color: #ffffff;
 }
 
 .privacyNote {
   font-size: 12px;
-  color: var(--color-slate);
+  color: var(--neutral-medium);
   line-height: 1.4;
   margin-top: -4px;
 }
 
 .submitBtn {
-  background-color: var(--color-cta);
+  background-color: var(--primary);
   color: #ffffff;
   font-size: 16px;
   font-weight: 800;
@@ -191,7 +191,7 @@
 }
 
 .submitBtn:hover {
-  background-color: var(--color-cta-hover);
+  background-color: var(--primary-hover);
   transform: translateY(-1px);
 }
 
@@ -228,21 +228,21 @@
 .successTitle {
   font-size: 24px;
   font-weight: 800;
-  color: var(--color-ink);
+  color: var(--neutral-dark);
   margin-bottom: 8px;
   outline: none;
 }
 
 .successMessage {
   font-size: 15px;
-  color: var(--color-body);
+  color: var(--neutral-dark);
   line-height: 1.5;
   margin-bottom: 24px;
   max-width: 420px;
 }
 
 .doneBtn {
-  background-color: var(--color-dark, #191c1e);
+  background-color: var(--primary, #191c1e);
   color: #ffffff;
   padding: 12px 32px;
   font-weight: 700;
@@ -254,24 +254,24 @@
 }
 
 .doneBtn:hover {
-  background-color: var(--color-dark-hover, #2d3135);
+  background-color: var(--primary-hover, #2d3135);
   transform: translateY(-1px);
 }
 
 .doneBtn:focus-visible {
-  outline: 2px solid var(--color-cta);
+  outline: 2px solid var(--primary);
   outline-offset: 2px;
 }
 
 .inputError {
-  border-color: var(--color-error) !important;
-  background-color: var(--color-error-light) !important;
+  border-color: var(--error) !important;
+  background-color: var(--error-light) !important;
 }
 
 .fieldErrorMsg {
   font-size: 12px;
   font-weight: 600;
-  color: var(--color-error);
+  color: var(--error);
   margin-top: 4px;
 }
 
@@ -281,7 +281,7 @@
   bottom: 24px;
   left: 50%;
   transform: translateX(-50%);
-  background-color: #1e293b;
+  background-color: var(--neutral-dark);
   color: #ffffff;
   padding: 12px 20px;
   border-radius: var(--radius-md);
@@ -321,7 +321,7 @@
 .toastText {
   font-size: 14px;
   font-weight: 600;
-  color: #f8fafc;
+  color: var(--surface-base);
   line-height: 1.4;
   flex: 1;
 }
@@ -329,7 +329,7 @@
 .toastCloseBtn {
   background: transparent;
   border: none;
-  color: #94a3b8;
+  color: var(--neutral-medium);
   font-size: 16px;
   cursor: pointer;
   padding: 4px;

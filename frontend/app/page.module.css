@@ -88,7 +88,7 @@
 }
 
 .primaryCtaBtn {
-  background-color: var(--color-cta);
+  background-color: var(--primary);
   color: #ffffff;
   font-size: 16px;
   font-weight: 800;
@@ -99,7 +99,7 @@
 }
 
 .primaryCtaBtn:hover {
-  background-color: var(--color-cta-hover);
+  background-color: var(--primary-hover);
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(255, 87, 34, 0.4);
 }
@@ -145,7 +145,7 @@
   display: flex;
   flex-direction: column;
   flex: 1;
-  background-color: var(--color-surface-2);
+  background-color: var(--surface-focus);
   border-radius: var(--radius-md);
   padding: 8px 14px;
 }
@@ -171,14 +171,14 @@
   font-size: 10px;
   font-weight: 800;
   letter-spacing: 0.08em;
-  color: var(--color-slate);
+  color: var(--neutral-medium);
 }
 
 .searchInput {
   font-family: var(--font-sans);
   font-size: 14px;
   font-weight: 600;
-  color: var(--color-ink);
+  color: var(--neutral-dark);
   background: transparent;
   border: none;
   outline: none;
@@ -188,12 +188,12 @@
 .searchSelectSimulated {
   font-size: 13px;
   font-weight: 600;
-  color: var(--color-body);
+  color: var(--neutral-dark);
 }
 
 .searchDivider {
   height: 1px;
-  background-color: var(--color-line);
+  background-color: var(--neutral-light);
 }
 
 @media (min-width: 768px) {
@@ -204,7 +204,7 @@
 }
 
 .searchSubmitBtn {
-  background-color: var(--color-cta);
+  background-color: var(--primary);
   color: #ffffff;
   font-size: 15px;
   font-weight: 700;
@@ -218,7 +218,7 @@
 }
 
 .searchSubmitBtn:hover {
-  background-color: var(--color-cta-hover);
+  background-color: var(--primary-hover);
 }
 
 /* Popular Chips */
@@ -257,10 +257,10 @@
 
 /* 2. Flash Sale Promo Banner */
 .flashSaleBanner {
-  background-color: var(--color-dark);
+  background-color: var(--primary);
   color: #ffffff;
   padding: 18px 0;
-  border-bottom: 2px solid var(--color-cta);
+  border-bottom: 2px solid var(--primary);
 }
 
 .flashSaleContainer {
@@ -286,7 +286,7 @@
 
 .flashTag {
   align-self: flex-start;
-  background-color: var(--color-cta);
+  background-color: var(--primary);
   color: #ffffff;
   font-size: 10px;
   font-weight: 800;
@@ -302,12 +302,12 @@
 }
 
 .flashSaleText p {
-  color: #cbd5e1;
+  color: var(--neutral-light);
   font-size: 13px;
 }
 
 .claimDealBtn {
-  background-color: var(--color-cta);
+  background-color: var(--primary);
   color: #ffffff;
   font-size: 13px;
   font-weight: 800;
@@ -317,7 +317,7 @@
 }
 
 .claimDealBtn:hover {
-  background-color: var(--color-cta-hover);
+  background-color: var(--primary-hover);
 }
 
 /* 3. Section Common Styles & 3-Column Grid */
@@ -327,7 +327,7 @@
 }
 
 .altBg {
-  background-color: var(--color-surface-2);
+  background-color: var(--surface-focus);
 }
 
 .sectionHeader {
@@ -342,20 +342,20 @@
   font-size: 11px;
   font-weight: 800;
   letter-spacing: 0.08em;
-  color: var(--color-cta-deep);
+  color: var(--primary-hover);
   margin-bottom: 6px;
 }
 
 .sectionTitle {
   font-size: clamp(24px, 3.5vw, 36px);
   font-weight: 800;
-  color: var(--color-ink);
+  color: var(--neutral-dark);
 }
 
 .viewAllLink {
   font-size: 14px;
   font-weight: 700;
-  color: var(--color-cta-deep);
+  color: var(--primary-hover);
   white-space: nowrap;
 }
 
@@ -415,21 +415,21 @@
 .collectionTitle {
   font-size: clamp(24px, 3.5vw, 34px);
   font-weight: 800;
-  color: var(--color-ink);
+  color: var(--neutral-dark);
   margin-bottom: 6px;
 }
 
 .collectionSubtitle {
   font-size: 15px;
-  color: var(--color-slate);
+  color: var(--neutral-medium);
   max-width: 700px;
 }
 
 /* 4. Trust Section */
 .trustSection {
-  background-color: var(--color-surface);
-  border-top: 1px solid var(--color-line);
-  border-bottom: 1px solid var(--color-line);
+  background-color: var(--surface-elevated);
+  border-top: 1px solid var(--neutral-light);
+  border-bottom: 1px solid var(--neutral-light);
   padding: 72px 0;
 }
 
@@ -441,7 +441,7 @@
 
 .trustSubtitle {
   font-size: 15px;
-  color: var(--color-slate);
+  color: var(--neutral-medium);
   margin-top: 8px;
 }
 
@@ -469,9 +469,9 @@
   align-items: flex-start;
   gap: 12px;
   padding: 24px;
-  background-color: var(--color-surface-2);
+  background-color: var(--surface-focus);
   border-radius: var(--radius-lg);
-  border: 1px solid var(--color-line);
+  border: 1px solid var(--neutral-light);
 }
 
 .trustIcon {
@@ -481,19 +481,19 @@
 .trustCardTitle {
   font-size: 17px;
   font-weight: 700;
-  color: var(--color-ink);
+  color: var(--neutral-dark);
 }
 
 .trustCardText {
   font-size: 13px;
   line-height: 1.55;
-  color: var(--color-body);
+  color: var(--neutral-dark);
 }
 
 /* 5. Testimonials Section */
 .testimonialsSection {
   padding: 72px 0;
-  background-color: var(--color-surface);
+  background-color: var(--surface-elevated);
 }
 
 .testimonialsGrid {
@@ -509,9 +509,9 @@
 }
 
 .testimonialCard {
-  background-color: var(--color-surface-2);
+  background-color: var(--surface-focus);
   border-radius: var(--radius-lg);
-  border: 1px solid var(--color-line);
+  border: 1px solid var(--neutral-light);
   padding: 28px;
   display: flex;
   flex-direction: column;
@@ -519,7 +519,7 @@
 }
 
 .testimonialRating {
-  color: var(--color-amber);
+  color: var(--warning);
   font-size: 16px;
   letter-spacing: 2px;
   margin-bottom: 12px;
@@ -528,7 +528,7 @@
 .testimonialQuote {
   font-size: 14px;
   line-height: 1.6;
-  color: var(--color-body);
+  color: var(--neutral-dark);
   font-style: italic;
   margin-bottom: 24px;
 }
@@ -543,7 +543,7 @@
   width: 40px;
   height: 40px;
   border-radius: var(--radius-full);
-  background-color: var(--color-cta-deep);
+  background-color: var(--primary-hover);
   color: #ffffff;
   display: flex;
   align-items: center;
@@ -555,10 +555,10 @@
 .authorName {
   font-size: 14px;
   font-weight: 700;
-  color: var(--color-ink);
+  color: var(--neutral-dark);
 }
 
 .authorLocation {
   font-size: 12px;
-  color: var(--color-slate);
+  color: var(--neutral-medium);
 }

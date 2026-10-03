@@ -1,13 +1,13 @@
 .pageContainer {
-  background-color: var(--color-bg);
+  background-color: var(--surface-base);
   min-height: 80vh;
   padding-bottom: 80px;
 }
 
 /* 1. Breadcrumbs */
 .breadcrumbBar {
-  background-color: var(--color-surface);
-  border-bottom: 1px solid var(--color-line);
+  background-color: var(--surface-elevated);
+  border-bottom: 1px solid var(--neutral-light);
   padding: 12px 0;
   margin-bottom: 32px;
 }
@@ -20,19 +20,19 @@
 }
 
 .breadcrumbLink {
-  color: var(--color-slate);
+  color: var(--neutral-medium);
 }
 
 .breadcrumbLink:hover {
-  color: var(--color-cta-deep);
+  color: var(--primary-hover);
 }
 
 .breadcrumbSep {
-  color: var(--color-line);
+  color: var(--neutral-light);
 }
 
 .breadcrumbCurrent {
-  color: var(--color-ink);
+  color: var(--neutral-dark);
   font-weight: 700;
 }
 
@@ -57,20 +57,20 @@
   font-size: 11px;
   font-weight: 800;
   letter-spacing: 0.08em;
-  color: var(--color-cta-deep);
+  color: var(--primary-hover);
   margin-bottom: 4px;
 }
 
 .listingTitle {
   font-size: clamp(24px, 4vw, 36px);
   font-weight: 800;
-  color: var(--color-ink);
+  color: var(--neutral-dark);
   margin-bottom: 6px;
 }
 
 .listingSubtitle {
   font-size: 14px;
-  color: var(--color-slate);
+  color: var(--neutral-medium);
   max-width: 600px;
 }
 
@@ -82,13 +82,13 @@
 }
 
 .mobileFilterToggle {
-  background-color: var(--color-surface);
-  border: 1px solid var(--color-line);
+  background-color: var(--surface-elevated);
+  border: 1px solid var(--neutral-light);
   padding: 10px 16px;
   border-radius: var(--radius-md);
   font-size: 13px;
   font-weight: 700;
-  color: var(--color-ink);
+  color: var(--neutral-dark);
   display: flex;
   align-items: center;
   gap: 6px;
@@ -104,8 +104,8 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  background-color: var(--color-surface);
-  border: 1px solid var(--color-line);
+  background-color: var(--surface-elevated);
+  border: 1px solid var(--neutral-light);
   padding: 6px 12px;
   border-radius: var(--radius-md);
 }
@@ -113,7 +113,7 @@
 .sortLabel {
   font-size: 12px;
   font-weight: 700;
-  color: var(--color-slate);
+  color: var(--neutral-medium);
   white-space: nowrap;
 }
 
@@ -121,7 +121,7 @@
   font-family: var(--font-sans);
   font-size: 13px;
   font-weight: 600;
-  color: var(--color-ink);
+  color: var(--neutral-dark);
   background: transparent;
   border: none;
   outline: none;
@@ -132,8 +132,8 @@
   display: none;
   align-items: center;
   gap: 2px;
-  background-color: var(--color-surface);
-  border: 1px solid var(--color-line);
+  background-color: var(--surface-elevated);
+  border: 1px solid var(--neutral-light);
   border-radius: var(--radius-md);
   padding: 2px;
 }
@@ -152,12 +152,12 @@
   justify-content: center;
   border-radius: var(--radius-sm);
   font-size: 16px;
-  color: var(--color-slate);
+  color: var(--neutral-medium);
 }
 
 .viewBtnActive {
-  background-color: var(--color-surface-2);
-  color: var(--color-ink);
+  background-color: var(--surface-focus);
+  color: var(--neutral-dark);
   font-weight: 800;
 }
 
@@ -177,8 +177,8 @@
 
 /* Filter Sidebar (286px wide per Figma) */
 .filterSidebar {
-  background-color: var(--color-surface);
-  border: 1px solid var(--color-line);
+  background-color: var(--surface-elevated);
+  border: 1px solid var(--neutral-light);
   border-radius: var(--radius-lg);
   padding: 24px;
   box-shadow: var(--shadow-subtle);
@@ -212,7 +212,7 @@
   display: flex;
   flex-direction: column;
   gap: 12px;
-  border-bottom: 1px solid var(--color-line);
+  border-bottom: 1px solid var(--neutral-light);
   padding-bottom: 16px;
 }
 
@@ -225,14 +225,14 @@
 .sidebarTitle {
   font-size: 18px;
   font-weight: 800;
-  color: var(--color-ink);
+  color: var(--neutral-dark);
 }
 
 .resetBtn {
   font-size: 11px;
   font-weight: 800;
   letter-spacing: 0.06em;
-  color: var(--color-cta-deep);
+  color: var(--primary-hover);
 }
 
 .resetBtn:hover {
@@ -242,13 +242,13 @@
 .closeSidebarBtn {
   display: none;
   align-self: flex-end;
-  background-color: var(--color-surface-2);
+  background-color: var(--surface-focus);
   width: 32px;
   height: 32px;
   border-radius: var(--radius-full);
   align-items: center;
   justify-content: center;
-  color: var(--color-slate);
+  color: var(--neutral-medium);
 }
 
 @media (max-width: 1023px) {
@@ -266,7 +266,7 @@
 .filterSectionTitle {
   font-size: 13px;
   font-weight: 700;
-  color: var(--color-ink);
+  color: var(--neutral-dark);
   text-transform: uppercase;
   letter-spacing: 0.04em;
 }
@@ -282,13 +282,13 @@
   align-items: center;
   gap: 10px;
   font-size: 13px;
-  color: var(--color-body);
+  color: var(--neutral-dark);
   cursor: pointer;
   user-select: none;
 }
 
 .filterOption input {
-  accent-color: var(--color-cta);
+  accent-color: var(--primary);
   cursor: pointer;
   width: 16px;
   height: 16px;
@@ -299,7 +299,7 @@
 }
 
 .filterOption:hover span {
-  color: var(--color-ink);
+  color: var(--neutral-dark);
 }
 
 /* Results Area */
@@ -314,11 +314,11 @@
   align-items: center;
   justify-content: space-between;
   font-size: 13px;
-  color: var(--color-slate);
+  color: var(--neutral-medium);
 }
 
 .activeFilterReset {
-  color: var(--color-cta-deep);
+  color: var(--primary-hover);
   font-weight: 700;
   font-size: 12px;
 }
@@ -354,8 +354,8 @@
 
 /* Empty State */
 .noResultsBox {
-  background-color: var(--color-surface);
-  border: 1px solid var(--color-line);
+  background-color: var(--surface-elevated);
+  border: 1px solid var(--neutral-light);
   border-radius: var(--radius-lg);
   padding: 60px 24px;
   text-align: center;
@@ -371,17 +371,17 @@
 
 .noResultsBox h3 {
   font-size: 20px;
-  color: var(--color-ink);
+  color: var(--neutral-dark);
 }
 
 .noResultsBox p {
   font-size: 14px;
-  color: var(--color-slate);
+  color: var(--neutral-medium);
   max-width: 440px;
 }
 
 .resetPrimaryBtn {
-  background-color: var(--color-cta);
+  background-color: var(--primary);
   color: #ffffff;
   padding: 12px 24px;
   border-radius: var(--radius-md);
@@ -391,5 +391,5 @@
 }
 
 .resetPrimaryBtn:hover {
-  background-color: var(--color-cta-hover);
+  background-color: var(--primary-hover);
 }

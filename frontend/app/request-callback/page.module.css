@@ -1,5 +1,5 @@
 .pageContainer {
-  background-color: var(--color-bg);
+  background-color: var(--surface-base);
   min-height: 80vh;
   padding: 60px 0 80px;
 }
@@ -28,14 +28,14 @@
   font-size: 11px;
   font-weight: 800;
   letter-spacing: 0.08em;
-  color: var(--color-cta-deep);
+  color: var(--primary-hover);
   margin-bottom: 6px;
 }
 
 .mainHeading {
   font-size: clamp(28px, 4vw, 42px);
   font-weight: 800;
-  color: var(--color-ink);
+  color: var(--neutral-dark);
   line-height: 1.2;
   margin-bottom: 16px;
 }
@@ -43,7 +43,7 @@
 .leadText {
   font-size: 15px;
   line-height: 1.65;
-  color: var(--color-body);
+  color: var(--neutral-dark);
   margin-bottom: 32px;
 }
 
@@ -62,8 +62,8 @@
 
 .trustIcon {
   font-size: 24px;
-  background-color: var(--color-surface);
-  border: 1px solid var(--color-line);
+  background-color: var(--surface-elevated);
+  border: 1px solid var(--neutral-light);
   width: 48px;
   height: 48px;
   border-radius: var(--radius-md);
@@ -76,19 +76,19 @@
 .trustItem h4 {
   font-size: 15px;
   font-weight: 700;
-  color: var(--color-ink);
+  color: var(--neutral-dark);
   margin-bottom: 2px;
 }
 
 .trustItem p {
   font-size: 13px;
-  color: var(--color-slate);
+  color: var(--neutral-medium);
   line-height: 1.45;
 }
 
 .helplineBox {
-  background-color: var(--color-surface);
-  border: 1px solid var(--color-line);
+  background-color: var(--surface-elevated);
+  border: 1px solid var(--neutral-light);
   border-radius: var(--radius-lg);
   padding: 24px;
   display: flex;
@@ -98,18 +98,18 @@
 
 .helplineBox p {
   font-size: 13px;
-  color: var(--color-slate);
+  color: var(--neutral-medium);
 }
 
 .phoneLink {
   font-size: 22px;
   font-weight: 800;
-  color: var(--color-cta-deep);
+  color: var(--primary-hover);
 }
 
 .hoursNotice {
   font-size: 11px;
-  color: var(--color-slate);
+  color: var(--neutral-medium);
 }
 
 .formCol {
