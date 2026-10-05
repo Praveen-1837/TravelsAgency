@@ -17,8 +17,9 @@ interface CallbackFormProps {
   subtitle?: string;
 }
 
-export const CallbackForm: React.FC<CallbackFormProps> = ({
+export const CallbackForm: React.FC<CallbackFormProps & { packageSlug?: string }> = ({
   packageId,
+  packageSlug,
   packageTitle,
   defaultDate = '',
   defaultGroupSize = 2,
@@ -76,42 +77,7 @@ export const CallbackForm: React.FC<CallbackFormProps> = ({
     }
   }, [success]);
 
-  useGSAP(
-    () => {
-      if (!success) return;
-
-      const isReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-      if (isReducedMotion) {
-        if (circleRef.current) gsap.set(circleRef.current, { drawSVG: '100%' });
-        if (checkRef.current) gsap.set(checkRef.current, { drawSVG: '100%' });
-        if (textRef.current) gsap.set(textRef.current, { opacity: 1 });
-      } else {
-        if (circleRef.current) gsap.set(circleRef.current, { drawSVG: '0%' });
-        if (checkRef.current) gsap.set(checkRef.current, { drawSVG: '0%' });
-        if (textRef.current) gsap.set(textRef.current, { opacity: 0 });
-
-        const tl = gsap.timeline();
-
-        tl.to(circleRef.current, {
-          drawSVG: '100%',
-          duration: 0.4,
-          ease: 'power2.out',
-        })
-          .to(checkRef.current, {
-            drawSVG: '100%',
-            duration: 0.3,
-            ease: 'power2.out',
-          })
-          .to(textRef.current, {
-            opacity: 1,
-            duration: 0.2,
-            ease: 'power2.out',
-          });
-      }
-    },
-    { dependencies: [success] }
-  );
+  // GSAP animations for success removed in favor of CSS fade-in
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -182,6 +148,8 @@ export const CallbackForm: React.FC<CallbackFormProps> = ({
       const res = await submitCallbackInquiry(
         {
           package_id: packageId,
+          package_slug: packageSlug,
+          package_title: packageTitle,
           name,
           phone: cleanPhone,
           email: email || undefined,
@@ -234,45 +202,30 @@ export const CallbackForm: React.FC<CallbackFormProps> = ({
         ref={panelRef}
         tabIndex={-1}
         aria-live="polite"
-        className={styles.successCard}
+        className={styles.successContainer}
       >
-        <svg className={styles.successSvg} viewBox="0 0 100 100" aria-hidden="true">
-          <circle
-            ref={circleRef}
-            cx="50"
-            cy="50"
-            r="40"
-            stroke="#00a572"
-            strokeWidth="4"
+        <div className={styles.successIconWrapper}>
+          <svg
+            className={styles.successCheckmark}
+            viewBox="0 0 24 24"
             fill="none"
-          />
-          <path
-            ref={checkRef}
-            d="M 32 52 L 44 64 L 68 36"
-            stroke="#00a572"
-            strokeWidth="4"
+            stroke="currentColor"
+            strokeWidth="3"
             strokeLinecap="round"
             strokeLinejoin="round"
-            fill="none"
-          />
-        </svg>
-
-        <div ref={textRef} className={styles.successTextContainer}>
-          <h3 className={styles.successTitle}>Inquiry Registered!</h3>
-          <p className={styles.successMsg}>
-            Thanks! The Aariva Voyages team will call or WhatsApp you shortly.
-          </p>
-          <div className={styles.helplineNotice} style={{ marginTop: '16px' }}>
-            <span>Need urgent help? Call directly:</span>
-            <a href="tel:+919876543210" className={styles.directCallLink}>
-              📞 +91 98765 43210
-            </a>
-          </div>
-          <br />
-          <button type="button" onClick={handleReset} className={styles.anotherBtn} style={{ marginTop: '16px' }}>
-            Submit Another Request
-          </button>
+          >
+            <polyline points="20 6 9 17 4 12" />
+          </svg>
         </div>
+
+        <h3 className={styles.successTitle}>Inquiry Registered!</h3>
+        <p className={styles.successSubtitle}>
+          Our team will contact you shortly
+        </p>
+
+        <button type="button" onClick={handleReset} className={styles.anotherBtn}>
+          Submit Another Request
+        </button>
       </div>
     );
   }

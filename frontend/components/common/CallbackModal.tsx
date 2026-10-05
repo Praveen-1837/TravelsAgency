@@ -11,6 +11,7 @@ interface CallbackModalProps {
   isOpen: boolean;
   onClose: () => void;
   packageId?: string | null;
+  packageSlug?: string | null;
   packageTitle?: string;
 }
 
@@ -18,6 +19,7 @@ export const CallbackModal: React.FC<CallbackModalProps> = ({
   isOpen,
   onClose,
   packageId,
+  packageSlug,
   packageTitle,
 }) => {
   const { user, session } = useAuth();
@@ -221,131 +223,7 @@ export const CallbackModal: React.FC<CallbackModalProps> = ({
     }
   };
 
-  // GSAP timeline sequence on successful submit
-  useGSAP(
-    () => {
-      if (!success) return;
-
-      const isReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-      // Avoid layout height jump by setting minHeight
-      if (modalBoxRef.current) {
-        const h = modalBoxRef.current.getBoundingClientRect().height;
-        gsap.set(modalBoxRef.current, { minHeight: `${Math.round(h)}px` });
-      }
-
-      if (isReducedMotion) {
-        if (formContentRef.current) gsap.set(formContentRef.current, { display: 'none' });
-        if (successPanelRef.current) gsap.set(successPanelRef.current, { display: 'flex', opacity: 0 });
-        if (badgeCircleRef.current) gsap.set(badgeCircleRef.current, { scale: 1, opacity: 1 });
-        if (pulseRingRef.current) gsap.set(pulseRingRef.current, { opacity: 0 });
-        if (checkmarkPathRef.current) gsap.set(checkmarkPathRef.current, { drawSVG: '100%' });
-        if (textGroupRef.current) gsap.set(textGroupRef.current, { opacity: 1, y: 0 });
-
-        gsap.to(successPanelRef.current, {
-          opacity: 1,
-          duration: 0.2,
-          onComplete: () => {
-            headingRef.current?.focus();
-          },
-        });
-        return;
-      }
-
-      const tl = gsap.timeline({
-        onComplete: () => {
-          triggerCloseAndToast();
-        },
-      });
-      tlRef.current = tl;
-
-      if (successPanelRef.current) gsap.set(successPanelRef.current, { display: 'none', opacity: 0 });
-      if (badgeCircleRef.current) gsap.set(badgeCircleRef.current, { scale: 0, transformOrigin: '48px 48px' });
-      if (pulseRingRef.current) gsap.set(pulseRingRef.current, { scale: 1, opacity: 0.35, transformOrigin: '48px 48px' });
-      if (checkmarkPathRef.current) gsap.set(checkmarkPathRef.current, { drawSVG: '0%' });
-      if (textGroupRef.current) gsap.set(textGroupRef.current, { opacity: 0, y: 12 });
-
-      tl.to(formContentRef.current, {
-        opacity: 0,
-        y: -8,
-        duration: 0.25,
-        ease: 'power2.in',
-        onComplete: () => {
-          if (formContentRef.current) formContentRef.current.style.display = 'none';
-          if (successPanelRef.current) {
-            successPanelRef.current.style.display = 'flex';
-            successPanelRef.current.style.opacity = '1';
-          }
-        },
-      });
-
-      tl.addLabel('popStart');
-
-      tl.to(
-        badgeCircleRef.current,
-        {
-          scale: 1,
-          duration: 0.45,
-          ease: 'back.out(1.8)',
-        },
-        'popStart'
-      );
-
-      tl.to(
-        pulseRingRef.current,
-        {
-          scale: 1.6,
-          opacity: 0,
-          duration: 0.35,
-          ease: 'power2.out',
-        },
-        'popStart'
-      );
-
-      tl.to(
-        checkmarkPathRef.current,
-        {
-          drawSVG: '100%',
-          duration: 0.4,
-          ease: 'power2.out',
-        },
-        'popStart+=0.15'
-      );
-
-      tl.to(
-        textGroupRef.current,
-        {
-          opacity: 1,
-          y: 0,
-          duration: 0.35,
-          ease: 'power2.out',
-          onComplete: () => {
-            headingRef.current?.focus();
-          },
-        },
-        'popStart+=0.25'
-      );
-
-      tl.to({}, { duration: 2.5 });
-
-      tl.to(modalBoxRef.current, {
-        opacity: 0,
-        scale: 0.96,
-        duration: 0.3,
-        ease: 'power2.in',
-      });
-      tl.to(
-        containerRef.current,
-        {
-          opacity: 0,
-          duration: 0.2,
-          ease: 'power2.in',
-        },
-        '<'
-      );
-    },
-    { dependencies: [success] }
-  );
+  // Simple CSS-based fade in for success state instead of GSAP
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -417,6 +295,8 @@ export const CallbackModal: React.FC<CallbackModalProps> = ({
       const res = await submitCallbackInquiry(
         {
           package_id: packageId,
+          package_slug: packageSlug,
+          package_title: packageTitle,
           name,
           phone: cleanPhone,
           email: email || undefined,
@@ -483,51 +363,42 @@ export const CallbackModal: React.FC<CallbackModalProps> = ({
               ref={successPanelRef}
               style={{ display: success ? 'flex' : 'none' }}
               aria-live="polite"
-              className={styles.successState}
+              className={styles.successContainer}
             >
-              <svg viewBox="0 0 96 96" className={styles.successBadgeSvg} aria-hidden="true">
-                <circle
-                  ref={pulseRingRef}
-                  cx="48"
-                  cy="48"
-                  r="32"
+              <div className={styles.successIconWrapper}>
+                <svg
+                  className={styles.successCheckmark}
+                  viewBox="0 0 24 24"
                   fill="none"
-                  stroke="var(--secondary)"
-                  strokeWidth="4"
-                  opacity="0.35"
-                />
-                <circle ref={badgeCircleRef} cx="48" cy="48" r="32" fill="var(--secondary)" />
-                <path
-                  ref={checkmarkPathRef}
-                  d="M 32 48 L 43 59 L 64 37"
-                  stroke="#FFFFFF"
-                  strokeWidth="4.5"
+                  stroke="currentColor"
+                  strokeWidth="3"
                   strokeLinecap="round"
                   strokeLinejoin="round"
-                  fill="none"
-                />
-              </svg>
-
-              <div ref={textGroupRef} className={styles.textGroup}>
-                <h3
-                  ref={headingRef}
-                  id="modal-success-heading"
-                  tabIndex={-1}
-                  className={styles.successTitle}
                 >
-                  Request received!
-                </h3>
-                <p className={styles.successMessage}>
-                  Thanks! The Aariva Voyages team will call or WhatsApp you shortly.
-                </p>
-                <button
-                  type="button"
-                  onClick={triggerCloseAndToast}
-                  className={styles.doneBtn}
-                >
-                  Done
-                </button>
+                  <polyline points="20 6 9 17 4 12" />
+                </svg>
               </div>
+
+              <h3
+                ref={headingRef}
+                id="modal-success-heading"
+                tabIndex={-1}
+                className={styles.successTitle}
+              >
+                Inquiry Registered!
+              </h3>
+              
+              <p className={styles.successSubtitle}>
+                Our team will contact you shortly
+              </p>
+              
+              <button
+                type="button"
+                onClick={triggerCloseAndToast}
+                className={styles.anotherBtn}
+              >
+                Done
+              </button>
             </div>
 
             {/* Form Content wrapped in RequireAuth */}

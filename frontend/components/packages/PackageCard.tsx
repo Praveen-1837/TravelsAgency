@@ -23,7 +23,7 @@ export const PackageCard: React.FC<PackageCardProps> = ({ pkg, variant = 'grid' 
   // Badge selector
   let badgeText = 'BESTSELLER';
   if (pkg.price_per_person >= 25000) badgeText = 'LUXURY RETREAT';
-  else if (pkg.rating_avg >= 4.9) badgeText = 'TOP RATED';
+  else if (pkg.rating_avg !== undefined && pkg.rating_avg >= 4.9) badgeText = 'TOP RATED';
   else if (pkg.audience.includes('couple')) badgeText = 'HONEYMOON FAV';
 
   return (
@@ -60,11 +60,13 @@ export const PackageCard: React.FC<PackageCardProps> = ({ pkg, variant = 'grid' 
         <div className={styles.content}>
           {/* Meta Row: Rating & Destination */}
           <div className={styles.metaRow}>
-            <div className={styles.ratingBox}>
-              <span className={styles.starIcon}>★</span>
-              <span className={styles.ratingAvg}>{pkg.rating_avg.toFixed(1)}</span>
-              <span className={styles.reviewCount}>({pkg.review_count} reviews)</span>
-            </div>
+            {pkg.rating_avg !== undefined && pkg.review_count !== undefined && (
+              <div className={styles.ratingBox}>
+                <span className={styles.starIcon}>★</span>
+                <span className={styles.ratingAvg}>{pkg.rating_avg.toFixed(1)}</span>
+                <span className={styles.reviewCount}>({pkg.review_count} reviews)</span>
+              </div>
+            )}
             <span className={styles.destinationTag}>{pkg.destination}</span>
           </div>
 

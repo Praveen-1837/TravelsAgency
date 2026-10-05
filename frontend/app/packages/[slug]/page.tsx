@@ -1,10 +1,13 @@
 import React from 'react';
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
-import { fetchPackageBySlug, fetchPackageReviews } from '@/lib/api';
-import { LOCAL_SEED_PACKAGES } from '@/lib/seed-data';
+import { fetchPackageReviews } from '@/lib/api';
 import PackageDetailClient from './PackageDetailClient';
-import { PackagesListingContent } from '../page';
+import { PackagesListingContent } from '../PackagesListingContent';
+import { sanityFetch } from '@/sanity/lib/fetch';
+import { PACKAGE_BY_SLUG_QUERY, ALL_PACKAGES_QUERY } from '@/sanity/lib/queries';
+import { SanityPackage, SanityPackageSummary } from '@/sanity/lib/types';
+import { mapSanityToPackage } from '@/sanity/lib/adapter';
 
 const DESTINATIONS: Record<string, string> = {
   rajasthan: 'Rajasthan',
@@ -29,22 +32,28 @@ const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://aarivavoyages.com';
 
 // ISR static params generation for fast loading and SEO
 export async function generateStaticParams() {
-  return LOCAL_SEED_PACKAGES.map((pkg) => ({
+  const pkgs = await sanityFetch<SanityPackageSummary[]>({ query: ALL_PACKAGES_QUERY, tags: ['package'] });
+  return pkgs.map((pkg) => ({
     slug: pkg.slug,
   }));
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const pkg = await fetchPackageBySlug(slug);
+  const sanityPkg = await sanityFetch<SanityPackage>({ 
+    query: PACKAGE_BY_SLUG_QUERY, 
+    params: { slug },
+    tags: [`package:${slug}`]
+  });
 
-  if (!pkg) {
+  if (!sanityPkg) {
     const destName = DESTINATIONS[slug];
     return {
       title: destName ? `${destName} Tour Packages` : 'Package Not Found',
     };
   }
 
+  const pkg = mapSanityToPackage(sanityPkg);
   const priceStr = `₹${pkg.price_per_person.toLocaleString('en-IN')}`;
 
   return {
@@ -72,25 +81,38 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function PackageDetailPage({ params }: Props) {
   const { slug } = await params;
-  const pkg = await fetchPackageBySlug(slug);
+  const sanityPkg = await sanityFetch<SanityPackage>({ 
+    query: PACKAGE_BY_SLUG_QUERY, 
+    params: { slug },
+    tags: [`package:${slug}`]
+  });
 
-  if (!pkg) {
+  if (!sanityPkg) {
     if (DESTINATIONS[slug]) {
+      // For /packages/kerala etc
+      const allPkgs = await sanityFetch<SanityPackageSummary[]>({ query: ALL_PACKAGES_QUERY, tags: ['package'] });
+      const mappedPackages = allPkgs.map(mapSanityToPackage);
       return (
         <React.Suspense fallback={<div style={{ padding: '60px', textAlign: 'center' }}>Loading packages...</div>}>
-          <PackagesListingContent destinationSlug={DESTINATIONS[slug]} destinationName={DESTINATIONS[slug]} />
+          <PackagesListingContent destinationSlug={DESTINATIONS[slug]} destinationName={DESTINATIONS[slug]} initialPackages={mappedPackages} />
         </React.Suspense>
       );
     }
     notFound();
   }
 
+  const pkg = mapSanityToPackage(sanityPkg);
+
   // Fetch package reviews for server rendering & SEO
   const reviewsRes = await fetchPackageReviews(slug);
   const initialReviews = reviewsRes?.data || [];
 
   // Similar packages (excluding current package)
-  const similarPackages = LOCAL_SEED_PACKAGES.filter((p) => p.slug !== pkg.slug).slice(0, 3);
+  const allSanityPkgs = await sanityFetch<SanityPackageSummary[]>({ query: ALL_PACKAGES_QUERY, tags: ['package'] });
+  const similarPackages = allSanityPkgs
+    .filter((p) => p.slug !== pkg.slug)
+    .map(mapSanityToPackage)
+    .slice(0, 3);
 
   // TouristTrip JSON-LD Structured Data with Reviews & Breadcrumbs
   const jsonLd = {

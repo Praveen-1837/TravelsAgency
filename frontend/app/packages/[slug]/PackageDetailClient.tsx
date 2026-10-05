@@ -185,12 +185,14 @@ export default function PackageDetailClient({ pkg, similarPackages, initialRevie
           <h1 className={styles.tourTitle}>{pkg.title}</h1>
 
           <div className={styles.metaRow}>
-            <div className={styles.ratingBox}>
-              <span className={styles.starIcon}>★</span>
-              <span className={styles.ratingVal}>{pkg.rating_avg.toFixed(1)}</span>
-              <span className={styles.reviewCount}>({pkg.review_count} verified reviews)</span>
-            </div>
-            <span className={styles.dot}>•</span>
+            {pkg.rating_avg !== undefined && pkg.review_count !== undefined && (
+              <div className={styles.ratingBox}>
+                <span className={styles.starIcon}>★</span>
+                <span className={styles.ratingVal}>{pkg.rating_avg.toFixed(1)}</span>
+                <span className={styles.reviewCount}>({pkg.review_count} verified reviews)</span>
+              </div>
+            )}
+            {pkg.rating_avg !== undefined && <span className={styles.dot}>•</span>}
             <span className={styles.destinationText}>📍 {pkg.destination}</span>
             <span className={styles.dot}>•</span>
             <span className={styles.audienceText}>👥 {pkg.audience.join(' • ').toUpperCase()}</span>
@@ -260,7 +262,7 @@ export default function PackageDetailClient({ pkg, similarPackages, initialRevie
                 className={`${styles.tabBtn} ${activeTab === 'reviews' ? styles.activeTab : ''}`}
                 onClick={(e) => handleAnchorClick(e, 'reviews')}
               >
-                Reviews ({pkg.review_count})
+                Reviews {pkg.review_count !== undefined ? `(${pkg.review_count})` : ''}
               </a>
               <a
                 href="#inquiries"
@@ -331,10 +333,12 @@ export default function PackageDetailClient({ pkg, similarPackages, initialRevie
                   <div className={styles.reviewsOverviewHeader}>
                     <div>
                       <h3 className={styles.blockTitle}>Traveler Feedback &amp; Stories</h3>
-                      <p className={styles.overviewSubtext}>
-                        ★ {pkg.rating_avg.toFixed(1)} out of 5.0 • Rated by {pkg.review_count}{' '}
-                        verified Indian travelers
-                      </p>
+                      {pkg.rating_avg !== undefined && pkg.review_count !== undefined && (
+                        <p className={styles.overviewSubtext}>
+                          ★ {pkg.rating_avg.toFixed(1)} out of 5.0 • Rated by {pkg.review_count}{' '}
+                          verified Indian travelers
+                        </p>
+                      )}
                     </div>
                     <a
                       href="#reviews"
@@ -415,8 +419,8 @@ export default function PackageDetailClient({ pkg, similarPackages, initialRevie
             {/* SECTION 3: REVIEWS & TESTIMONIALS */}
             <div id="reviews" className={styles.tabContent}>
               <ReviewScoreCard
-                ratingAvg={pkg.rating_avg}
-                reviewCount={pkg.review_count}
+                ratingAvg={pkg.rating_avg || 0}
+                reviewCount={pkg.review_count || 0}
                 onWriteReviewClick={() => setIsReviewModalOpen(true)}
                 selectedStarFilter={selectedStarFilter}
                 onSelectStarFilter={(star) => setSelectedStarFilter(star)}

@@ -1,10 +1,14 @@
 import { MetadataRoute } from 'next';
-import { LOCAL_SEED_PACKAGES } from '@/lib/seed-data';
+import { sanityFetch } from '@/sanity/lib/fetch';
+import { ALL_PACKAGES_QUERY } from '@/sanity/lib/queries';
+import { SanityPackageSummary } from '@/sanity/lib/types';
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://aarivavoyages.com';
 
-  const packageRoutes: MetadataRoute.Sitemap = LOCAL_SEED_PACKAGES.map((pkg) => ({
+  const pkgs = await sanityFetch<SanityPackageSummary[]>({ query: ALL_PACKAGES_QUERY, tags: ['package'] });
+
+  const packageRoutes: MetadataRoute.Sitemap = pkgs.map((pkg) => ({
     url: `${baseUrl}/packages/${pkg.slug}`,
     lastModified: new Date(),
     changeFrequency: 'weekly',

@@ -201,64 +201,71 @@
   transform: none;
 }
 
-.successState {
+.successContainer {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   text-align: center;
-  padding: 24px 8px;
+  padding: 32px 8px;
   width: 100%;
 }
 
-.successBadgeSvg {
+.successIconWrapper {
   width: 80px;
   height: 80px;
-  margin-bottom: 20px;
-  overflow: visible;
+  border-radius: 50%;
+  background-color: rgba(0, 165, 114, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 24px;
+  animation: fadeInIcon 0.2s ease-out forwards;
 }
 
-.textGroup {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 100%;
+@keyframes fadeInIcon {
+  from { opacity: 0; transform: scale(0.85); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.successCheckmark {
+  width: 40px;
+  height: 40px;
+  color: var(--success, #00a572);
 }
 
 .successTitle {
   font-size: 24px;
-  font-weight: 800;
-  color: var(--neutral-dark);
+  font-weight: 700;
+  color: var(--neutral-dark, #1a202c);
   margin-bottom: 8px;
   outline: none;
 }
 
-.successMessage {
-  font-size: 15px;
-  color: var(--neutral-dark);
-  line-height: 1.5;
+.successSubtitle {
+  font-size: 14px;
+  color: var(--neutral-medium, #718096);
   margin-bottom: 24px;
-  max-width: 420px;
 }
 
-.doneBtn {
-  background-color: var(--primary, #191c1e);
-  color: #ffffff;
-  padding: 12px 32px;
-  font-weight: 700;
+.anotherBtn {
+  background-color: transparent;
+  color: var(--neutral-medium, #718096);
+  font-size: 14px;
+  font-weight: 500;
+  padding: 8px 32px;
+  border: 1px solid var(--neutral-light);
   border-radius: var(--radius-md);
-  font-size: 15px;
-  border: none;
+  transition: all 0.2s ease-in-out;
   cursor: pointer;
-  transition: all var(--transition-fast);
 }
 
-.doneBtn:hover {
-  background-color: var(--primary-hover, #2d3135);
-  transform: translateY(-1px);
+.anotherBtn:hover {
+  background-color: var(--neutral-light);
+  color: var(--neutral-dark);
 }
 
-.doneBtn:focus-visible {
+.anotherBtn:focus-visible {
   outline: 2px solid var(--primary);
   outline-offset: 2px;
 }

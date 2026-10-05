@@ -263,22 +263,34 @@ export async function createCallbackRequest(
   recentPhoneTimestamps.push(currentTime);
   phoneSubmissions.set(input.phone, recentPhoneTimestamps);
 
-  // 4. Save New Callback Record with verified user_id
+  // 4. Save New Inquiry Record with verified user_id
   const recordId = crypto.randomUUID();
-  const newRecord: CallbackRecord = {
+  
+  // 5. Lookup Package Title for Notification
+  const matchedPkg = input.package_id
+    ? SEED_PACKAGES.find((p) => p.id === input.package_id)
+    : undefined;
+  
+  // Note: the rest of the app might still use CallbackRecord for now.
+  // We construct the new inquiry schema object for insertion.
+  const newInquiry = {
     id: recordId,
-    user_id: userId,
+    user_id: userId, // login required, we already throw if no user_id (not shown here, but assumed verified)
+    type: 'callback',
     package_id: input.package_id || null,
+    package_slug: input.package_slug || null,
+    package_title_snapshot: input.package_title || (input.package_id ? (matchedPkg?.title || 'Unknown Package') : null),
     name: input.name,
     phone: input.phone,
-    email: input.email || null,
-    travel_from: input.travel_from || null,
-    travel_to: input.travel_to || null,
+    email: input.email || '', // email is now NOT NULL in schema
+    preferred_contact: 'whatsapp',
+    travel_start_date: input.travel_from || null,
+    travel_end_date: input.travel_to || null,
     group_size: input.group_size || 2,
     special_requests: input.special_requests || null,
+    message: null,
     status: 'new',
-    assigned_to: null,
-    notes: null,
+    admin_notes: null,
     created_at: now.toISOString(),
     updated_at: now.toISOString(),
   };
@@ -290,9 +302,11 @@ export async function createCallbackRequest(
       process.env.SUPABASE_URL &&
       process.env.SUPABASE_URL !== 'https://placeholder.supabase.co'
     ) {
-      const { error } = await supabaseAdmin.from('callback_requests').insert([newRecord]);
+      const { error } = await supabaseAdmin.from('inquiries').insert([newInquiry]);
       if (!error) {
         savedToDb = true;
+      } else {
+        console.error('[CallbackService] Supabase insert error:', error);
       }
     }
   } catch (err) {
@@ -303,13 +317,27 @@ export async function createCallbackRequest(
   }
 
   if (!savedToDb) {
-    memoryCallbacks.unshift(newRecord);
+    // keeping memory fallback matching old CallbackRecord for now to not break memory reads
+    memoryCallbacks.unshift({
+      id: recordId,
+      user_id: userId,
+      package_id: input.package_id || null,
+      name: input.name,
+      phone: input.phone,
+      email: input.email || null,
+      travel_from: input.travel_from || null,
+      travel_to: input.travel_to || null,
+      group_size: input.group_size || 2,
+      special_requests: input.special_requests || null,
+      status: 'new',
+      assigned_to: null,
+      notes: null,
+      created_at: now.toISOString(),
+      updated_at: now.toISOString(),
+    });
   }
 
-  // 5. Lookup Package Title for Notification
-  const matchedPkg = input.package_id
-    ? SEED_PACKAGES.find((p) => p.id === input.package_id)
-    : undefined;
+
 
   // 6. Asynchronous Non-blocking Email Notification via SendGrid
   sendCallbackNotifications({

@@ -8,6 +8,7 @@ import {
   CallbackRecord,
 } from './types';
 import { LOCAL_SEED_PACKAGES, LOCAL_SEED_REVIEWS } from './seed-data';
+import { supabase } from '@/lib/supabase/client';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
 
@@ -68,7 +69,7 @@ export async function fetchPackages(filters?: PackageFilters): Promise<{
   } else if (filters?.sort === 'price_desc') {
     results.sort((a, b) => b.price_per_person - a.price_per_person);
   } else if (filters?.sort === 'rating') {
-    results.sort((a, b) => b.rating_avg - a.rating_avg);
+    results.sort((a, b) => (b.rating_avg || 0) - (a.rating_avg || 0));
   } else if (filters?.sort === 'duration') {
     results.sort((a, b) => a.duration_days - b.duration_days);
   }
@@ -102,15 +103,17 @@ export async function fetchPackageBySlug(slug: string): Promise<Package | null> 
 
 export async function submitCallbackInquiry(
   payload: CallbackRequestPayload,
-  token?: string
+  _token?: string // kept for backward compatibility if needed, but overridden
 ): Promise<{ success: boolean; message?: string; error?: string }> {
   try {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) throw new Error('Not logged in');
+    const token = session.access_token;
+
     const headers: Record<string, string> = {
       'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
     };
-    if (token) {
-      headers['Authorization'] = `Bearer ${token}`;
-    }
 
     const res = await fetch(`${API_BASE_URL}/callbacks`, {
       method: 'POST',

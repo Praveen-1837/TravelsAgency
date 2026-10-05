@@ -50,6 +50,7 @@ export async function requireUserAuth(req: Request, _res: Response, next: NextFu
       } = await supabaseAdmin.auth.getUser(token);
 
       if (error || !user) {
+        console.error('[Auth] Supabase auth error in requireUserAuth:', error);
         next(new AppError('Invalid or expired authentication token. Please log in again.', 401, 'UNAUTHORIZED'));
         return;
       }

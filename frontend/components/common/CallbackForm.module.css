@@ -159,80 +159,72 @@
   transform: none;
 }
 
-/* Success Card */
-.successCard {
-  text-align: center;
-  padding: 40px 20px;
-  background-color: var(--surface-elevated);
-  border: 1px solid var(--neutral-light);
+/* Minimal Success State */
+.successContainer {
+  max-width: 400px;
+  margin: 0 auto;
+  background-color: #ffffff;
+  padding: 32px 24px;
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-card);
+  border: 1px solid var(--neutral-light);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
 }
 
-.successIcon {
-  width: 64px;
-  height: 64px;
-  border-radius: var(--radius-full);
-  background-color: var(--success);
-  color: #ffffff;
-  font-size: 32px;
-  font-weight: 800;
+.successIconWrapper {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background-color: rgba(0, 165, 114, 0.1);
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 0 auto 16px;
-  box-shadow: 0 8px 24px rgba(0, 108, 73, 0.25);
+  margin-bottom: 24px;
+  animation: fadeInIcon 0.2s ease-out forwards;
+}
+
+@keyframes fadeInIcon {
+  from { opacity: 0; transform: scale(0.85); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.successCheckmark {
+  width: 40px;
+  height: 40px;
+  color: var(--success, #00a572);
 }
 
 .successTitle {
-  font-size: 26px;
-  font-weight: 800;
-  color: var(--neutral-dark);
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--neutral-dark, #1a202c);
   margin-bottom: 8px;
 }
 
-.successMsg {
-  font-size: 16px;
-  color: var(--neutral-dark);
-  margin-bottom: 6px;
-}
-
-.successSub {
+.successSubtitle {
   font-size: 14px;
-  color: var(--neutral-medium);
+  color: var(--neutral-medium, #718096);
   margin-bottom: 24px;
-  max-width: 500px;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.helplineNotice {
-  background-color: var(--surface-focus);
-  padding: 14px;
-  border-radius: var(--radius-md);
-  display: inline-flex;
-  align-items: center;
-  gap: 12px;
-  font-size: 13px;
-  margin-bottom: 24px;
-}
-
-.directCallLink {
-  font-weight: 800;
-  color: var(--primary-hover);
 }
 
 .anotherBtn {
-  background-color: var(--primary);
-  color: #ffffff;
+  background-color: transparent;
+  color: var(--neutral-medium, #718096);
   font-size: 14px;
-  font-weight: 700;
-  padding: 12px 24px;
+  font-weight: 500;
+  padding: 8px 16px;
+  border: 1px solid var(--neutral-light);
   border-radius: var(--radius-md);
+  transition: all 0.2s ease-in-out;
+  cursor: pointer;
 }
 
 .anotherBtn:hover {
-  background-color: var(--primary-hover);
+  background-color: var(--neutral-light);
+  color: var(--neutral-dark);
 }
 
 .inputError {
@@ -246,4 +238,3 @@
   color: var(--error);
   margin-top: 4px;
 }
-

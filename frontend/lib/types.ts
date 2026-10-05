@@ -25,8 +25,8 @@ export interface Package {
   inclusions: string[];
   itinerary: ItineraryDay[];
   images: string[];
-  rating_avg: number;
-  review_count: number;
+  rating_avg?: number;
+  review_count?: number;
   is_featured: boolean;
   is_active: boolean;
 }
@@ -85,6 +85,8 @@ export interface AdminStats {
 
 export interface CallbackRequestPayload {
   package_id?: string | null;
+  package_slug?: string | null;
+  package_title?: string | null;
   name: string;
   phone: string;
   email?: string;

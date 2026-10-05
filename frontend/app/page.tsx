@@ -7,20 +7,31 @@ import { fetchPackages, fetchAllFeaturedReviews } from '@/lib/api';
 import { AnimatedHeroContent } from '@/components/home/AnimatedHeroContent';
 import { Reveal } from '@/components/common/Reveal';
 
+import { FEATURED_PACKAGES_QUERY, ALL_PACKAGES_QUERY } from '@/sanity/lib/queries';
+import { sanityFetch } from '@/sanity/lib/fetch';
+import { SanityPackageSummary } from '@/sanity/lib/types';
+import { mapSanityToPackage } from '@/sanity/lib/adapter';
+
 export default async function HomePage() {
-  const { data: allPackages } = await fetchPackages();
+  const featuredSanity = await sanityFetch<SanityPackageSummary[]>({ query: FEATURED_PACKAGES_QUERY, tags: ['package'] });
+  let allSanity = await sanityFetch<SanityPackageSummary[]>({ query: ALL_PACKAGES_QUERY, tags: ['package'] });
+  
+  if (featuredSanity.length === 0) {
+    allSanity = allSanity; // already fetched
+  }
+
+  const allPackages = allSanity.map(mapSanityToPackage);
+  const featuredPackages = featuredSanity.length > 0 ? featuredSanity.map(mapSanityToPackage).slice(0, 3) : allPackages.slice(0, 3);
+  
   const featuredReviews = await fetchAllFeaturedReviews();
 
-  // Honeymoon packages (audience includes couple)
-  const honeymoonPackages = allPackages.filter((p) => p.audience.includes('couple'));
+  // Honeymoon packages (audience includes honeymoon)
+  const honeymoonPackages = allPackages.filter((p) => p.audience.includes('honeymoon') || p.audience.includes('couple'));
 
   // Group & Family packages
   const groupPackages = allPackages.filter(
-    (p) => p.audience.includes('group') || p.audience.includes('family')
+    (p) => p.audience.includes('group') || p.audience.includes('family') || p.audience.includes('adventure')
   );
-
-  // Featured 3 packages for the top showcase grid
-  const featuredPackages = allPackages.slice(0, 3);
 
   return (
     <div className={styles.homeContainer}>

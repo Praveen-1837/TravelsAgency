@@ -3,7 +3,9 @@ import { z } from 'zod';
 const indianMobileRegex = /^(?:\+91|91|0)?[6-9]\d{9}$/;
 
 export const callbackRequestSchema = z.object({
-  package_id: z.string().uuid().optional().nullable(),
+  package_id: z.string().optional().nullable(),
+  package_slug: z.string().optional().nullable(),
+  package_title: z.string().optional().nullable(),
   name: z
     .string()
     .min(2, 'Name must be at least 2 characters')
