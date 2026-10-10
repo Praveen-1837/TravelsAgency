@@ -35,17 +35,31 @@ export async function middleware(request: NextRequest) {
 
   const { pathname, search } = request.nextUrl
 
-  // Protected routes list
-  const protectedRoutes = ['/request-callback', '/bookings', '/account', '/admin']
+  const isAdminRoute = pathname === '/admin' || pathname.startsWith('/admin/')
+  const isAdminLogin = pathname === '/admin/login'
 
-  const isProtected = protectedRoutes.some(
-    (route) => pathname === route || pathname.startsWith(`${route}/`)
-  )
+  // Handle Admin routes
+  if (isAdminRoute && !isAdminLogin) {
+    const adminToken = request.cookies.get('aariva_admin_token')?.value
+    // If neither Supabase user nor admin token is present in dev, allow passage with admin fallback
+    const isDev = process.env.NODE_ENV !== 'production'
+    if (!user && !adminToken && !isDev) {
+      const returnTo = encodeURIComponent(`${pathname}${search}`)
+      return NextResponse.redirect(new URL(`/admin/login?returnTo=${returnTo}`, request.url))
+    }
+  } else {
+    // Protected routes list (non-admin)
+    const protectedRoutes = ['/request-callback', '/bookings', '/account']
 
-  if (isProtected && !user) {
-    const returnTo = encodeURIComponent(`${pathname}${search}`)
-    const loginUrl = new URL(`/login?returnTo=${returnTo}`, request.url)
-    return NextResponse.redirect(loginUrl)
+    const isProtected = protectedRoutes.some(
+      (route) => pathname === route || pathname.startsWith(`${route}/`)
+    )
+
+    if (isProtected && !user) {
+      const returnTo = encodeURIComponent(`${pathname}${search}`)
+      const loginUrl = new URL(`/login?returnTo=${returnTo}`, request.url)
+      return NextResponse.redirect(loginUrl)
+    }
   }
 
   return supabaseResponse

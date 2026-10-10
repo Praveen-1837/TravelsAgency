@@ -1,0 +1,50 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+  /* Admin Dashboard Design Tokens */
+  --admin-color-bg-primary: #FFFFFF;
+  --admin-color-bg-secondary: #F9FAFB;
+  --admin-color-bg-tertiary: #F3F4F6;
+  --admin-color-text-primary: #111827;
+  --admin-color-text-secondary: #374151;
+  --admin-color-text-tertiary: #6B7280;
+  --admin-color-border: #E5E7EB;
+  --admin-color-accent: #FF8C00;
+  --admin-color-accent-hover: #E67E00;
+  --admin-color-accent-active: #D66E00;
+  --admin-color-success: #10B981;
+  --admin-color-error: #EF4444;
+  --admin-color-warning: #F59E0B;
+  --admin-color-info: #3B82F6;
+
+  /* Spacing */
+  --admin-space-xs: 4px;
+  --admin-space-sm: 8px;
+  --admin-space-md: 16px;
+  --admin-space-lg: 24px;
+  --admin-space-xl: 32px;
+  --admin-space-2xl: 48px;
+
+  /* Typography */
+  --admin-font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --admin-font-size-h1: 28px;
+  --admin-font-size-h2: 20px;
+  --admin-font-size-body: 14px;
+  --admin-font-size-small: 12px;
+
+  /* Border Radius */
+  --admin-radius-sm: 4px;
+  --admin-radius-md: 8px;
+  --admin-radius-lg: 12px;
+
+  /* Shadows */
+  --admin-shadow-sm: 0 1px 3px rgba(0,0,0,0.1);
+  --admin-shadow-md: 0 4px 6px rgba(0,0,0,0.1);
+  --admin-shadow-lg: 0 10px 15px rgba(0,0,0,0.1);
+}
+
+.admin-dashboard-scope {
+  font-family: var(--admin-font-family);
+  background-color: var(--admin-color-bg-secondary);
+  color: var(--admin-color-text-primary);
+}

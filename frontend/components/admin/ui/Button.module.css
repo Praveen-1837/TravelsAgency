@@ -1,0 +1,84 @@
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--admin-font-family);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+  outline: none;
+}
+
+.button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  background-color: #D1D5DB;
+}
+
+.button:focus-visible {
+  outline: 2px solid var(--admin-color-accent);
+  outline-offset: 2px;
+}
+
+.primary {
+  background-color: var(--admin-color-accent);
+  color: #FFFFFF;
+  font-size: var(--admin-font-size-body);
+  font-weight: 600;
+  padding: 10px 16px;
+  border-radius: var(--admin-radius-sm);
+  min-height: 40px;
+}
+
+.primary:hover:not(:disabled) {
+  background-color: var(--admin-color-accent-hover);
+}
+
+.primary:active:not(:disabled) {
+  background-color: var(--admin-color-accent-active);
+}
+
+.secondary {
+  background-color: var(--admin-color-bg-tertiary);
+  color: var(--admin-color-text-secondary);
+  font-size: var(--admin-font-size-body);
+  font-weight: 600;
+  padding: 10px 16px;
+  border-radius: var(--admin-radius-sm);
+  min-height: 40px;
+  border: 1px solid #D1D5DB;
+}
+
+.secondary:hover:not(:disabled) {
+  background-color: var(--admin-color-border);
+}
+
+.icon {
+  background: transparent;
+  color: var(--admin-color-text-tertiary);
+  padding: 8px;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+}
+
+.icon:hover:not(:disabled) {
+  background-color: var(--admin-color-bg-tertiary);
+  color: var(--admin-color-accent);
+}
+
+.iconWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.iconWrapper svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* Add small gap if there is both icon and text */
+.iconWrapper + .text {
+  margin-left: var(--admin-space-sm);
+}

@@ -1,60 +1,33 @@
-import React from 'react';
-import { redirect } from 'next/navigation';
-import { createClient } from '@/lib/supabase/server';
-import Link from 'next/link';
+'use client'
 
-export default async function AdminLayout({ children }: { children: React.ReactNode }) {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+import React, { useState } from 'react'
+import { Sidebar } from './components/Sidebar'
+import { TopBar } from './components/TopBar'
+import { AdminRoleProvider } from './context/AdminRoleContext'
+import './admin-tokens.css'
 
-  if (!user) {
-    redirect('/login');
-  }
+export default function AdminLayout({ children }: { children: React.ReactNode }) {
+  const [isSidebarOpen, setSidebarOpen] = useState(false)
 
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select('role')
-    .eq('id', user.id)
-    .single();
-
-  if (profile?.role !== 'admin' && profile?.role !== 'staff') {
-    redirect('/');
-  }
+  const toggleSidebar = () => setSidebarOpen(!isSidebarOpen)
 
   return (
-    <div className="flex h-screen bg-gray-50">
-      {/* Sidebar */}
-      <aside className="w-64 bg-slate-900 text-white flex flex-col hidden md:flex">
-        <div className="p-6">
-          <h2 className="text-2xl font-bold">Aariva Admin</h2>
-        </div>
-        <nav className="flex-1 px-4 space-y-2">
-          <Link href="/admin" className="block px-4 py-2 rounded hover:bg-slate-800">
-            Dashboard
-          </Link>
-          <Link href="/admin/inquiries" className="block px-4 py-2 rounded hover:bg-slate-800">
-            Inquiries
-          </Link>
-          <Link href="/admin/bookings" className="block px-4 py-2 rounded hover:bg-slate-800">
-            Bookings
-          </Link>
-          <Link href="/admin/payments" className="block px-4 py-2 rounded hover:bg-slate-800">
-            Payments
-          </Link>
-        </nav>
-        <div className="p-4 border-t border-slate-700">
-          <form action="/auth/signout" method="post">
-            <button type="submit" className="w-full px-4 py-2 text-sm text-left hover:bg-slate-800 rounded">
-              Logout
-            </button>
-          </form>
-        </div>
-      </aside>
+    <AdminRoleProvider>
+      <div className="admin-dashboard-scope min-h-screen flex antialiased selection:bg-primary selection:text-white">
+        <Sidebar isOpen={isSidebarOpen} setIsOpen={setSidebarOpen} />
 
-      {/* Main Content */}
-      <main className="flex-1 overflow-auto p-8">
-        {children}
-      </main>
-    </div>
-  );
+        {/* Main Content Area */}
+        <div className="flex-1 flex flex-col min-w-0 h-screen overflow-hidden bg-[var(--admin-color-bg-secondary)]">
+          <TopBar onMenuClick={toggleSidebar} />
+
+          {/* Page Content with custom scrollbar */}
+          <main style={{ flex: 1, overflowY: 'auto', padding: '32px' }}>
+            <div style={{ maxWidth: '1400px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '32px' }}>
+              {children}
+            </div>
+          </main>
+        </div>
+      </div>
+    </AdminRoleProvider>
+  )
 }
