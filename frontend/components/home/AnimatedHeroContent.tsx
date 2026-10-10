@@ -30,10 +30,10 @@ const FlipTile = ({ i, style }: { i: number, style?: React.CSSProperties }) => {
     <div className={styles.tile} style={style} aria-hidden="true">
       <div className={styles.tileInner}>
         <div className={styles.tileFront}>
-           <Image src={front} alt="" fill sizes="110px" loading="lazy" />
+           <Image src={front} alt="" fill sizes="110px" priority={true} loading="eager" />
         </div>
         <div className={styles.tileBack}>
-           <Image src={back} alt="" fill sizes="110px" loading="eager" />
+           <Image src={back} alt="" fill sizes="110px" priority={true} loading="eager" />
         </div>
       </div>
     </div>

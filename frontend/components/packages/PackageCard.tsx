@@ -5,7 +5,8 @@ import Link from 'next/link';
 import Image from 'next/image';
 import styles from './PackageCard.module.css';
 import { Package } from '@/lib/types';
-import { CallbackModal } from '@/components/common/CallbackModal';
+import dynamic from 'next/dynamic';
+const CallbackModal = dynamic(() => import('@/components/common/CallbackModal').then(mod => mod.CallbackModal), { ssr: false });
 
 interface PackageCardProps {
   pkg: Package;

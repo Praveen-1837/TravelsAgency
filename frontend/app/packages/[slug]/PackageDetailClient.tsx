@@ -6,12 +6,13 @@ import Image from 'next/image';
 import styles from './package-detail.module.css';
 import { Package, Review } from '@/lib/types';
 import { fetchPackageReviews } from '@/lib/api';
-import { CallbackModal } from '@/components/common/CallbackModal';
+import dynamic from 'next/dynamic';
 import { CallbackForm } from '@/components/common/CallbackForm';
 import { PackageCard } from '@/components/packages/PackageCard';
 import { ReviewScoreCard } from '@/components/reviews/ReviewScoreCard';
 import { ReviewList } from '@/components/reviews/ReviewList';
-import { ReviewModal } from '@/components/reviews/ReviewModal';
+const CallbackModal = dynamic(() => import('@/components/common/CallbackModal').then(mod => mod.CallbackModal), { ssr: false });
+const ReviewModal = dynamic(() => import('@/components/reviews/ReviewModal').then(mod => mod.ReviewModal), { ssr: false });
 import { gsap, useGSAP, ScrollTrigger, ScrollToPlugin } from '@/lib/gsap';
 import { ItineraryRouteVisual } from '@/components/packages/ItineraryRouteVisual';
 
@@ -206,7 +207,8 @@ export default function PackageDetailClient({ pkg, similarPackages, initialRevie
               src={images[activeImageIndex] || images[0]}
               alt={pkg.title}
               fill
-              priority
+              priority={true}
+              loading="eager"
               sizes="(max-width: 1024px) 100vw, 780px"
               className={styles.galleryImg}
             />
@@ -223,6 +225,8 @@ export default function PackageDetailClient({ pkg, similarPackages, initialRevie
                   src={imgUrl}
                   alt={`${pkg.title} preview ${idx + 1}`}
                   fill
+                  priority={true}
+                  loading="eager"
                   sizes="380px"
                   className={styles.galleryImg}
                 />

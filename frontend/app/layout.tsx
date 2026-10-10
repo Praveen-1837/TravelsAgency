@@ -85,6 +85,8 @@ export const metadata: Metadata = {
 import { CountryProvider } from '@/context/CountryContext';
 import { AuthProvider } from '@/lib/auth/AuthContext';
 
+import Script from 'next/script';
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -134,6 +136,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
   return (
     <html lang="en" className={plusJakartaSans.variable}>
+      <head>
+        <style dangerouslySetInnerHTML={{ __html: `
+          body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+          .sidebar { width: 240px; background: #1F2937; color: #E5E7EB; }
+          .main-content { flex: 1; background: #FFFFFF; }
+          .kpi-card { background: white; border: 1px solid #E5E7EB; border-radius: 8px; padding: 20px; }
+        ` }} />
+      </head>
       <body>
         <script
           type="application/ld+json"
@@ -146,6 +156,26 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <Footer />
           </CountryProvider>
         </AuthProvider>
+        <Script
+          src="https://checkout.razorpay.com/v1/checkout.js"
+          strategy="lazyOnload"
+        />
+        <Script
+          src="https://cdn.sanity.io/v3/preview@3.15.0"
+          strategy="lazyOnload"
+        />
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=GA_ID"
+          strategy="afterInteractive"
+        />
+        <Script id="gtag-init" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'GA_ID');
+          `}
+        </Script>
       </body>
     </html>
   );
